@@ -1732,9 +1732,16 @@ function update(){
     }
   }
   if(state === "goal"){
-    player.x += Math.max(1.2, speed);
-    if(!gateClosing && !passedGate && player.x + 6 > gateScreenX() + 3) passedGate = true;
-    if(player.x > W + 4) gameClear();
+    // バナナで転がっている途中に正門前まで来た場合も、転がり終わりで判定する（最後のライフならゲームオーバー）
+    if(rolling > 0){
+      rolling--;
+      if(rolling === 0 && lives <= 0){ lifeGameOver("banana"); return; }
+    }
+    if(lives > 0){   // やられた状態では進まない（ゴールさせない）
+      player.x += Math.max(1.2, speed);
+      if(!gateClosing && !passedGate && player.x + 6 > gateScreenX() + 3) passedGate = true;
+      if(player.x > W + 4) gameClear();
+    }
   }
   // 閉まった門扉に激突
   if(active && gateClosing && !passedGate){
