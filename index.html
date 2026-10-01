@@ -44,6 +44,34 @@ canvas{
 .heart{ color:#e03838; }
 .stock{ display:inline-flex; gap:0; margin-left:calc(var(--dot) * 4); align-items:center; }
 .can{ display:block; }
+/* メダル（はやいな評価のごほうび） */
+.medal{ display:block; }
+.medaltxt{ white-space:nowrap; }
+/* リザルト・記録：文字と同じ行に置き、メダルの下端を文字の下端（基準線の2ドット下）にそろえる */
+.medaltxt .medal{ display:inline-block; vertical-align:-.25em; margin-right:.2em; }   /* 大きさはドット等倍（medalSVG が指定） */
+.medaltxt.mini .medal{ height:.8em; width:.8em; vertical-align:0; margin-right:.15em; }
+.medalstack{
+  position:absolute; right:calc(var(--dot) * 4); bottom:calc(var(--dot) * 24);
+  display:flex; flex-direction:row-reverse; align-items:flex-end; gap:calc(var(--dot) * 1);
+  pointer-events:none; z-index:4;
+}
+.medalstack .new{ animation:medalin .5s steps(5, end); }
+@keyframes medalin{ 0%{ transform:translateY(calc(var(--dot) * -6)); } 100%{ transform:none; } }
+.medalpop{
+  position:absolute; pointer-events:none; z-index:4;   /* クリア画面の文字より奥（文字にかぶらない） */
+  transform:translate(-50%, -100%);
+  animation:medalpop 2.2s steps(22, end) forwards;
+}
+
+@keyframes medalpop{
+  0%  { transform:translate(-50%, -100%); opacity:1; }
+  20% { transform:translate(-50%, calc(-100% - var(--dot) * 12)); opacity:1; }
+  85% { transform:translate(-50%, calc(-100% - var(--dot) * 14)); opacity:1; }
+  100%{ transform:translate(-50%, calc(-100% - var(--dot) * 14)); opacity:0; }
+}
+.medalpop .spark{ position:absolute; width:calc(var(--dot) * 5); height:calc(var(--dot) * 5); animation:spark .5s steps(1, end) infinite; }
+@keyframes spark{ 0%{ opacity:1; } 50%{ opacity:0; } }
+.screen.paused .medalpop, .screen.paused .medalpop .spark, .screen.paused .medalstack .new{ animation-play-state:paused !important; }
 .cangap{ display:block; width:calc(var(--dot) * 3); }
 
 /* 「−♥1」：マイナスは線で描いて高さを中央に、間隔は均等に */
@@ -421,6 +449,8 @@ button{ font-size:var(--ui) !important; }
     <div class="popup outline" id="popup"></div>
     <div class="headpop outline" id="headpop"></div>
     <div class="headpop outline" id="teacherpop"></div>
+    <div class="medalpop hidden" id="medalpop"></div>
+    <div class="medalstack" id="medalStack"></div>
     <div class="headpop outline" id="dmgpop"></div>
     <div class="headpop outline" id="usepop"></div>
     <div class="headpop outline" id="healpop"></div>
@@ -749,6 +779,22 @@ function playBurstSE(){
   if(!audioCtx) return;
   playNoise(0.35, 0.07);
   playNote(90, "triangle", 0.25, 0.12);
+}
+
+// メダル獲得音（キラリーン）
+function playMedalSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  [[1319, 0], [1568, .07], [2093, .14], [2637, .24]].forEach(([f, d]) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(f, t + d);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.setValueAtTime(0.05, t + d);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + d + 0.3);
+    osc.connect(gain); gain.connect(outNode());
+    osc.start(t + d); osc.stop(t + d + 0.32);
+  });
 }
 
 // 空中クルッの効果音
@@ -1116,7 +1162,7 @@ function nextDay(){
 function startDay(w, d, startMul){
   week = w; day = d;
   invulT = 0; starT = 0;
-  if(w === 1 && d === 1){ drinkStock = 0; lives = CONFIG.lives; }   // ライフもエナドリも、最初からやり直すときだけリセット
+  if(w === 1 && d === 1){ drinkStock = 0; lives = CONFIG.lives; medals = 0; }   // ライフもエナドリも、最初からやり直すときだけリセット
   teacherSaid = false;
   ["dayLabel", "lifeLabel", "hud", "speedo"].forEach(id => document.getElementById(id).classList.remove("hidden"));
   showMessageWindows(true);
@@ -1155,23 +1201,35 @@ function startDay(w, d, startMul){
   ov.classList.add("hidden");
   ov.classList.remove("clear");
   updateHUD();
+  renderMedals();
+  document.getElementById("medalpop").className = "medalpop hidden";
 }
 
 // ===== 記録・ポーズ・タイトルへ =====
-let records = [];        // { idx, speed, at }（ページを開いている間）
+let records = [];        // { idx, medals, speed, at }（ページを開いている間）
 let runRecorded = false;
 function addRecord(idx, speed){
   if(runRecorded) return;
   runRecorded = true;
   const d = new Date();
-  records.push({ idx, speed, at: `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}` });
-  records.sort((a, b) => b.idx - a.idx || b.speed - a.speed);
+  records.push({ idx, medals, speed, at: `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}` });
+  records.sort((a, b) => b.idx - a.idx || b.medals - a.medals || b.speed - a.speed);
   records = records.slice(0, 5);
   noteBest(idx);
 }
-function noteBest(idx){ bestIdx = Math.max(bestIdx, idx); updateBest(); }
-// 上の帯の右側に、いつでも最高到達日
-function updateBest(){ document.getElementById("bestLabel").textContent = "Best: " + (bestIdx >= 0 ? idxLabel(bestIdx) : "-"); }
+// ベスト：日数が長い回。日数が同じならメダルが多い回
+let bestMedals = 0;
+function noteBest(idx){
+  if(idx > bestIdx || (idx === bestIdx && medals > bestMedals)){ bestIdx = idx; bestMedals = medals; }
+  updateBest();
+}
+const bestText = () => idxLabel(bestIdx) + (bestMedals > 0 ? "　" + medalText(bestMedals) : "");
+// 上の帯は簡略版：紐なしの金メダル（丸）だけ
+// 字と同じ高さの、縁取りなしの金色の丸だけ
+const MEDAL_MINI_SVG = `<svg class="medal" viewBox="0 0 5 5" shape-rendering="crispEdges"><path fill="#f8d030" d="M1 0h3v1h1v3h-1v1h-3v-1h-1v-3h1z"/><path fill="#c88820" d="M4 2h1v2h-1v1h-3v-1h3z"/><path fill="#fff0a8" d="M1 1h1v1h-1z"/></svg>`;
+const bestMini = () => idxLabel(bestIdx) + (bestMedals > 0 ? ` <span class="medaltxt mini">${MEDAL_MINI_SVG}×${bestMedals}</span>` : "");
+// 上の帯の右側に、いつでも最高記録
+function updateBest(){ document.getElementById("bestLabel").innerHTML = "Best: " + (bestIdx >= 0 ? bestMini() : "-"); }
 
 let paused = false;
 let recordOpen = false;
@@ -1181,7 +1239,7 @@ function openRecords(){
   recordOpen = true;
   const list = document.getElementById("recList");
   list.innerHTML = records.length
-    ? records.map((r, i) => `<li>${i + 1}．${idxLabel(r.idx)}　SPEED ×${r.speed.toFixed(2)}　（${r.at}）</li>`).join("")
+    ? records.map((r, i) => `<li>${i + 1}．${idxLabel(r.idx)}　${r.medals > 0 ? medalText(r.medals) + "　" : ""}（${r.at}）</li>`).join("")
     : "<li>まだ記録がありません</li>";
   document.getElementById("recPanel").classList.remove("hidden");
   document.getElementById("overlay").style.visibility = "hidden";   // 結果画面の文字と重ならないように
@@ -1211,6 +1269,7 @@ function goTitle(){
   else if(state === "clear") addRecord(dayIdx(week, day) + 1, mul);
   stopBGM();
   state = "menu";
+  renderMedals();
   confettiSpawn = 0; confetti = []; fireworks = []; fwSpawn = 0;
   cats = []; cans = []; puddles = []; bananas = []; crows = []; particles = []; elder = null;
   player = createPlayer(); worldOffset = 0;
@@ -1221,7 +1280,7 @@ function goTitle(){
   ov.classList.remove("hidden", "clear");
   ov.classList.add("menu");
   document.getElementById("title").textContent = "遅刻ダッシュ！";
-  document.getElementById("message").innerHTML = bestIdx >= 0 ? `最高記録：${idxLabel(bestIdx)}` : "";
+  document.getElementById("message").innerHTML = bestIdx >= 0 ? `最高記録：${bestText()}` : "";
   const btn = document.getElementById("start");
   btn.textContent = "スタート";
   btn.disabled = false;
@@ -1545,6 +1604,82 @@ function clockText(elapsedMin){
   const t = CONFIG.clockStart + elapsedMin;
   return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
 }
+// ===== メダル =====
+// 中身だけ描いて、まわりの1ドットの黒縁はコードで付ける（ハートや缶と同じ見た目）
+// 上から：赤い紐（真ん中に白い線）→ 銀の金具 → 金メダル
+const MEDAL_S = [
+  ".RTR.",
+  ".RTR.",
+  ".RTR.",
+  "..S..",
+  ".YYY.",
+  "YWYYY",
+  "YYYYD",
+  "YYYDD",
+  ".DDD.",
+];
+const MEDAL_L = [   // 10個ごとの大メダル（一回り大きい）
+  "..RTR..",
+  "..RTR..",
+  "..RTR..",
+  "..RTR..",
+  "...S...",
+  "..YYY..",
+  ".WYYYY.",
+  "YYEEGYD",
+  "YYEGGYD",
+  "YYGGGYD",
+  ".YYYDD.",
+  "..DDD..",
+];
+// R 紐の赤 / T 紐の白い線 / S 銀の金具 / Y,W,D メダルの縁（明・ハイライト・影） / E,G 大メダルの中心（控えめなへこみ）
+const MEDAL_PAL = { R:"#e03030", T:"#ffffff", S:"#d0d0dc", Y:"#f8d030", W:"#fff0a8", D:"#d09828", E:"#d8a828", G:"#ecc030", O:"#1c2030" };
+function medalSVG(big, cls = "medal"){
+  const core = Array.isArray(big) ? big : (big ? MEDAL_L : MEDAL_S), h = core.length + 2, w = core[0].length + 2;
+  const at = (x, y) => y >= 0 && y < core.length && x >= 0 && x < core[0].length && core[y][x] !== ".";
+  let r = "";
+  for(let y = -1; y <= core.length; y++) for(let x = -1; x <= core[0].length; x++){
+    let c = null;
+    if(at(x, y)) c = MEDAL_PAL[core[y][x]];
+    else if(at(x-1, y) || at(x+1, y) || at(x, y-1) || at(x, y+1)) c = MEDAL_PAL.O;
+    if(c) r += `<rect x="${x+1}" y="${y+1}" width="1" height="1" fill="${c}"/>`;
+  }
+  const size = cls === "medal" ? ` style="width:calc(var(--dot) * ${w});height:calc(var(--dot) * ${h})"` : "";
+  return `<svg class="${cls}" viewBox="0 0 ${w} ${h}"${size} shape-rendering="crispEdges">${r}</svg>`;
+}
+// 文章中の「（メダル）×数」
+const medalText = n => n < 1 ? "" : `<span class="medaltxt">${medalSVG(false, "medal")}×${n}</span>`;   // 0個のときはどこにも出さない
+let medals = 0;   // このプレイで獲得したメダル（最初からやり直すと0）
+// 右下：右端をアンカーに左へ積む。10個ごとに大メダル1つにまとまる
+function renderMedals(isNew){
+  const el = document.getElementById("medalStack");
+  const big = Math.floor(medals / 10), small = medals % 10;
+  let h = "";
+  for(let i = 0; i < big; i++) h += medalSVG(true);
+  for(let i = 0; i < small; i++) h += medalSVG(false);
+  el.innerHTML = h;
+  el.classList.toggle("hidden", medals < 1 || !(state === "playing" || state === "goal" || state === "clear" || state === "gameover" || state === "crash"));
+  if(isNew && el.lastElementChild) el.lastElementChild.classList.add("new");
+}
+// 先生の頭からメダルがポンと出る（キラキラつき）
+function awardMedal(){
+  medals++;
+  const pop = document.getElementById("medalpop");
+  const tx = gateScreenX() - 16 + 6, ty = groundY - 30;
+  pop.style.left = (tx / W * 100) + "%";
+  pop.style.top = ((ty + VIEW_OY) / H * 100) + "%";
+  const sparkSVG = c => `<svg viewBox="0 0 5 5" shape-rendering="crispEdges"><path fill="${c}" d="M2 0h1v5H2z M0 2h5v1H0z"/><path fill="#ffffff" d="M2 2h1v1H2z"/></svg>`;
+  const pos = [[-7, -2, "#ffffff", 0], [8, 1, "#f8d030", .25], [-5, 9, "#f8d030", .12], [9, 10, "#ffffff", .37], [1, -6, "#fff8c8", .5]];
+  pop.innerHTML = medalSVG(true) + pos.map(([x, y, c, d]) =>
+    `<i class="spark" style="left:calc(var(--dot) * ${x});top:calc(var(--dot) * ${y});animation-delay:${d}s">${sparkSVG(c)}</i>`).join("");
+  pop.className = "medalpop hidden";
+  void pop.offsetWidth;
+  pop.className = "medalpop";
+  playMedalSE();
+  // ポップが上がりきったころ右下に加える
+  setTimeout(() => { renderMedals(true); }, 700);
+}
+
 // ライフの右：エナドリのストック（starDrinks 本で無敵）
 function canIcon(full){
   // ゲーム中の缶スプライト（CAN）をそのまま 1ドット＝1px で描く＋右下に影。空は中身を灰色1色に
@@ -1657,6 +1792,7 @@ function update(){
       const min = Math.floor((CONFIG.timeLimit * 60 - timeLeft) / 60 / CONFIG.secPerMinute);
       const line = min >= 15 ? "ギリギリだぞ！" : (min >= 10 ? "おはよう" : "きょうははやいな！");
       npcSay("teacher", line, 150);
+      if(min < 10 && lives > 0) awardMedal();   // 「きょうははやいな！」でメダル
     }
     if(!passedGate && !gateClosing){
       timeLeft--;
@@ -1986,7 +2122,7 @@ function showResult(title, message, clear){
     document.getElementById("start").textContent = day >= CONFIG.daysPerWeek ? "次の週へ" : "次の日へ";
   } else {
     addRecord(dayIdx(week, day), mul);
-    document.getElementById("message").innerHTML = `${weekDayLabel()}、遅刻しちゃった…<br>最高記録：${idxLabel(bestIdx)}`;
+    document.getElementById("message").innerHTML = `${weekDayLabel()}、遅刻しちゃった…<br>最高記録：${bestText()}`;
     document.getElementById("start").textContent = "タイトルへ";
   }
 }
@@ -2107,7 +2243,7 @@ function gameClear(){
   const weekEnd = day >= CONFIG.daysPerWeek;
   if(weekEnd){ fwSpawn = 480; fwNext = 1; }   // 週クリア：下から花火を打ち上げる（約8秒）
   showResult(weekEnd ? (week === 1 ? "クリア！" : `第${week}週 クリア！`) : "セーフ！！",
-    `${weekDayLabel()}　到着 ${clockText()}<br>最高記録：${idxLabel(bestIdx)}`, true);
+    `${weekDayLabel()}　到着 ${clockText()}<br>最高記録：${bestText()}`, true);
 }
 
 // ===== 描画：背景 =====
