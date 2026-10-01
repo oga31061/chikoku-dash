@@ -1094,11 +1094,11 @@ function setSpeed(){
 }
 
 let week = 1, day = 1;
-let bestIdx = -1;   // 到達した日の通し番号（第1週1日目＝0）
+let bestIdx = -1;   // やり通せた日数の最高（まだ遊んでいなければ -1）
 const dayIdx = (w, d) => (w - 1) * CONFIG.daysPerWeek + (d - 1);
 // 第1週のあいだは「週」を出さない（5日目を越えて、まだ先があると初めて知る驚きのため）
 const wdText = (w, d) => w === 1 ? `${d}日目` : `第${w}週 ${d}日目`;
-const idxLabel = i => wdText(Math.floor(i / CONFIG.daysPerWeek) + 1, i % CONFIG.daysPerWeek + 1);
+const idxLabel = i => `${i}日`;   // 記録＝やり通せた（セーフだった）日数。1日目で遅刻したら 0日
 const weekDayLabel = () => wdText(week, day);
 let invulT = 0;     // ぶつかった直後の無敵時間
 let drinkStock = 0; // 無敵タイムまでに飲んだエナドリ（starDrinks 本で無敵）
@@ -1268,7 +1268,8 @@ function proceed(){
   if(recordOpen) return;
   if(performance.now() < inputLockUntil) return;
   if(state === "clear") nextDay();
-  else if(state === "menu" || state === "gameover") resetGame();
+  else if(state === "gameover"){ goTitle(); inputLockUntil = performance.now() + 400; }   // ゲームオーバー → 必ずタイトルへ（連打で即スタートしないよう少し待つ）
+  else if(state === "menu") resetGame();
 }
 
 // ジャンプ操作（スペース・画面下のボタン共通）
@@ -1288,7 +1289,7 @@ window.addEventListener("keydown", e=>{
 canvas.addEventListener("pointerdown",()=>{
   if(recordOpen){ closeRecords(); return; }
   if(state === "playing" || state === "goal") jump();
-  else if(state === "menu") proceed();   // 結果画面は画面タップでは進まない（ボタンかスペースで）
+  else if(state === "menu" || state === "gameover") proceed();   // ゲームオーバーは画面タップでタイトルへ（クリア画面はボタンかスペースで）
 });
 document.getElementById("start").addEventListener("click", proceed);
 
@@ -1979,7 +1980,7 @@ function showResult(title, message, clear){
   } else {
     addRecord(dayIdx(week, day), mul);
     document.getElementById("message").innerHTML = `${weekDayLabel()}、遅刻しちゃった…<br>最高記録：${idxLabel(bestIdx)}`;
-    document.getElementById("start").textContent = "第1週からやり直す";
+    document.getElementById("start").textContent = "タイトルへ";
   }
 }
 
