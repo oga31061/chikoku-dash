@@ -42,6 +42,7 @@ canvas{
   image-rendering:crisp-edges;
 }
 .heart{ color:#e03838; }
+.lifelabel .heart + .heart{ margin-left:calc(var(--dot) * 2); }   /* ハートどうしの間をあける */
 .stock{ display:inline-flex; gap:0; margin-left:calc(var(--dot) * 4); align-items:center; }
 .can{ display:block; }
 /* メダル（はやいな評価のごほうび） */
@@ -51,11 +52,11 @@ canvas{
 .medaltxt .medal{ display:inline-block; vertical-align:-.25em; margin-right:.2em; }   /* 大きさはドット等倍（medalSVG が指定） */
 .medaltxt.mini .medal{ height:.8em; width:.8em; vertical-align:0; margin-right:.15em; }
 .medalstack{
-  position:absolute; right:calc(var(--dot) * 4); bottom:calc(var(--dot) * 24);
-  display:flex; flex-direction:row-reverse; align-items:flex-end; gap:calc(var(--dot) * 1);
+  position:absolute; right:calc(var(--dot) * 5); bottom:calc(var(--dot) * 5);   /* 画面下の地面の帯：右にメダル×数 */
+  display:flex; align-items:center; gap:calc(var(--dot) * 2); font-size:calc(var(--dot) * 8); color:#f8f8f8; white-space:nowrap;
   pointer-events:none; z-index:4;
 }
-.medalstack .new{ animation:medalin .5s steps(5, end); }
+.medalstack.new{ animation:medalin .5s steps(5, end); }
 @keyframes medalin{ 0%{ transform:translateY(calc(var(--dot) * -6)); } 100%{ transform:none; } }
 .medalpop{
   position:absolute; pointer-events:none; z-index:4;   /* クリア画面の文字より奥（文字にかぶらない） */
@@ -117,19 +118,20 @@ canvas{
   top:calc(var(--dot) * 4);
   right:3%;
   white-space:nowrap;
+  text-align:right;
 }
 /* 画面下：ゲームの情報だけ（ライフ・残り時間・スピード） */
 .lifelabel{
   position:absolute;
-  top:calc(var(--dot) * 4);
-  left:3%;
+  top:calc(var(--dot) * 4);    /* 左上：ハートとエナドリ（その下にセリフウィンドウ） */
+  left:calc(var(--dot) * 5);
   white-space:nowrap;
   display:flex;
   align-items:center;   /* ハートとエナドリの高さをそろえる */
 }
 .hud{
   position:absolute;
-  top:calc(var(--dot) * 14);
+  top:calc(var(--dot) * 16);   /* 右上：日にちの下に今の時刻だけ */
   right:3%;
   white-space:nowrap;
   letter-spacing:.05em;
@@ -141,8 +143,8 @@ canvas{
 }
 .msgwin{
   position:absolute;
-  top:calc(var(--dot) * 15);   /* ハートの下 */
-  left:3%;
+  top:calc(var(--dot) * 16);   /* ハートとエナドリの下 */
+  left:calc(var(--dot) * 3);
   /* 一番長いセリフ（10文字）＋顔アイコンが収まる、ぎりぎりの幅 */
   width:calc(var(--dot) * 118);
   height:calc(var(--dot) * 30);
@@ -205,6 +207,7 @@ canvas{
 .msgwin .msg{ flex:1; min-width:0; text-align:center; overflow:hidden; }
 .msgwin .msg.red{ color:#ff6060; }
 .speedo{
+  display:none !important;   /* スピード表示はなし */
   position:absolute;
   top:calc(var(--dot) * 24);
   right:3%;
@@ -212,8 +215,9 @@ canvas{
   letter-spacing:.08em;
 }
 .boostlabel{
+  display:none !important;   /* ブーストはセリフウィンドウの顔で知らせる */
   position:absolute;
-  top:calc(var(--dot) * 34);
+  top:calc(var(--dot) * 24);
   right:3%;
   color:#f8d030;
   white-space:nowrap;
@@ -292,6 +296,52 @@ canvas{
   filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030);
 }
 .ctl:active{ transform:translate(var(--dot), var(--dot)); }
+/* ポーズボタン：ゲーム画面の上の真ん中（ハート列と時計のすきま） */
+.pausebtn{
+  position:absolute; right:3%; top:calc(var(--dot) * 28);   /* 右上：時刻の下に右寄せ（週があるときは JS で1行下げる） */
+  width:calc(var(--dot) * 12); height:calc(var(--dot) * 12);
+  padding:0 !important; display:flex; align-items:center; justify-content:center; z-index:10;
+}
+.pausebtn.on{ background:#f8f8f8 !important; }
+.pausebtn.on svg{ fill:#1c2030; filter:none; }
+.pausebtn svg, .volopt svg{ width:calc(var(--dot) * 8); height:calc(var(--dot) * 8); fill:#f8f8f8; filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030); display:block; }
+.pausemenu{
+  position:absolute; inset:0; background:rgba(16,18,28,.86);   /* 後ろのセリフ枠などが透けて見えにくい濃さ */
+  display:flex; align-items:center; justify-content:center;
+  color:#f8f8f8; z-index:8; padding-top:calc(var(--dot) * 10);
+}
+.pausemenu.hidden{ display:none; }
+.pmbox{ display:flex; gap:calc(var(--dot) * 6); align-items:stretch; height:calc(var(--dot) * 96); }
+.pmtabs{ display:flex; flex-direction:column; gap:calc(var(--dot) * 4); width:calc(var(--dot) * 56); }
+.pmtab, .pmclose{ width:100%; padding:calc(var(--dot) * 3) 0 !important; }
+.pmclose{ margin-top:auto; }   /* 項目の下（一番下）に「とじる」 */
+.pmtab.on{ background:#f8f8f8 !important; color:#1c2030 !important; text-shadow:none !important; }
+.pmbody{
+  width:calc(var(--dot) * 150); border:var(--dot) solid #f8f8f8; box-shadow:var(--dot) var(--dot) 0 #1c2030;
+  padding:calc(var(--dot) * 6); font-size:calc(var(--dot) * 8); box-sizing:border-box;
+}
+.pmpane{ display:none; height:100%; }
+.pmpane.on{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--dot) * 6); }
+.pmpane .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
+.pmq{ margin:0; text-align:center; line-height:1.6; }
+.pmsub{ color:#c8ccd8; }
+.volopts{ display:flex; align-items:center; gap:calc(var(--dot) * 3); }
+.volbar{ display:flex; align-items:flex-end; gap:var(--dot); height:calc(var(--dot) * 14); }
+.volseg{
+  width:calc(var(--dot) * 5); padding:0 !important; border:var(--dot) solid #f8f8f8 !important;
+  background:transparent !important; box-shadow:var(--dot) var(--dot) 0 #1c2030 !important; animation:none !important;
+}
+.volseg.on{ background:#f8f8f8 !important; }
+.volseg:nth-child(1){ height:calc(var(--dot) * 5); } .volseg:nth-child(2){ height:calc(var(--dot) * 6); }
+.volseg:nth-child(3){ height:calc(var(--dot) * 7); } .volseg:nth-child(4){ height:calc(var(--dot) * 8); }
+.volseg:nth-child(5){ height:calc(var(--dot) * 9); } .volseg:nth-child(6){ height:calc(var(--dot) * 10); }
+.volseg:nth-child(7){ height:calc(var(--dot) * 11); } .volseg:nth-child(8){ height:calc(var(--dot) * 12); }
+.volseg:nth-child(9){ height:calc(var(--dot) * 13); } .volseg:nth-child(10){ height:calc(var(--dot) * 14); }
+.volopt{ width:calc(var(--dot) * 14); height:calc(var(--dot) * 14); padding:0 !important; display:flex; align-items:center; justify-content:center; }
+.volopt.on{ background:#f8f8f8 !important; }
+.volopt.on svg{ fill:#1c2030; filter:none; }
+/* 遊び方：タイトルだけ */
+
 /* 記録（ポーズ中）：半透明の黒の上に上位5件 */
 .recpanel{
   position:absolute;
@@ -303,7 +353,7 @@ canvas{
   justify-content:center;
   gap:calc(var(--dot) * 4);
   color:#f8f8f8;
-  z-index:6;   /* 結果画面の文字より手前 */
+  z-index:9;   /* ポーズメニューより手前 */
 }
 .recpanel .rectitle{ font-size:calc(var(--dot) * 16); }
 .recpanel .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
@@ -318,7 +368,7 @@ canvas{
   font-size:15px;
 }
 .overlay{
-  position:fixed;
+  position:absolute;
   inset:0;
   background:rgba(0,0,0,.6);
   display:flex;
@@ -332,7 +382,7 @@ canvas{
 .overlay button{ pointer-events:auto; }
 .overlay .card{ background:transparent; border:0; box-shadow:none; width:auto; }
 /* 結果画面は左上のセリフウィンドウと重ならないよう少し下げる */
-.overlay:not(.menu) .card{ transform:translateY(calc(var(--dot) * 12)); padding:0; }
+.overlay:not(.menu) .card{ transform:translateY(calc(var(--dot) * 15)); padding:0; }   /* 左上のセリフ枠とハート列の下、道の上あたりに */
 .overlay:not(.menu) .card h1{ margin-bottom:calc(var(--dot) * 3) !important; }
 .overlay .card p{ margin:calc(var(--dot) * 3) 0 calc(var(--dot) * 4) !important; }
 .overlay .card p{
@@ -356,7 +406,7 @@ canvas{
   animation:blink 1.2s steps(1, end) infinite;
 }
 /* 週クリア：タイトルとボタンを大きく（上のUIに重なってもよい） */
-.overlay.weekend .card{ transform:translateY(calc(var(--dot) * -2)) !important; }
+.overlay.weekend .card{ transform:translateY(calc(var(--dot) * 10)) !important; }
 .overlay.weekend .card h1{ font-size:calc(var(--dot) * var(--tsize, 40)) !important; white-space:nowrap; }
 .overlay.weekend button{ font-size:calc(var(--dot) * 16) !important; }
 @keyframes blink{ 0%{ opacity:1; } 60%{ opacity:0; } 100%{ opacity:0; } }
@@ -387,7 +437,11 @@ button:active{ transform:translate(4px,4px); box-shadow:none; }
 /* ゲーム画面内の文字：8ドット＝1文字 */
 .hud, .daylabel, .lifelabel, .hurrypop, .meter, .speedo, .boostlabel, .headpop, .msgwin{ font-size:calc(var(--dot) * 8); line-height:1.2; }
 .popup{ font-size:calc(var(--dot) * 16); line-height:1.2; }
-.header{ font-size:var(--ui); display:flex; justify-content:space-between; align-items:center; line-height:1.2; }
+.header{ font-size:var(--ui); display:flex; justify-content:space-between; align-items:center; line-height:1.2; gap:1em; }
+.header{ overflow:hidden; }
+.header .hint{ flex:1; min-width:0; text-align:left; color:#a8b0bc; font-size:.7em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+#bestLabel{ white-space:nowrap; }
 .ctl.vol{
   width:calc(var(--dot) * 16);
   height:calc(var(--dot) * 16);
@@ -414,7 +468,7 @@ button:active{ transform:translate(4px,4px); box-shadow:none; }
   justify-content:center;
   gap:calc(var(--dot) * 4);
   color:#f8f8f8;
-  z-index:6;   /* 結果画面の文字より手前 */
+  z-index:9;   /* ポーズメニューより手前 */
 }
 .recpanel .rectitle{ font-size:calc(var(--dot) * 16); }
 .recpanel .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
@@ -433,15 +487,11 @@ button{ font-size:var(--ui) !important; }
 <body>
 
 <div class="game-wrap" id="wrap">
-  <div class="header"><span>遅刻ダッシュ！</span><span id="bestLabel">Best: -</span></div>
+  <div class="header"><span class="hint">Space/タップ ジャンプ</span><span id="bestLabel">Best: -</span></div>
   <div class="screen">
     <canvas id="game" width="264" height="144"></canvas>
-    <div class="controls">
-      <button class="ctl" id="btnJump">SPACE・タップでジャンプ</button>
-      <button class="ctl" id="btnRec">記録</button>
-      <button class="ctl" id="btnTitle">タイトルへ</button>
-      <button class="ctl vol" id="btnVol" aria-label="音量"></button>
-    </div>
+    <!-- 画面下中央のポーズボタン（左右どちらの手でも押せる）。ほかの場所はどこをタップしてもジャンプ -->
+    <button class="ctl icon pausebtn" id="btnPause" aria-label="メニュー"></button>
     <div class="daylabel outline hidden" id="dayLabel">1日目</div>
     <div class="lifelabel outline hidden" id="lifeLabel"></div>
     <div class="meter outline hidden" id="meter"><svg class="arrow" viewBox="0 0 9 9" shape-rendering="crispEdges"><path d="M0 3h4V0h1v1h1v1h1v1h1v1h1v1H8v1H7v1H6v1H5v1H4V6H0z"/></svg><span><span class="num" id="meterNum">400</span>m</span></div>
@@ -459,20 +509,31 @@ button{ font-size:var(--ui) !important; }
     <div class="speedo outline hidden" id="speedo">SPEED ×1.00</div>
     <div class="hurrypop outline" id="hurry">いそげ！</div>
     <div class="daybanner" id="dayBanner"></div>
-    <div class="recpanel hidden" id="recPanel">
-      <div class="rectitle outline">記録</div>
-      <ol class="reclist outline" id="recList"></ol>
-      <div class="rechint outline">［記録］か SPACE でもどる</div>
-    </div>
     <div class="msgwin hidden" id="msgWin"><img class="face" id="faceL" alt=""><span class="msg" id="msgText"></span></div>
-  </div>
-</div>
-
-<div class="overlay menu" id="overlay">
-  <div class="card">
-    <h1 id="title">遅刻ダッシュ！</h1>
-    <p id="message"></p>
-    <button id="start">スタート</button>
+    <!-- タイトル・結果（ゲーム画面の中に置くので、スマホの縦画面でも画面に対して中央） -->
+    <div class="overlay menu" id="overlay">
+      <div class="card">
+        <h1 id="title">遅刻ダッシュ！</h1>
+        <p id="message"></p>
+        <button id="start">スタート</button>
+      </div>
+    </div>
+    <!-- ポーズメニュー（タブ式）：左にタブ、右に中身。開け閉めは上のポーズボタンだけ -->
+    <div class="pausemenu hidden" id="pauseMenu">
+      <div class="pmbox">
+        <div class="pmtabs">
+          <button class="ctl pmtab" data-tab="rec">記録</button>
+          <button class="ctl pmtab" data-tab="vol">音量</button>
+          <button class="ctl pmtab" data-tab="title" id="tabTitle">タイトルへ</button>
+          <button class="ctl pmclose" id="btnClose">とじる</button>
+        </div>
+        <div class="pmbody outline">
+          <div class="pmpane" data-pane="rec"><ol class="reclist" id="recList"></ol></div>
+          <div class="pmpane" data-pane="vol"><div class="volopts" id="volOpts"></div></div>
+          <div class="pmpane" data-pane="title"><p class="pmq">タイトルにもどる？<br><span class="pmsub">（ここまでの記録はのこります）</span></p><button class="ctl" id="btnTitle">もどる</button></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -487,8 +548,11 @@ ctx.imageSmoothingEnabled = false;
 const W = canvas.width;   // 264（少し引いた画：前方が広く見える）
 const H = canvas.height;  // 144
 // ゲーム内の座標は高さ120基準のまま。増えた24ドットを上（空）と下（道路）に半分ずつ足す
-const VIEW_OY = 24;   // 増えた分はすべて空に（下に別枠のような帯を作らない）
+const VIEW_OY = 10;   // 世界を上に寄せて、画面下の地面（ハート・エナドリ・メダルを置く帯）を広くとる
 const groundY = 98;
+// 道を広くして少し見下ろす感じに：女の子・猫・障害物・門などは、塀の下端（groundY）より LANE だけ手前（下）に描く。
+// 当たり判定などの計算はこれまでどおり groundY 基準のまま（見た目だけずらす）
+const LANE = 14;
 
 // ===== ゲーム設定（難易度はここで調整） =====
 const CONFIG = {
@@ -611,14 +675,15 @@ const bgmBass = [
 ];
 
 // 音量：最大 → 無音 → 1 → 2 → 最大 の順に切り替え（全部の音がマスター音量を通る）
-const VOLUME_LEVELS = [1, 0, 0.35, 0.65];   // 3(最大), 0(無音), 1, 2
-let volumeIdx = 0;
+const VOL_STEPS = 10;   // 音量バーの目盛り（0＝無音〜10＝最大）
+let volStep = VOL_STEPS;
+const volGain = () => volStep / VOL_STEPS;
 let masterGain = null;
 function initAudio(){
   if(!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = VOLUME_LEVELS[volumeIdx];
+    masterGain.gain.value = volGain();
     masterGain.connect(audioCtx.destination);
   }
   if(audioCtx.state === "suspended") audioCtx.resume();
@@ -1193,7 +1258,7 @@ function startDay(w, d, startMul){
     // コースのちょうど真ん中であいさつするように置く（奥の層なので地面の0.3倍で流れてくる）
   elder = { x: 36 + 60 + (COURSE / 2 - 36) * ELDER_FACTOR };
   elderTalk = 0;
-  particles = []; confetti = []; confettiSpawn = 0; fireworks = []; fwSpawn = 0; healPopT = 0;
+  particles = []; confetti = []; confettiSpawn = 0; fireworks = []; fwSpawn = 0; healPopT = 0; ghosts = [];
   player = createPlayer();
   createTown();
   state = "playing";
@@ -1232,27 +1297,37 @@ const bestMini = () => idxLabel(bestIdx) + (bestMedals > 0 ? ` <span class="meda
 function updateBest(){ document.getElementById("bestLabel").innerHTML = "Best: " + (bestIdx >= 0 ? bestMini() : "-"); }
 
 let paused = false;
-let recordOpen = false;
+let recordOpen = false;   // （旧：記録パネル。いまはポーズメニューのタブ）
+let menuOpen = false;
 function isActive(){ return state === "playing" || state === "goal" || state === "crash"; }
-function openRecords(){
-  if(recordOpen) return;
-  recordOpen = true;
-  const list = document.getElementById("recList");
-  list.innerHTML = records.length
-    ? records.map((r, i) => `<li>${i + 1}．${idxLabel(r.idx)}　${r.medals > 0 ? medalText(r.medals) + "　" : ""}（${r.at}）</li>`).join("")
-    : "<li>まだ記録がありません</li>";
-  document.getElementById("recPanel").classList.remove("hidden");
+// メニューボタン：横三本線。開いているあいだは白く反転（押すと時間が止まる）
+const ICON_MENU = `<svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M1 1h6v1H1z M1 4h6v1H1z M1 7h6v1H1z"/></svg>`;
+function renderPauseBtn(){
+  const b = document.getElementById("btnPause");
+  b.innerHTML = ICON_MENU;
+  b.classList.toggle("on", menuOpen);
+}
+// ポーズメニュー：遊んでいる途中なら時間・BGM・アニメを止める（タイトルや結果画面でも開ける）
+function openPause(){
+  if(menuOpen) return;
+  menuOpen = true;
+  document.getElementById("tabTitle").style.display = state === "menu" ? "none" : "";
+  renderRecords();
+  renderVolOpts();
+  selectTab("rec");
+  document.getElementById("pauseMenu").classList.remove("hidden");
   document.getElementById("overlay").style.visibility = "hidden";   // 結果画面の文字と重ならないように
   if(isActive()){
     paused = true;
     stopBGM();
     document.querySelector(".screen").classList.add("paused");
   }
+  renderPauseBtn();
 }
-function closeRecords(){
-  if(!recordOpen) return;
-  recordOpen = false;
-  document.getElementById("recPanel").classList.add("hidden");
+function closePause(){
+  if(!menuOpen) return;
+  menuOpen = false;
+  document.getElementById("pauseMenu").classList.add("hidden");
   document.getElementById("overlay").style.visibility = "";
   if(paused){
     paused = false;
@@ -1260,10 +1335,23 @@ function closeRecords(){
     last = performance.now(); acc = 0;
     if(state === "playing" || state === "goal") startBGM(false);   // 止めたところから
   }
+  renderPauseBtn();
 }
+function togglePause(){ menuOpen ? closePause() : openPause(); }
+function selectTab(name){
+  document.querySelectorAll(".pmtab").forEach(t => t.classList.toggle("on", t.dataset.tab === name));
+  document.querySelectorAll(".pmpane").forEach(p => p.classList.toggle("on", p.dataset.pane === name));
+}
+function renderRecords(){
+  document.getElementById("recList").innerHTML = records.length
+    ? records.map((r, i) => `<li>${i + 1}．${idxLabel(r.idx)}　${r.medals > 0 ? medalText(r.medals) + "　" : ""}（${r.at}）</li>`).join("")
+    : "<li>まだ記録がありません</li>";
+}
+function openRecords(){ openPause(); selectTab("rec"); }
+function closeRecords(){}
 
 function goTitle(){
-  closeRecords();
+  closePause();
   // 途中でやめた場合も、そこまでの記録は残す
   if(isActive()) addRecord(dayIdx(week, day), mul);
   else if(state === "clear") addRecord(dayIdx(week, day) + 1, mul);
@@ -1287,13 +1375,13 @@ function goTitle(){
   inputLockUntil = 0;
 }
 
-// 画面下のボタン（フォーカスを取らない：スペースで誤って押されないように）
-["btnJump", "btnRec", "btnTitle", "start"].forEach(id => {
-  document.getElementById(id).addEventListener("mousedown", e => e.preventDefault());
-});
-document.getElementById("btnJump").addEventListener("pointerdown", e => { e.preventDefault(); pressJump(false); });
-document.getElementById("btnRec").addEventListener("click", () => recordOpen ? closeRecords() : openRecords());
+// ボタン（フォーカスを取らない：スペースで誤って押されないように）
+document.querySelectorAll("button").forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
+document.getElementById("btnPause").addEventListener("click", togglePause);
+document.querySelectorAll(".pmtab").forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
 document.getElementById("btnTitle").addEventListener("click", goTitle);
+document.getElementById("btnClose").addEventListener("click", closePause);
+renderPauseBtn();
 
 // 音量ボタン：スピーカーのドット絵（波の数で音量、無音は×）
 function speakerSVG(level){
@@ -1308,23 +1396,33 @@ function speakerSVG(level){
   }
   return `<svg viewBox="0 0 12 12" shape-rendering="crispEdges"><path d="${r}"/></svg>`;
 }
-function volumeLevel(){ return [3, 0, 1, 2][volumeIdx]; }
-function renderVolume(){ document.getElementById("btnVol").innerHTML = speakerSVG(volumeLevel()); }
-function cycleVolume(){
-  volumeIdx = (volumeIdx + 1) % VOLUME_LEVELS.length;
-  if(masterGain) masterGain.gain.value = VOLUME_LEVELS[volumeIdx];
-  renderVolume();
+// 音量タブ：［ミュートのアイコン］［■■■■■□□□□□］［最大のアイコン］。目盛りかアイコンを押して決める
+function renderVolOpts(){
+  const el = document.getElementById("volOpts");
+  let bar = "";
+  for(let k = 1; k <= VOL_STEPS; k++) bar += `<button class="volseg${k <= volStep ? " on" : ""}" data-step="${k}" aria-label="音量${k}"></button>`;
+  el.innerHTML = `<button class="ctl volopt${volStep === 0 ? " on" : ""}" data-step="0" aria-label="ミュート">${speakerSVG(0)}</button>`
+    + `<div class="volbar">${bar}</div>`
+    + `<button class="ctl volopt${volStep === VOL_STEPS ? " on" : ""}" data-step="${VOL_STEPS}" aria-label="最大">${speakerSVG(3)}</button>`;
+  el.querySelectorAll("button").forEach(b => {
+    b.addEventListener("mousedown", e => e.preventDefault());
+    b.addEventListener("click", () => setVolume(+b.dataset.step));
+  });
 }
-document.getElementById("btnVol").addEventListener("mousedown", e => e.preventDefault());
-document.getElementById("btnVol").addEventListener("click", cycleVolume);
-renderVolume();
+function setVolume(step){
+  volStep = step;
+  if(masterGain) masterGain.gain.value = volGain();
+  renderVolOpts();
+}
+
+
 
 // 結果画面が出てすぐは入力を受け付けない（誤爆で即再開しないように）
 const RESULT_LOCK_MS = 2000;   // 結果画面は2秒間入力を受け付けない（スクショを撮る間に誤って進まないように）
 let inputLockUntil = 0;
 
 function proceed(){
-  if(recordOpen) return;
+  if(menuOpen) return;
   if(performance.now() < inputLockUntil) return;
   if(state === "clear") nextDay();
   else if(state === "gameover"){ goTitle(); inputLockUntil = performance.now() + 400; }   // ゲームオーバー → 必ずタイトルへ（連打で即スタートしないよう少し待つ）
@@ -1334,6 +1432,7 @@ function proceed(){
 // ジャンプ操作（スペース・画面下のボタン共通）
 function pressJump(isRepeat){
   if(recordOpen){ if(!isRepeat) closeRecords(); return; }   // 記録表示中はまず閉じる（ジャンプはしない）
+  if(menuOpen) return;   // ポーズ中は何もしない（開け閉めはポーズボタン・Esc・P）
   if(state === "playing" || state === "goal") jump();
   else if(!isRepeat) proceed();   // 押しっぱなしの連打では進まない
 }
@@ -1341,12 +1440,13 @@ window.addEventListener("keydown", e=>{
   if(e.code === "Space"){
     e.preventDefault();
     pressJump(e.repeat);
-  } else if(e.code === "Escape" && recordOpen){
-    closeRecords();
+  } else if(e.code === "Escape" || e.code === "KeyP"){
+    togglePause();
   }
 });
-canvas.addEventListener("pointerdown",()=>{
-  if(recordOpen){ closeRecords(); return; }
+// 画面のどこをタップしてもジャンプ（ボタンとメニューの上は除く）
+document.querySelector(".screen").addEventListener("pointerdown", e=>{
+  if(menuOpen || e.target.closest("button, #pauseMenu")) return;
   if(state === "playing" || state === "goal") jump();
   else if(state === "menu" || state === "gameover") proceed();   // ゲームオーバーは画面タップでタイトルへ（クリア画面はボタンかスペースで）
 });
@@ -1386,7 +1486,7 @@ function popAt(id, text, cls, x, y){
   const el = document.getElementById(id);
   el.textContent = text;
   el.style.left = (x / W * 100) + "%";
-  el.style.top  = ((y + VIEW_OY) / H * 100) + "%";
+  el.style.top  = ((y + VIEW_OY + LANE) / H * 100) + "%";   // 道の上のもの（女の子・先生）から出る
   el.className = "headpop outline";
   void el.offsetWidth;
   el.className = "headpop outline show " + (cls || "");
@@ -1502,6 +1602,46 @@ function faceURL(rows, pal){
   }));
   return c.toDataURL();
 }
+// ブースト中の女の子の顔：20×20ドットで、オレンジの顔＋十字に光る目＋上に「BOOST」
+const MINI_FONT = {   // 3×5 の小さい文字
+  B:["110","101","110","101","110"], O:["010","101","101","101","010"],
+  S:["011","100","010","001","110"], T:["111","010","010","010","010"],
+};
+function boostFaceURL(frame){
+  const c = document.createElement("canvas");
+  c.width = 20; c.height = 20;
+  const g = c.getContext("2d");
+  const pal = GIRL_PAL_BOOST;
+  FACE_GIRL.forEach((row, y) => [...row].forEach((ch, x) => {
+    let col = pal[ch];
+    if(y === 4 && (x === 2 || x === 7)) col = pal.S;   // 目はあとで十字の光にする
+    if(col){ g.fillStyle = col; g.fillRect(x * 2, y * 2, 2, 2); }
+  }));
+  // 目：十字に光る（2コマで大きさが変わってキラキラ）
+  const arm = frame ? 3 : 2;
+  [[4, 8], [14, 8]].forEach(([ex, ey]) => {
+    g.fillStyle = frame ? "#ffffff" : "#fff4a0";
+    g.fillRect(ex - arm, ey, 2 + arm * 2, 2);
+    g.fillRect(ex, ey - arm, 2, 2 + arm * 2);
+    g.fillStyle = "#ffffff";
+    g.fillRect(ex, ey, 2, 2);
+  });
+  // 上側に「BOOST」（影つき）
+  [..."BOOST"].forEach((ch, i) => {
+    MINI_FONT[ch].forEach((r, yy) => [...r].forEach((b, xx) => {
+      if(b !== "1") return;
+      const x = i * 4 + xx, y = 1 + yy;
+      g.fillStyle = "#5a1808"; g.fillRect(x + 1, y + 1, 1, 1);
+    }));
+  });
+  [..."BOOST"].forEach((ch, i) => {
+    MINI_FONT[ch].forEach((r, yy) => [...r].forEach((b, xx) => {
+      if(b === "1"){ g.fillStyle = "#f8d030"; g.fillRect(i * 4 + xx, 1 + yy, 1, 1); }
+    }));
+  });
+  return c.toDataURL();
+}
+let BOOST_FACES = null;
 let FACES = null;
 function faces(){
   if(!FACES) FACES = {
@@ -1544,15 +1684,19 @@ function renderMessage(){
   const L = document.getElementById("faceL");
   const t = document.getElementById("msgText");
   let text = "", side = "";
+  // ブースト中（ほかの人のセリフがないとき）は、女の子の顔をブースト顔にしてウィンドウを出す
+  const boosting = msgOn && boostLeft > 0 && starT === 0 && (state === "playing" || state === "goal");
   if(npcLineT > 0){ text = npcLine; side = "R"; }
   else if(girlLineT > 0){ text = girlLine; side = "L"; }
+  else if(boosting){ side = "L"; }
   renderHurry();
-  if(!msgOn || !text){ win.classList.add("hidden"); return; }   // セリフがないときはウィンドウごと消す
+  if(!msgOn || (!text && !boosting)){ win.classList.add("hidden"); return; }   // セリフがないときはウィンドウごと消す
   win.classList.remove("hidden");
   if(t.textContent !== text) t.textContent = text;
   t.className = "msg " + (side === "R" ? npcCls : "");
-  // 顔アイコンは全員左
-  const src = side === "L" ? faces().girl : faces()[npcWho];
+  // 顔アイコンは全員左（NPC のセリフ中はそちらが優先）
+  if(!BOOST_FACES) BOOST_FACES = [boostFaceURL(0), boostFaceURL(1)];
+  const src = side === "L" ? (boosting ? BOOST_FACES[Math.floor(animTick / 8) % 2] : faces().girl) : faces()[npcWho];
   if(L.getAttribute("src") !== src) L.src = src;
 }
 // 「いそげ！」は女の子の頭上に。走っている間だけ出て、ジャンプや転倒で消える。
@@ -1568,7 +1712,7 @@ function renderHurry(){
     hurryArmed = false;
     // 頭の上でぴょんと跳ねて消える
     el.style.left = ((player.x + 6) / W * 100) + "%";
-    el.style.top  = ((player.y - 8 + VIEW_OY) / H * 100) + "%";
+    el.style.top  = ((player.y - 8 + VIEW_OY + LANE) / H * 100) + "%";
     el.className = "hurrypop outline";
     void el.offsetWidth;
     el.className = "hurrypop outline hop";
@@ -1650,16 +1794,12 @@ function medalSVG(big, cls = "medal"){
 // 文章中の「（メダル）×数」
 const medalText = n => n < 1 ? "" : `<span class="medaltxt">${medalSVG(false, "medal")}×${n}</span>`;   // 0個のときはどこにも出さない
 let medals = 0;   // このプレイで獲得したメダル（最初からやり直すと0）
-// 右下：右端をアンカーに左へ積む。10個ごとに大メダル1つにまとまる
+// 右下：メダルのアイコン ×数
 function renderMedals(isNew){
   const el = document.getElementById("medalStack");
-  const big = Math.floor(medals / 10), small = medals % 10;
-  let h = "";
-  for(let i = 0; i < big; i++) h += medalSVG(true);
-  for(let i = 0; i < small; i++) h += medalSVG(false);
-  el.innerHTML = h;
+  el.innerHTML = `${medalSVG(false)}<span class="outline">×${medals}</span>`;
   el.classList.toggle("hidden", medals < 1 || !(state === "playing" || state === "goal" || state === "clear" || state === "gameover" || state === "crash"));
-  if(isNew && el.lastElementChild) el.lastElementChild.classList.add("new");
+  if(isNew){ el.classList.remove("new"); void el.offsetWidth; el.classList.add("new"); }
 }
 // 先生の頭からメダルがポンと出る（キラキラつき）
 function awardMedal(){
@@ -1667,7 +1807,7 @@ function awardMedal(){
   const pop = document.getElementById("medalpop");
   const tx = gateScreenX() - 16 + 6, ty = groundY - 30;
   pop.style.left = (tx / W * 100) + "%";
-  pop.style.top = ((ty + VIEW_OY) / H * 100) + "%";
+  pop.style.top = ((ty + VIEW_OY + LANE) / H * 100) + "%";
   const sparkSVG = c => `<svg viewBox="0 0 5 5" shape-rendering="crispEdges"><path fill="${c}" d="M2 0h1v5H2z M0 2h5v1H0z"/><path fill="#ffffff" d="M2 2h1v1H2z"/></svg>`;
   const pos = [[-7, -2, "#ffffff", 0], [8, 1, "#f8d030", .25], [-5, 9, "#f8d030", .12], [9, 10, "#ffffff", .37], [1, -6, "#fff8c8", .5]];
   pop.innerHTML = medalSVG(true) + pos.map(([x, y, c, d]) =>
@@ -1702,15 +1842,23 @@ function updateHUD(){
   if(gateClosing){
     hud.innerHTML = `<span class="hurry">正門が閉まった！</span>`;
   } else {
-    const late = CONFIG.timeLimit * 60 - timeLeft >= 15 * CONFIG.secPerMinute * 60;   // 7:45 から赤
-    hud.innerHTML = `<span class="${late ? "hurry" : ""}">${clockText()}</span>（閉門まで <span class="num">${clockText(CONFIG.timeLimit / CONFIG.secPerMinute)}</span>）`;
+    // 今の時刻だけ：ふだん白 → 7:45 から黄色 → 7:55（閉門）で赤
+    const min = Math.floor((CONFIG.timeLimit * 60 - timeLeft) / 60 / CONFIG.secPerMinute);
+    const cls = min >= CONFIG.timeLimit / CONFIG.secPerMinute ? "hurry" : (min >= 15 ? "num" : "");
+    const [hh, mm] = clockText().split(":");
+    hud.innerHTML = `${hh}:<span class="${cls}">${mm}</span>`;   // 色が変わるのは「分」だけ
   }
   const meter = document.getElementById("meter");
   document.getElementById("meterNum").textContent = m;
   meter.classList.toggle("hidden", gateScreenX() < W + 20 || !(state === "playing" || state === "goal"));   // 正門が見えたら消す
   let hearts = "";
   for(let i=0;i<CONFIG.lives;i++) hearts += `<span class="${i < lives ? "heart" : "heart lost"}">♥</span>`;
-  document.getElementById("dayLabel").innerHTML = (week === 1 ? "" : `第<span class="num">${week}</span>週 `) + `<span class="num">${day}</span>日目`;
+  // 右上：上から「週（第1週は出さない） 日にち」／時刻／メニュー
+  document.getElementById("dayLabel").innerHTML = (week === 1 ? "" : `第<span class="num">${week}</span>週 `) + `<span class="num">${day}</span>日目`;   // 週と日にちは同じ行
+  const rows = 0;
+  hud.style.top = `calc(var(--dot) * ${16 + rows * 10})`;   // 日にちとの間を少しあける
+  document.getElementById("btnPause").style.top = `calc(var(--dot) * ${28 + rows * 10})`;
+  document.getElementById("boostLabel").style.top = `calc(var(--dot) * ${42 + rows * 10})`;
   let stock = "";
   for(let i=0;i<CONFIG.maxDrinks;i++){
     if(i === CONFIG.healDrinks) stock += `<i class="cangap"></i>`;   // 5本ずつ区切る
@@ -1960,6 +2108,7 @@ function update(){
   }
 
   updateParticles();
+  updateGhosts();
   updateConfetti();
   updateFireworks();
   updateHealPop();
@@ -2371,14 +2520,13 @@ function drawFront(gx){
 }
 
 function drawRoad(){
-  // 足が乗る面（路側帯）は groundY から下。キャラの足元がちょうど上端に乗る
+  // 塀の下に細い路側帯 → 広いアスファルト（この上を走る）→ 縁石 → わずかな植え込み
   ctx.fillStyle = PAL.path;
-  ctx.fillRect(0, groundY, W, 4);
+  ctx.fillRect(0, groundY, W, 3);
   ctx.fillStyle = PAL.line;
-  ctx.fillRect(0, groundY + 4, W, 1);
+  ctx.fillRect(0, groundY + 3, W, 1);
   ctx.fillStyle = PAL.road;
-  ctx.fillRect(0, groundY + 5, W, 8);
-  // 手前の植え込み（芝）。ここに画面下のボタンが重なる
+  ctx.fillRect(0, groundY + 4, W, VERGE_Y - 1 - (groundY + 4));
   ctx.fillStyle = PAL.curbFar;
   ctx.fillRect(0, VERGE_Y - 1, W, 1);
   ctx.fillStyle = PAL.verge;
@@ -2387,7 +2535,7 @@ function drawRoad(){
 }
 
 // 手前をたまに流れていく花壇・野花（さりげなく、まばらに）
-const VERGE_Y = groundY + 14;
+const VERGE_Y = groundY + LANE + 12;   // 走る位置より少し下まで道。植え込みは画面の下にわずかだけ
 function drawVerge(){
   eachVisible(layers.verge, (it, x) => {
     if(it.kind === "bed"){
@@ -2513,15 +2661,17 @@ function drawTeacher(gx){
 
 function drawGate(gx){
   if(gx < -30 || gx > W + 30) return;
+  // 道の手前側（LANE ぶん下）に描かれるので、門柱は上へ LANE ぶん伸ばして頭の高さを校舎にそろえる
+  const top = 64 - LANE;
   ctx.fillStyle = PAL.pillar;
-  ctx.fillRect(gx, 64, 8, groundY - 64);
+  ctx.fillRect(gx, top, 8, groundY - top);
   ctx.fillStyle = PAL.pillarLn;
-  ctx.fillRect(gx, 64, 8, 2);
-  ctx.fillRect(gx - 1, 62, 10, 2);
+  ctx.fillRect(gx, top, 8, 2);
+  ctx.fillRect(gx - 1, top - 2, 10, 2);
   ctx.fillStyle = "#f0ece0";
-  ctx.fillRect(gx + 2, 69, 4, 16);
+  ctx.fillRect(gx + 2, top + 5, 4, 16);
   ctx.fillStyle = "#6a6458";
-  for(let y = 71; y < 84; y += 3) ctx.fillRect(gx + 3, y, 2, 1);
+  for(let y = top + 7; y < top + 20; y += 3) ctx.fillRect(gx + 3, y, 2, 1);
 
   const dx = doorLeft();
   ctx.fillStyle = PAL.gate;
@@ -2575,6 +2725,44 @@ function girlPal(){
   const live = state === "playing" || state === "goal";
   if(live && starT > 0) return GIRL_PAL_STAR[Math.floor(animTick / 3) % 2];
   return boostLeft > 0 && live ? GIRL_PAL_BOOST : GIRL_PAL;
+}
+
+// ===== ブースト中の残像 =====
+// いまの女の子の絵（パーツと位置）を返す。残像用
+function girlParts(){
+  const x = Math.round(player.x), y = Math.round(player.y);
+  if(player.flip > 0){
+    const f = Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4)));
+    const spr = GIRL_ROT[f];
+    return [[spr, x + 6 - Math.floor(spr[0].length/2), y + 8 - Math.floor(spr.length/2)]];
+  }
+  if(rolling > 0){
+    const f = Math.floor((CONFIG.rollTime - rolling) / 4) % 4;
+    const spr = GIRL_ROT[f];
+    return [[spr, x + 6 - Math.floor(spr[0].length/2), groundY - spr.length]];
+  }
+  const legs = (!player.jumping && Math.floor(animTick / 6) % 2) ? GIRL_LEGS_B : GIRL_LEGS_A;
+  return [[GIRL_TOP, x, y], [legs, x, y + 12]];
+}
+let ghosts = [];
+const GHOST_LIFE = 14;
+function updateGhosts(){
+  const live = state === "playing" || state === "goal";
+  if(live && (boostLeft > 0 || starT > 0) && animTick % 3 === 0){
+    ghosts.push({ parts: girlParts(), pal: girlPal(), dx: 0, life: GHOST_LIFE });
+  }
+  for(let i = ghosts.length - 1; i >= 0; i--){
+    const g = ghosts[i];
+    g.dx -= 1.6;   // 後ろへ流れていく
+    if(--g.life <= 0) ghosts.splice(i, 1);
+  }
+}
+function drawGhosts(){
+  ghosts.forEach(g => {
+    ctx.globalAlpha = 0.45 * g.life / GHOST_LIFE;
+    g.parts.forEach(([spr, x, y]) => drawSprite(spr, Math.round(x + g.dx), y, g.pal));
+  });
+  ctx.globalAlpha = 1;
 }
 
 function drawPlayer(){
@@ -2652,6 +2840,8 @@ function draw(){
   drawElder();
   drawFront(gx);
   drawRoad();
+  ctx.save();
+  ctx.translate(0, LANE);   // ここから道の上（手前）のもの
   puddles.forEach(drawPuddle);
   bananas.forEach(drawBanana);
   drawGate(gx);
@@ -2659,8 +2849,10 @@ function draw(){
   cans.forEach(drawCan);
   cats.forEach(drawCat);
   crows.forEach(c => drawSprite(Math.floor(c.age / 8) % 2 ? CROW_B : CROW_A, c.x, c.y, CROW_PAL));
+  drawGhosts();
   drawPlayer();
   drawParticles();
+  ctx.restore();
   drawFireworks();
   drawConfetti();
   ctx.restore();
