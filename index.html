@@ -340,6 +340,8 @@ canvas{
 .xbox.off{ opacity:.28; cursor:default; }
 .xbox svg, .xpop svg{ display:block; }
 .xtext{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 4); text-align:center; line-height:1.5; }
+/* アイコン列の下：左寄せ←、右寄せ→（操作説明を兼ねる） */
+.xarrows{ width:calc(var(--dot) * 234); display:flex; justify-content:space-between; margin-top:calc(var(--dot) * -2); }
 .xgot{ min-height:calc(var(--dot) * 10); color:#f8d030; }
 .xpop{ position:absolute; pointer-events:none; transform:translate(-50%, -50%); }
 .xpop.go{ animation:xpop 1.2s steps(12, end) forwards; }
@@ -568,6 +570,7 @@ button{ font-size:var(--ui) !important; }
         <button class="xbox" data-x="bread" aria-label="食パン"></button>
         <button class="xbox" data-x="skip" aria-label="こうかんしない"></button>
       </div>
+      <div class="xarrows outline"><span>←</span><span>→</span></div>
       <div class="xgot outline" id="xGot"></div>
       <div class="xpop" id="xPop"></div>
     </div>
