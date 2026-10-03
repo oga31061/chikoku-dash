@@ -321,6 +321,29 @@ canvas{
   padding:0 !important; display:flex; align-items:center; justify-content:center; z-index:10;
 }
 .pausebtn.on{ background:#f8f8f8 !important; }
+.cambtn{ top:calc(var(--dot) * 44); }
+.cammenu{ z-index:11; }
+.cambox{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 6); font-size:calc(var(--dot) * 8);
+  border:var(--dot) solid #f8f8f8; box-shadow:var(--dot) var(--dot) 0 #1c2030; padding:calc(var(--dot) * 8) calc(var(--dot) * 12); }
+.camrow{ display:flex; align-items:center; gap:calc(var(--dot) * 6); }
+/* UI スイッチ：つまみはいつも白。オン＝つまみが右で、あいた左側も白／オフ＝つまみが左で、あいた右側は透明 */
+.camsw{
+  position:relative; width:calc(var(--dot) * 16) !important; height:calc(var(--dot) * 12) !important; padding:0 !important;
+  background:transparent !important; border:var(--dot) solid #f8f8f8 !important; box-shadow:var(--dot) var(--dot) 0 #1c2030 !important;
+  animation:none !important; cursor:pointer;
+}
+.camsw i{
+  position:absolute; top:calc(var(--dot) * 1); left:calc(var(--dot) * 1);
+  width:calc(var(--dot) * 4); height:calc(var(--dot) * 8); box-sizing:border-box;
+  background:#f8f8f8;
+}
+.camsw::before{ content:""; position:absolute; inset:var(--dot); background:transparent; }   /* 枠の内側は1ドットあける */
+.camsw.on::before{ background:#f8f8f8; }
+.camsw.on i{ box-shadow:0 0 0 var(--dot) #1c2030; }   /* 白どうしでもつまみが見えるように、ふちだけ濃い色 */
+.camsw.on i{ left:calc(var(--dot) * 9); }   /* メニューの下：スクショ（カメラ） */
+.camflash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:20; }
+.camflash.go{ animation:camflash .35s steps(4, end) forwards; }
+@keyframes camflash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
 .pausebtn.on svg{ fill:#1c2030; filter:none; }
 .pausebtn svg, .volopt svg{ width:calc(var(--dot) * 8); height:calc(var(--dot) * 8); fill:#f8f8f8; filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030); display:block; }
 .pausemenu{
@@ -332,16 +355,19 @@ canvas{
 /* 交換画面 */
 .xchg{
   position:absolute; inset:0; z-index:12; background:rgba(16,18,28,.72);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--dot) * 5);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--dot) * 2);
   color:#f8f8f8; font-size:calc(var(--dot) * 8);
 }
+.xchg .xtext{ gap:calc(var(--dot) * 1); margin-bottom:calc(var(--dot) * 1); }
+.xcost{ position:absolute; right:calc(var(--dot) * 2); bottom:calc(var(--dot) * 1); line-height:1; }   /* 必要なメダル（右下） */
+.xgot{ position:absolute; left:0; right:0; bottom:calc(var(--dot) * 2); text-align:center; }
 .xchg.hidden{ display:none; }
 .xrow{ display:flex; align-items:center; gap:calc(var(--dot) * 6); }
 .xbox{ position:relative; }
 .xbox .hp{ position:absolute; top:calc(var(--dot) * 3); left:0; right:0; text-align:center; color:#f8f8f8; } .xbox .hp b{ color:#ff6a6a; font-weight:400; }
 .xbox > svg{ margin-top:0; }
 .xbox{
-  width:calc(var(--dot) * 54); height:calc(var(--dot) * 54); flex-direction:column; gap:calc(var(--dot) * 2); color:#f8f8f8; font-size:calc(var(--dot) * 8) !important; line-height:1.3; text-shadow:var(--dot) var(--dot) 0 #1c2030; padding:0 !important;
+  width:calc(var(--dot) * 54); height:calc(var(--dot) * 46); flex-direction:column; gap:calc(var(--dot) * 2); color:#f8f8f8; font-size:calc(var(--dot) * 8) !important; line-height:1.3; text-shadow:var(--dot) var(--dot) 0 #1c2030; padding:0 !important;
   background:rgba(255,255,255,.08) !important; border:var(--dot) solid #a8b0bc !important;
   box-shadow:var(--dot) var(--dot) 0 #1c2030 !important; animation:none !important;
   display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -351,7 +377,7 @@ canvas{
 .xbox svg, .xpop svg{ display:block; }
 .xtext{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 4); text-align:center; line-height:1.5; }
 /* アイコン列の下：左寄せ←、右寄せ→（操作説明を兼ねる） */
-.xarrows{ width:calc(var(--dot) * 234); display:flex; justify-content:space-between; margin-top:calc(var(--dot) * -2); }
+.xarrows{ width:calc(var(--dot) * 174); display:flex; justify-content:space-between; margin-top:calc(var(--dot) * -2); }
 /* ゲームオーバー時の「結果をシェア」：画面の左下すみ */
 .sharebar{ position:absolute; left:calc(var(--dot) * 4); bottom:calc(var(--dot) * 4); z-index:7; display:flex; gap:calc(var(--dot) * 4); }
 .sharebar.hidden{ display:none; }
@@ -558,6 +584,16 @@ button{ font-size:var(--ui) !important; }
     <canvas id="game" width="264" height="144"></canvas>
     <!-- 画面下中央のポーズボタン（左右どちらの手でも押せる）。ほかの場所はどこをタップしてもジャンプ -->
     <button class="ctl icon pausebtn" id="btnPause" aria-label="メニュー"></button>
+    <button class="ctl icon pausebtn cambtn" id="btnCam" aria-label="スクリーンショット"><svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M2 1h4v1H2z M0 2h8v1H0z M0 3h2v1H0z M6 3h2v1H6z M0 4h1v1H0z M3 4h2v1H3z M7 4h1v1H7z M0 5h1v1H0z M3 5h2v1H3z M7 5h1v1H7z M0 6h2v1H0z M6 6h2v1H6z M0 7h8v1H0z" /></svg></button>
+    <div class="camflash" id="camFlash"></div>
+    <!-- カメラ：確認（ゲームはポーズ） -->
+    <div class="pausemenu cammenu hidden" id="camMenu">
+      <div class="cambox outline">
+        <p class="pmq">スクリーンショットをとりますか？</p>
+        <div class="camrow"><button class="ctl" id="camYes">はい</button><button class="ctl" id="camNo">いいえ</button></div>
+        <div class="camrow">UI <button class="camsw" id="camUI" aria-label="UI"><i></i></button></div>
+      </div>
+    </div>
     <div class="daylabel outline hidden" id="dayLabel">1日目</div>
     <div class="lifelabel outline hidden" id="lifeLabel"></div>
     <div class="meter outline hidden" id="meter"><svg class="arrow" viewBox="0 0 9 9" shape-rendering="crispEdges"><path d="M0 3h4V0h1v1h1v1h1v1h1v1h1v1H8v1H7v1H6v1H5v1H4V6H0z"/></svg><span><span class="num" id="meterNum">400</span>m</span></div>
@@ -569,8 +605,12 @@ button{ font-size:var(--ui) !important; }
     <div class="medalstack" id="medalStack"></div>
     <div class="headpop outline" id="dmgpop"></div>
     <div class="umbstars outline" id="umbStars"></div>
+    <div class="umbstars outline" id="bikeStars"></div>
     <div class="headpop outline" id="usepop"></div>
     <div class="headpop outline" id="healpop"></div>
+    <div class="headpop outline" id="slowpop"></div>
+    <div class="headpop outline" id="wapopL"></div>
+    <div class="headpop outline" id="wapopR"></div>
     <div class="headpop outline" id="elderpop"></div>
     <div class="boostlabel outline hidden" id="boostLabel">BOOST!</div>
     <div class="speedo outline hidden" id="speedo">SPEED ×1.00</div>
@@ -589,12 +629,16 @@ button{ font-size:var(--ui) !important; }
     <!-- ポーズメニュー（タブ式）：左にタブ、右に中身。開け閉めは上のポーズボタンだけ -->
     <!-- メダル3つの交換画面（クリアのリザルト中、いちばん手前）。アイコンは最下段に横並び -->
     <div class="xchg hidden" id="xchg">
-      <div class="xtext outline"><div>メダル3つと こうかんできるよ！</div><div>えらんでね！</div></div>
+      <div class="xtext outline"><div>メダルと こうかんできるよ！ えらんでね！</div><div id="xWallet"></div></div>
       <div class="xrow">
         <button class="xbox" data-x="bike" aria-label="自転車"></button>
         <button class="xbox" data-x="umb" aria-label="傘"></button>
         <button class="xbox" data-x="bread" aria-label="食パン"></button>
-        <button class="xbox" data-x="skip" aria-label="こうかんしない"></button>
+      </div>
+      <div class="xrow">
+        <button class="xbox" data-x="life3" aria-label="ハートの上限3"></button>
+        <button class="xbox" data-x="life4" aria-label="ハートの上限4"></button>
+        <button class="xbox" data-x="skip" aria-label="とっておく"></button>
       </div>
       <div class="xarrows outline"><span>←</span><span>→</span></div>
       <div class="xgot outline" id="xGot"></div>
@@ -654,6 +698,9 @@ const CONFIG = {
   carrySpeed:  true,   // 次の日にスピード倍率を引き継ぐか（false = 毎朝×1.00から）
   timeLimit:   37.5,   // 1日の制限時間（秒）。ゲーム内時計で 7:30 → 7:55（1.5秒＝1分）
   secPerMinute: 1.5,   // 現実の何秒でゲーム内の1分が進むか
+  melonSlow:   0.45,   // スイカに乗っているあいだ、スピードをこの割合だけ落とす（バランスを取るぶん遅い）
+  rainSlow:    0.15,   // アジサイのまわりの雨に濡れているあいだ、スピードをこの割合だけ落とす（傘があれば無効）
+  rainPuddles: 1.6,    // アジサイの週は水たまりをこの倍に
   lateDensity: 2.0,    // コース終盤の障害物密度（序盤を1として）。後半ほど難しく
   maxDrinks:   10,     // エナドリのストック上限（日・週をまたいで持ち越し）
   healDrinks:  5,      // ライフが減っているとき、この本数たまったら自動で消費して ♥+1
@@ -677,6 +724,7 @@ const DAY_COUNTS = {
   // コース 800m → 600m に合わせて、密度が変わらないよう 0.71倍（障害物を置ける区間の長さの比）
   cats:    [3.2, 0.53, 1.07],
   crows:   [1.07, 0.32, 0.36],
+  melons:  [0.6, 0.25, 0.3],   // 夏だけ：転がってくるスイカ
   puddles: [1.07, 0.32, 0.36],
   bananas: [1.07, 0.27, 0.36],
 };
@@ -1017,6 +1065,406 @@ const PAL = {
   puddleHi: "#c4e2f2",
 };
 
+// ===== 季節（4週ごと：春→夏→秋→冬）=====
+// 春：学校に近づく後半に桜並木と舞い散る花びら／夏：青い空と、手前の花壇にひまわり（秋・冬はまだ）
+const BASE_PAL = Object.assign({}, PAL);
+const SEASON_PAL = [
+  {},                                                                    // 春：いつもの色
+  { sky:"#7cc6f2", cloud:"#f2fafe", hill:"#8cc4e2", farHouse:"#86bcdc", tree:"#5fa274", verge:"#5c9a58", leaf:"#4a8046" },   // 夏：青い空
+];
+const seasonOf = w => Math.floor((w - 1) / 4) % 4;   // 0 春 / 1 夏 / 2 秋 / 3 冬
+let season = 0;
+function applySeason(w){
+  season = seasonOf(w);
+  Object.assign(PAL, BASE_PAL, SEASON_PAL[season] || {});
+  // 春の第3週（アジサイ・梅雨）はくもり空
+  if(season === 0 && (w - 1) % 4 === 2) Object.assign(PAL, { sky:"#c3cbd3", cloud:"#d6dbe0", hill:"#b2bcc5", farHouse:"#a9b5bf" });
+}
+// 並木：スタート時はキャラの少し後ろに1本（電柱と同じ速さで流れる）、学校の前に3本（学校と一緒に流れる）
+// まず葉も花もない「幹と枝」を作り、季節ごとに上から 桜／緑の葉／紅葉／枯れ木 をのせる（いまは春・夏）
+// 形：短く太い幹から枝が扇のように広がり、その上に横長のドーム状に花や葉がつく。枝先はかならずドームの内側
+const SAKURA_FACTOR = .6;
+const TREE_TRUNK = { trunk:"#7e6052", dark:"#5f463c" };   // ファミコン風：幹もベース色＋影色の2色
+const FOLIAGE = [
+  // 春：桜
+  // ファミコン風に色数をしぼる：ベース色＋影色（春は＋αで白い花）
+  { base:"#f2c2d0", shade:"#df9fb4", accent:"#fff3f7" },
+  // 夏：緑の葉
+  { base:"#6fac62", shade:"#4c8846" },
+];
+const TRUNK_TOP = 60, CROWN_CY = 37, CROWN_RX = 40, CROWN_RY = 25, TREE_OX = 52, TREE_H = 90;
+let sakura = [], petals = [];   // sakura＝並木（名前は春から）
+function seeded(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// 幹と枝（葉も花もない木）。形と比率はユーザーの下絵にならう：
+// 長めの幹が少しくねって半分くらいの高さで分かれ、左は横へ張ってから上へ、真ん中は上へ、右は横へ張ってから上へ。枝はところどころ折れ曲がる
+const TREE_LIMBS = [
+  // [点の列（分かれ目からの相対）, 太さ(元→先), 奥の枝か]
+  { pts:[[0,0],[-11,-7],[-24,-12],[-29,-19],[-31,-26]], w:[4,2], back:false },   // 左：横に張って上へ
+  { pts:[[0,0],[-5,-14],[-11,-26],[-13,-38]],            w:[4,1], back:false },   // 左上：まっすぐ上へ
+  { pts:[[0,0],[2,-13],[0,-26],[3,-36]],                 w:[3,1], back:true  },   // 真ん中（奥）
+  { pts:[[0,0],[9,-5],[19,-7],[24,-18],[31,-28]],        w:[4,2], back:false },   // 右：横に張って上へ
+  { pts:[[19,-7],[28,-12],[35,-18]],                     w:[3,1], back:true  },   // 右の外（奥）
+];
+const TREE_SPLIT = { x:1, y:60 };
+function makeTree(anchor, fixedSeed){
+  const seed = fixedSeed != null ? fixedSeed : Math.floor(Math.random() * 1e9), rnd = seeded(seed);
+  const rr = (a, b) => a + rnd() * (b - a);
+  const flip = rnd() < .5 ? -1 : 1;   // 左右反転で変化をつける（光は右上から固定）
+  // 花・葉の塊：大小の丸を重ねた形（上は右寄りに盛り上がり、下は左右がふくらんで真ん中が少しあく）
+  const lobes = [
+    [4, 24, 16], [15, 18, 12], [-9, 27, 13], [-22, 39, 11], [-25, 50, 8], [23, 37, 12],
+    [27, 49, 8], [1, 40, 13], [-12, 50, 8], [13, 50, 8], [-2, 14, 9],
+  ].map(([x, y, r]) => ({ x:(x + rr(-2, 2)) * flip, y:y + rr(-2, 2), r:r + rr(-1.5, 1.5) }));
+  // 枝先・小枝の先は塊の内側（少し内寄り）におさめる
+  const covered = (x, y) => lobes.some(l => (x * flip - l.x * flip) ** 2 + (y - l.y) ** 2 <= (l.r - 2) ** 2);
+  const segs = [];
+  const J = () => rr(-2, 2);
+  // 幹：根元から少しくねって分かれ目へ（太い→やや細い）
+  const trunk = [[0, 87], [J() * .5 - 1, 77], [1 + J() * .5, 68], [TREE_SPLIT.x, TREE_SPLIT.y]];
+  for(let i = 0; i < trunk.length - 1; i++) segs.push({ x0:trunk[i][0] * flip, y0:trunk[i][1], x1:trunk[i + 1][0] * flip, y1:trunk[i + 1][1], w:8 - i, back:false, trunk:true });
+  TREE_LIMBS.forEach(L => {
+    const pts = L.pts.map(([x, y], i) => i === 0 ? [x, y] : [x + J(), y + J()]);
+    const last = pts[pts.length - 1], prev = pts[pts.length - 2];
+    for(let k = 0; k < 10 && !covered((TREE_SPLIT.x + last[0]) * flip, TREE_SPLIT.y + last[1]); k++){ last[0] += (prev[0] - last[0]) * .2; last[1] += (prev[1] - last[1]) * .2; }
+    const n = pts.length - 1;
+    for(let i = 0; i < n; i++){
+      const w = Math.max(1, Math.round(L.w[0] + (L.w[1] - L.w[0]) * i / Math.max(1, n - 1)));
+      segs.push({ x0:(TREE_SPLIT.x + pts[i][0]) * flip, y0:TREE_SPLIT.y + pts[i][1], x1:(TREE_SPLIT.x + pts[i + 1][0]) * flip, y1:TREE_SPLIT.y + pts[i + 1][1], w, back:L.back });
+    }
+    // 小枝：途中の折れ目から短く
+    for(let i = 1; i < n; i++) if(rnd() < .45){
+      const [px, py] = pts[i], dir = px < 0 ? -1 : 1;
+      const ex = px + dir * rr(3, 6), ey = py - rr(3, 6);
+      if(!covered((TREE_SPLIT.x + ex) * flip, TREE_SPLIT.y + ey)) continue;
+      segs.push({ x0:(TREE_SPLIT.x + px) * flip, y0:TREE_SPLIT.y + py, x1:(TREE_SPLIT.x + ex) * flip, y1:TREE_SPLIT.y + ey, w:1, back:L.back });
+    }
+  });
+  const clumps = [];
+  for(let i = 0; i < 40; i++){ const l = lobes[Math.floor(rnd() * lobes.length)]; clumps.push({ x:l.x + rr(-l.r, l.r) * .7, y:l.y + rr(-l.r, l.r) * .7 }); }
+  const t = Object.assign({ seed, segs, lobes, clumps }, anchor);
+  t.cv = renderTree(t, treeFoliage());
+  return t;
+}
+// 幹と枝の上に、季節の花や葉をのせて1枚の絵にする（毎フレームは貼るだけ）。FOLIAGE がない季節は枯れ木
+function renderTree(t, sea){
+  const rnd = seeded(t.seed + 7), rr = (a, b) => a + rnd() * (b - a), ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+  const cv = document.createElement("canvas"); cv.width = TREE_OX * 2; cv.height = TREE_H;
+  const g = cv.getContext("2d"), X0 = TREE_OX, B = TREE_TRUNK, P = FOLIAGE[sea];
+  const line = (x0, y0, x1, y1, w, col) => {
+    g.fillStyle = col;
+    const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+    for(let i = 0; i <= n; i++){
+      const px = Math.round(X0 + x0 + (x1 - x0) * i / n), py = Math.round(y0 + (y1 - y0) * i / n);
+      g.fillRect(px - Math.floor((w - 1) / 2), py - (w >= 3 ? 1 : 0), w, w >= 3 ? 2 : 1);   // 太い枝は縦にも厚く
+    }
+  };
+  // 幹と枝は表面の模様なし。手前の枝はベース色、奥の枝は影色
+  const backBranches = () => t.segs.forEach(sg => { if(sg.back) line(sg.x0, sg.y0, sg.x1, sg.y1, sg.w, B.dark); });
+  const frontTree = () => {
+    t.segs.forEach(sg => { if(!sg.back) line(sg.x0, sg.y0, sg.x1, sg.y1, sg.w, B.trunk); });
+    g.fillStyle = B.trunk; g.fillRect(X0 - 4, 83, 9, 5);   // 根元の広がり
+  };
+  backBranches(); frontTree();
+  if(!P) return cv;   // 枯れ木
+  // 塊：2×2 ドット単位。ふちは少しだけ欠けたりはみ出したりして、でこぼこに
+  const inLobes = (x, y) => t.lobes.some(l => (x - l.x) ** 2 + (y - l.y) ** 2 <= l.r * l.r);
+  const cells = [];
+  for(let y = 0; y < 66; y += 2) for(let x = -TREE_OX; x < TREE_OX; x += 2){
+    const cx = x + 1, cy = y + 1;
+    let on = inLobes(cx, cy);
+    const edge = on !== inLobes(cx + 3, cy) || on !== inLobes(cx - 3, cy) || on !== inLobes(cx, cy + 3) || on !== inLobes(cx, cy - 3);
+    if(edge && rnd() < .18) on = !on;
+    if(on) cells.push({ x, y });
+  }
+  // ぽつんと離れたマスは消す（ふちが砂っぽくならないように）
+  const raw = new Set(cells.map(c => c.x + "," + c.y));
+  const nb = c => [[2,0],[-2,0],[0,2],[0,-2]].filter(([dx, dy]) => raw.has((c.x + dx) + "," + (c.y + dy))).length;
+  for(let i = cells.length - 1; i >= 0; i--) if(nb(cells[i]) < 2) cells.splice(i, 1);
+  const has = new Set(cells.map(c => c.x + "," + c.y));
+  // 光は右上から：左下ほど影色。境目は影のマスをまぜる
+  cells.forEach(c => {
+    const k = -(c.x - 6) / 34 * .6 + (c.y - 32) / 24 * .8 + rr(-.3, .3);
+    const under = !has.has(c.x + "," + (c.y + 2));
+    g.fillStyle = (k > .05 || under) ? P.shade : P.base;
+    g.fillRect(X0 + c.x, c.y, 2, 2);
+  });
+  if(P.accent){   // 春だけ：＋α の白い花（ぽつぽつ）と、下に散る花びら
+    g.fillStyle = P.accent;
+    cells.forEach(c => { if(rnd() < .05 && has.has((c.x - 2) + "," + c.y) && has.has((c.x + 2) + "," + c.y) && has.has(c.x + "," + (c.y - 2))) g.fillRect(X0 + c.x, c.y, 2, 2); });
+    for(let i = 0; i < 5; i++) g.fillRect(X0 + ri(-16, 16) * 2, ri(31, 38) * 2, 2, 2);
+  }
+  return cv;
+}
+// 春の第3週：塀の手前に花壇が点在して、アジサイが咲く（地面と同じ速さで流れる）。形は固定
+const HYD_LEAF = { base:"#5f9a56", shade:"#467a40" };
+const HYD_PURPLE = { base:"#a891dc", shade:"#8670bc" };   // 紫（ほとんどこれ）
+const HYD_WHITE  = { base:"#f4f2f8", shade:"#cfcadc" };   // 少しだけ白
+let hydrangea = [];
+// 手まりを2段に互い違いに（後ろの段が高い）。色は紫で、白はどの花壇も同じ位置（後ろの段の2つ目と、前の段のいちばん右）
+function hydHeads(w, ri){
+  const heads = [], back = [], front = [];
+  for(let hx = 6;  hx <= w - 6; hx += 9) back.push({ dx:hx + ri(-1, 1), dy:0, r:5, c:HYD_PURPLE });
+  for(let hx = 10; hx <= w - 9; hx += 9) front.push({ dx:hx + ri(-1, 1), dy:6, r:4, c:HYD_PURPLE });
+  if(back.length > 1) back[1].c = HYD_WHITE;
+  if(front.length) front[front.length - 1].c = HYD_WHITE;
+  return heads.concat(back, front);
+}
+// 塀の前の花壇：位置と大きさはいつも同じ（固定）。咲く花は季節で変える
+//   春の第3週＝アジサイ／それ以外＝手前の花壇と同じ小さな花（夏・秋・冬の花はまだ）
+let backBedFlower = "small";
+let rainZones = [];
+let fenceSuns = [];   // 夏：塀の前、花壇のセットとセットのあいだに咲くひまわり（塀の上での位置、固定）   // アジサイの2つセットのまわりだけ雨（塀の上での位置。花壇より広め）
+const isHydWeek = () => season === 0 && weekInSeason(week) === 2;
+const FENCE_FACTOR = .6;   // 塀（layers.front）の流れる速さ
+// ===== 夏：右上から差しこむ強い日差し（太陽そのものは描かない） =====
+// 画面の右上の外にある一点から、左下へ広がる光の帯。1行ずつ塗るので、ふちはドットの段々になる
+const SUN_RAYS = [[17.5, 20.5], [31, 34.5], [45, 47.5], [60, 64]];   // 一筋ずつ細め   // 帯の角度（度：水平から下向き）
+const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];   // 網掛け（4×4 のディザ）
+// 画面の右上4分の1におさめる：下は画面の真ん中の高さ、左は画面の真ん中まで。そこへ向かって網掛けで消える
+function drawSunRays(){
+  if(season !== 1) return;
+  const ox = W + 24, oy = -VIEW_OY - 34, D = Math.PI / 180;
+  const top = -VIEW_OY, bottom = H / 2 - VIEW_OY, left = W / 2;
+  const fadeY0 = top + (bottom - top) * .35, fadeX0 = left + (W - left) * .55;
+  ctx.fillStyle = "#fff6c8";
+  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
+  for(let y = top; y < bottom; y++){
+    const dy = y - oy;
+    const fy = y < fadeY0 ? 0 : (y - fadeY0) / (bottom - fadeY0);
+    const row = ((y % 4) + 4) % 4 * 4;
+    SUN_RAYS.forEach(([a1, a2]) => {
+      const x1 = Math.round(ox - dy / Math.tan(a1 * D)), x2 = Math.round(ox - dy / Math.tan(a2 * D));
+      const xa = Math.max(left, Math.min(x1, x2)), xb = Math.min(W, Math.max(x1, x2));
+      for(let x = xa; x < xb; x++){
+        const fx = x >= fadeX0 ? 0 : (fadeX0 - x) / (fadeX0 - left);
+        const level = Math.round(16 * (1 - Math.min(1, Math.max(fx, fy))));   // 残す割合（0〜16）
+        if(BAYER4[row + (x & 3)] < level) ctx.fillRect(x, y, 1, 1);
+      }
+    });
+  }
+  ctx.globalAlpha = 1;
+}
+// ===== アジサイのまわりの雨 =====
+const RAIN_COL = "#9cb4cc";
+const rainX0 = z => Math.round(z.x0 - worldOffset * FENCE_FACTOR);
+function inRainNow(){
+  const px = player.x + 6;
+  return rainZones.some(z => { const a = rainX0(z); return px >= a && px <= a + (z.x1 - z.x0); });
+}
+function updateRain(){
+  // 雨粒：ゾーンごとに、上から降って地面で小さくはねる
+  rainZones.forEach(z => {
+    const w = z.x1 - z.x0;
+    if(!z.drops.length) for(let i = 0; i < Math.round(w / 1.4); i++) z.drops.push({ x:Math.random() * w, y:rand(-VIEW_OY - 10, 120), v:rand(2.6, 3.4), end:rand(96, 126), sp:0 });
+    z.drops.forEach(d => {
+      if(d.sp > 0){ if(--d.sp === 0){ d.y = rand(-VIEW_OY - 8, -VIEW_OY); d.x = Math.random() * w; d.end = rand(96, 126); } return; }
+      d.y += d.v;
+      if(d.y >= d.end) d.sp = 6;   // しぶき
+    });
+  });
+  // 濡れているか（傘があれば濡れない）
+  const w = isActive() && umbrella <= 0 && inRainNow();
+  if(w !== wet){
+    wet = w; setSpeed();
+    if(wet) popAt("slowpop", "SLOW", "down", player.x + 6, player.y - 12);   // 雨に濡れはじめたら「SLOW」
+    if(wet && npcLineT === 0 && girlLineT === 0) girlSay("つめたいっ！", 90);   // ほかのセリフが出ているときはそちらを優先
+  }
+  if(wet && Math.random() < .25) particles.push({ x:player.x + rand(2, 10), y:player.y - 1, vx:rand(-.4, .4), vy:rand(-.6, -.2), life:10, c:RAIN_COL });   // 頭でしずくがはねる
+}
+function drawRain(){
+  rainZones.forEach(z => {
+    const a = rainX0(z), w = z.x1 - z.x0;
+    if(a > W + 8 || a + w < -8) return;
+    // 雨粒（1×3 の線）と、地面のしぶき
+    ctx.fillStyle = RAIN_COL;
+    z.drops.forEach(d => {
+      const x = Math.round(a + d.x);
+      if(d.sp > 0){ const y = Math.round(d.end); ctx.fillRect(x - 1, y - 1, 1, 1); ctx.fillRect(x + 1, y - 1, 1, 1); }
+      else ctx.fillRect(x, Math.round(d.y), 1, 4);
+    });
+  });
+}
+// アジサイの花壇の真ん中に、小さなカエル（ときどきぴょんと跳ねる）
+const FROG = ["K.K", "GGG", "G.G"];   // 横3×たて3：目（K）が上に飛び出した小さなカエル
+const FROG_PAL = { G:"#8fd04a", K:"#1c2414" };   // 葉より明るい黄緑で目立つように
+function drawFrog(cx, seed){
+  // ぴょーん：軽くふわっと、アジサイの高さまで（約0.7秒で18ドット）
+  const t = (animTick + seed * 37) % 170;
+  const hop = t < 44 ? Math.round(Math.sin(t / 44 * Math.PI) * 18) : 0;
+  const rows = hop > 0 ? FROG.slice(0, 2) : FROG;   // 跳んでいるあいだは足をたたむ
+  drawSprite(rows, Math.round(cx) - 1, 95 - hop, FROG_PAL);   // 花壇の前（足もとの地面）に座る
+}
+function buildHydrangea(){
+  hydrangea = [];
+  backBedFlower = isHydWeek() ? "hyd" : "small";
+  rainZones = []; fenceSuns = [];
+  let prevEnd = null;
+  const rnd = seeded(31415), ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+  const small = w => { const fl = []; for(let fx = 2; fx < w - 3; fx += ri(4, 7)) fl.push({ dx:fx, dy:ri(0, 1), c:ri(0, 2) }); return fl; };
+  // 塀と同じ速さで流れる：x は「塀の上での位置」。ゴールで止まる位置（門が x=150）より手前まで
+  // 2つ並んだ花壇のセット → 大きくあけて → また2つのセット
+  for(let x = 150; x < (COURSE - 150) * FENCE_FACTOR - 110; ){
+    let bx = x;
+    if(isHydWeek()) rainZones.push({ x0:x - 64, x1:0, drops:[] });
+    for(let k = 0; k < 2; k++){
+      const w = ri(38, 50);
+      hydrangea.push({ x:bx, w, heads:hydHeads(w, ri), small:small(w) });
+      bx += w + 12;
+    }
+    if(isHydWeek()) rainZones[rainZones.length - 1].x1 = bx - 12 + 64;
+    // 夏：ひとつ前のセットとのあいだの真ん中に、ひまわりを5本
+    if(season === 1 && prevEnd != null){
+      const mid = (prevEnd + x) / 2, hs = [24, 26, 18, 29, 21];   // 低い順の番号で左から 3,4,1,5,2
+      hs.forEach((h, k) => fenceSuns.push({ x:mid + (k - 2) * 9, h, i:k }));
+    }
+    prevEnd = bx - 12;
+    x = bx + ri(300, 380);
+  }
+  // 確定で置く花壇：校門の前に1つ、学校の敷地内に2つ（門と一緒に流れる）。3つとも同じ間隔（門柱をはさむ）
+  [-46, 10, 66].forEach(off => hydrangea.push({ off, w:42, heads:hydHeads(42, ri), small:small(42) }));
+}
+function drawHydrangea(){
+  fenceSuns.forEach(sf => {   // 塀と同じ速さで流れる
+    const x = Math.round(sf.x - worldOffset * FENCE_FACTOR);
+    if(x < -12 || x > W + 12) return;
+    drawSunflowerAt(x, 97, sf.h, sf.i);
+  });
+  hydrangea.forEach(h => {
+    // 塀と同じ速さ。門まわりの3つは、ゴールで止まったとき（門が x=150）に門からのずれの位置にくる
+    const x = h.off != null ? Math.round(150 + h.off - (worldOffset - (COURSE - 150)) * FENCE_FACTOR) : Math.round(h.x - worldOffset * FENCE_FACTOR);
+    if(x > W + 4 || x + h.w < -4) return;
+    if(backBedFlower === "small"){
+      // 手前の花壇と同じ小さな草花
+      ctx.fillStyle = PAL.leaf; ctx.fillRect(x + 1, 90, h.w - 2, 3);
+      h.small.forEach(fl => { ctx.fillStyle = PAL.flowers[fl.c]; ctx.fillRect(x + fl.dx, 89 + fl.dy, 2, 2); });
+    } else {
+    // 葉のしげみ（こんもり）
+    ctx.fillStyle = HYD_LEAF.shade; ctx.fillRect(x + 1, 84, h.w - 2, 10);
+    ctx.fillStyle = HYD_LEAF.base;
+    for(let lx = x + 5; lx < x + h.w - 3; lx += 7) pixelCircle(lx, 83, 5);
+    ctx.fillStyle = HYD_LEAF.shade;
+    for(let lx = x + 8; lx < x + h.w - 3; lx += 7) ctx.fillRect(lx, 84, 1, 4);   // 葉の切れ目
+    // 花（まるい手まり）：影 → ベース → 小さな花の粒
+    h.heads.forEach(f => {
+      const cx = x + f.dx, cy = 80 + f.dy;
+      ctx.fillStyle = f.c.shade; pixelCircle(cx, cy + 1, f.r);
+      ctx.fillStyle = f.c.base;  pixelCircle(cx - 1, cy, f.r - 1);
+      ctx.fillStyle = f.c.shade;
+      ctx.fillRect(cx - 2, cy - 1, 1, 1); ctx.fillRect(cx, cy - 2, 1, 1); ctx.fillRect(cx + 1, cy + 1, 1, 1); ctx.fillRect(cx - 2, cy + 2, 1, 1);
+    });
+    }
+    // レンガの花壇
+    ctx.fillStyle = PAL.brick;   ctx.fillRect(x, 93, h.w, 5);
+    ctx.fillStyle = PAL.brickHi; ctx.fillRect(x, 93, h.w, 1);
+    for(let bx = x + 3; bx < x + h.w; bx += 6) ctx.fillRect(bx, 95, 1, 3);
+    if(backBedFlower === "hyd") drawFrog(x + h.w / 2, Math.round(h.w * 7 + (h.off || 0)));
+  });
+}
+// 季節の中の週（0〜3）。春：第1週＝桜、第2週＝なし、第3週＝アジサイ、第4週＝なし
+const weekInSeason = w => (w - 1) % 4;
+// 桜は春の第1週の1・2日目だけ。そのあと（春の残り・夏）は緑の葉
+const isSakuraDay = () => season === 0 && weekInSeason(week) === 0 && day <= 2;
+const treeFoliage = () => isSakuraDay() ? 0 : season <= 1 ? 1 : season;
+function buildSakura(){
+  sakura = [];
+  buildHydrangea();
+  if(!FOLIAGE[season]) return;   // 秋・冬はまだ
+  sakura.push(makeTree({ s:(46 - W - 40) / SAKURA_FACTOR }, 18234));   // 形は固定（ランダムにしない）   // 幹がキャラのすぐ後ろ（奥）
+  sakura.push(makeTree({ s:(46 + 76 - W - 40) / SAKURA_FACTOR }, 6078));   // スタート地点にもう1本（学校前と同じ76ドット間隔）
+  // 学校の前に4本（形は固定）。ゴールで止まったとき（門が x=150 前後）に、花が重ならない76ドット間隔で均等に（両端は見切れてよい）
+  [[-132, 21273], [-56, 24312], [20, 4052], [96, 16208]].forEach(([off, sd]) => sakura.push(makeTree({ off }, sd)));
+}
+function sakuraX(t){ return t.off != null ? gateScreenX() + t.off : Math.round(W + 40 + (t.s - worldOffset) * SAKURA_FACTOR); }
+function drawSakura(){
+  sakura.forEach(t => {
+    const x = sakuraX(t);
+    if(x < -TREE_OX || x > W + TREE_OX) return;
+    ctx.drawImage(t.cv, x - TREE_OX, 0);
+  });
+}
+// 舞い散る花びら（後半ほど多く）
+function updatePetals(scroll){
+  if(isSakuraDay() && (state === "playing" || state === "goal")){   // 桜の日だけ
+    const newPetal = (x, y) => petals.push({ x, y, vx:-rand(.25, .6), vy:rand(.25, .5), ph:rand(0, 6), t:0, c:Math.random() < .6 ? "#f6c4d3" : "#fde4ec" });
+    // 見えている木の花から散る
+    sakura.forEach(t => {
+      const x = sakuraX(t);
+      if(x > -40 && x < W + 40 && petals.length < 90 && Math.random() < .22){ const c = t.clumps[irand(0, t.clumps.length - 1)]; newPetal(x + c.x, c.y); }
+    });
+    // 後半はあたり一面に（学校に近づくほど多く）
+    const prog = worldOffset / COURSE;
+    const rate = prog < .45 ? 0 : Math.min(1, (prog - .45) / .45) * .35;
+    if(petals.length < 90 && Math.random() < rate) newPetal(rand(20, W + 60), -VIEW_OY - 2);
+  }
+  for(let i = petals.length - 1; i >= 0; i--){
+    const p = petals[i];
+    p.t++;
+    p.x += p.vx - scroll * .5 + Math.sin(p.ph + p.t * .07) * .35;
+    p.y += p.vy;
+    if(p.x < -4 || p.y > H) petals.splice(i, 1);
+  }
+}
+function drawPetals(){
+  petals.forEach(p => {
+    ctx.fillStyle = p.c;
+    if(Math.floor((p.t + p.ph * 10) / 12) % 2) ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 1);
+    else ctx.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+  });
+}
+// 夏：手前の花壇のひまわり（地面より手前なので、道の上のものより前に描く）
+const SUNFLOWER = [   // 11×11 の大輪
+  "....yYy....",
+  "..yYYYYYy..",
+  ".yYYCCCYYy.",
+  ".YYCcCcCYY.",
+  "yYCcCcCcCYy",
+  "YYCCcCcCCYY",
+  "yYCcCcCcCYy",
+  ".YYCcCcCYY.",
+  ".yYYCCCYYy.",
+  "..yYYYYYy..",
+  "....yYy....",
+];
+const SUNFLOWER_PAL = { Y:"#f8c818", y:"#e09c10", C:"#6a4020", c:"#8c5a26" };
+const SUN_LEAF = ["..GGG....", ".GGGGGG..", "GGgggGGGG", ".GGGGGGG.", "..GGGG..."];   // 左向きの葉（右向きは左右反転）
+const SUN_LEAF_PAL = { G:"#4f8a40", g:"#3a6a30" };
+const mirror = rows => rows.map(r => [...r].reverse().join(""));
+const SUN_LEAF_R = mirror(SUN_LEAF);
+// 花壇の上に背の高いひまわり（道の上のものより手前に描くので、通り過ぎるあいだ視界をさえぎる）
+function makeSunflowers(w){
+  const sun = [];
+  // 花が道の上（猫や女の子の高さ）にくるように。背の高さを混ぜて壁のように
+  for(let fx = 5; fx < w - 4; fx += irand(6, 8)) sun.push({ dx:fx, h:irand(18, 34) });
+  return sun;
+}
+// ひまわり1本（根もと base から高さ h）。i で葉の左右をずらす
+function drawSunflowerAt(fx, base, h, i){
+  const top = base - h;
+  ctx.fillStyle = "#3e7034"; ctx.fillRect(fx, top + 4, 2, h - 3);   // 太い茎
+  ctx.fillStyle = "#5c9a48"; ctx.fillRect(fx + 1, top + 4, 1, h - 3);
+  for(let ly = top + 8 + (i % 2) * 3, k = i; ly < base - 4; ly += 6, k++){   // 大きな葉を左右交互に
+    const left = k % 2 === 0;
+    drawSprite(left ? SUN_LEAF : SUN_LEAF_R, left ? fx - 8 : fx + 1, ly, SUN_LEAF_PAL);
+  }
+  drawSprite(SUNFLOWER, fx - 4, top - 5, SUNFLOWER_PAL);
+}
+function drawSunflowers(){
+  if(season !== 1) return;
+  eachVisible(layers.verge, (it, x) => {
+    if(it.kind !== "bed" || !it.sun) return;
+    it.sun.forEach((f, i) => {
+      const fx = x + f.dx, top = VERGE_Y - 1 - f.h;
+      ctx.fillStyle = "#3e7034"; ctx.fillRect(fx, top + 4, 2, f.h - 3);   // 太い茎
+      ctx.fillStyle = "#5c9a48"; ctx.fillRect(fx + 1, top + 4, 1, f.h - 3);
+      for(let ly = top + 8 + (i % 2) * 3, k = i; ly < VERGE_Y - 5; ly += 6, k++){   // 大きな葉を左右交互に
+        const left = k % 2 === 0;
+        drawSprite(left ? SUN_LEAF : SUN_LEAF_R, left ? fx - 8 : fx + 1, ly, SUN_LEAF_PAL);
+      }
+      drawSprite(SUNFLOWER, fx - 4, top - 5, SUNFLOWER_PAL);
+    });
+  });
+}
+
 // ===== スプライト =====
 const GIRL_TOP = [
   "...KKKKK....",
@@ -1186,7 +1634,8 @@ let crashTimer = 0;
 let bounced = false;
 
 let plan = { cats:[], cans:[], puddles:[] };
-let planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0 };
+let planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0, melons:0 };
+let melons = [];
 let elder = null;      // 画面上のおじいさん { x }
 let elderTalk = 0;     // 会話の進み具合（0=まだ, 1〜=あいさつ後のフレーム）
 let cats = [], cans = [], puddles = [], bananas = [], crows = [];
@@ -1237,10 +1686,18 @@ function createTown(){
     if(Math.random() < .3){
       const w = irand(22, 34), flowers = [];
       for(let fx = 2; fx < w - 3; fx += irand(4, 7)) flowers.push({ dx:fx, dy:irand(0, 1), c:PAL.flowers[irand(0, 2)] });
-      return { kind:"bed", w, flowers };
+      // 夏はこの花壇の半分くらいにひまわり（背の高さはまちまち）
+      return { kind:"bed", w, flowers, sun:Math.random() < .6 ? makeSunflowers(w) : null };
     }
     return { kind:"wild", w:7, c:PAL.flowers[irand(0, 2)] };
   }, 90, 260);
+  {
+    // 走り出してすぐ、画面の右から流れてくる花壇（夏はひまわり）
+    const w = 46, at = W + 30, flowers = [];
+    for(let fx = 2; fx < w - 3; fx += irand(4, 7)) flowers.push({ dx:fx, dy:irand(0, 1), c:PAL.flowers[irand(0, 2)] });
+    layers.verge.items = layers.verge.items.filter(it => it.x + it.w < at - 40 || it.x > at + w + 60);
+    layers.verge.items.push({ kind:"bed", w, flowers, sun:makeSunflowers(w), x:at });
+  }
 }
 
 // ===== コース配置 =====
@@ -1288,18 +1745,22 @@ function buildCourse(){
   cats.sort((a, b) => a.s - b.s);
   const bananas = scatter(countFor("bananas"), ()=>({}));
   const crows = scatter(countFor("crows"), ()=>({ phase: Math.random() * Math.PI * 2 }));
-  const puddles = scatter(countFor("puddles"), ()=>({ w:irand(16, 24) }));
-  return { cats, cans, puddles, bananas, crows };
+  const puddles = season === 1 ? [] :   // 夏（日差しが強い）は水たまりなし
+    scatter(Math.round(countFor("puddles") * (isHydWeek() ? CONFIG.rainPuddles : 1)), ()=>({ w:irand(16, 24) }));   // アジサイの週は水たまり多め
+  const melons = season === 1 ? scatter(countFor("melons"), ()=>({})) : [];   // 夏だけ
+  return { cats, cans, puddles, bananas, crows, melons };
 }
 
 function createPlayer(){
   return { x:36, y:groundY-15, w:12, h:15, vx:0, vy:0, jumping:false, jumpPower:-2.9, flip:0, flipped:false };
 }
 
+let wet = false;   // アジサイのまわりの雨に濡れている（傘なし）
+let melonWarn = 0, melonRide = null;   // スイカの予告・乗っている状態
 function setSpeed(){
   mul = Math.max(CONFIG.minMul, mul);
   const bonus = starT > 0 ? CONFIG.starBonus : (boostLeft > 0 ? CONFIG.drinkBonus : 0);
-  speed = CONFIG.baseSpeed * (mul + bonus + (onBike ? CONFIG.bikeBonus : 0));
+  speed = CONFIG.baseSpeed * (mul + bonus + (onBike ? CONFIG.bikeBonus : 0)) * (wet ? 1 - CONFIG.rainSlow : 1) * (melonRide ? 1 - CONFIG.melonSlow : 1);   // スイカに乗っていると遅い   // 雨に濡れているとわずかに遅い
 }
 
 let week = 1, day = 1;
@@ -1324,8 +1785,9 @@ function nextDay(){
 
 function startDay(w, d, startMul){
   week = w; day = d;
+  applySeason(w);
   invulT = 0; starT = 0;
-  if(w === 1 && d === 1){ drinkStock = 0; lives = CONFIG.lives; medals = 0; exchangeCredits = 0; onBike = false; umbrella = 0; }   // ライフもエナドリも、最初からやり直すときだけリセット
+  if(w === 1 && d === 1){ drinkStock = 0; maxLives = CONFIG.lives; lives = maxLives; medals = 0; medalWallet = 0; onBike = false; umbrella = 0; }   // ライフもエナドリも、最初からやり直すときだけリセット
   teacherSaid = false;
   ["dayLabel", "lifeLabel", "hud", "speedo"].forEach(id => document.getElementById(id).classList.remove("hidden"));
   showMessageWindows(true);
@@ -1337,6 +1799,7 @@ function startDay(w, d, startMul){
   banner.className = "daybanner show";
   timeLeft = CONFIG.timeLimit * 60;
   startBGM();
+  wet = false;
   mul = startMul; boostLeft = 0; rolling = 0; drinks = 0;
   setSpeed();
   worldOffset = 0;
@@ -1349,8 +1812,9 @@ function startDay(w, d, startMul){
   crashTimer = 0;
   bounced = false;
   plan = buildCourse();
-  planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0 };
-  cats = []; cans = []; puddles = []; bananas = []; crows = [];
+  buildSakura(); petals = [];
+  planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0, melons:0 };
+  cats = []; cans = []; puddles = []; bananas = []; crows = []; melons = []; melonWarn = 0; melonRide = null;
   // 週の初め（スピードが戻る日）は、走り出してすぐ取れる位置にエナドリ
   if(day === 1) cans.push({ x: 180, y: 64, age: 0 });   // 近すぎると気づく前に通り過ぎるので、見て判断できる距離に
     // コースのちょうど真ん中であいさつするように置く（奥の層なので地面の0.3倍で流れてくる）
@@ -1408,7 +1872,7 @@ function renderPauseBtn(){
 }
 // ポーズメニュー：遊んでいる途中なら時間・BGM・アニメを止める（タイトルや結果画面でも開ける）
 function openPause(){
-  if(menuOpen || exchangeOpen) return;
+  if(menuOpen || exchangeOpen || camOpen) return;
   menuOpen = true;
   document.getElementById("tabTitle").style.display = state === "menu" ? "none" : "";
   renderRecords();
@@ -1458,11 +1922,13 @@ function goTitle(){
   state = "menu";
   renderMedals();
   confettiSpawn = 0; confetti = []; fireworks = []; fwSpawn = 0;
-  cats = []; cans = []; puddles = []; bananas = []; crows = []; particles = []; elder = null;
+  cats = []; cans = []; puddles = []; bananas = []; crows = []; melons = []; melonWarn = 0; melonRide = null; particles = []; elder = null;
+  setSpeed();
   player = createPlayer(); worldOffset = 0;
+  applySeason(1); sakura = []; petals = []; hydrangea = []; rainZones = []; fenceSuns = []; wet = false;   // タイトルは春
   // ダメージの点滅・無敵・ブースト・転倒などの状態も消す（タイトルで点滅したまま／その状態から始まらないように）
   blink = 0; invulT = 0; starT = 0; boostLeft = 0; rolling = 0; ghosts = []; healPopT = 0;
-  ["headpop", "dmgpop", "usepop", "healpop", "teacherpop", "elderpop"].forEach(id => { document.getElementById(id).className = "headpop outline"; });
+  ["headpop", "dmgpop", "usepop", "healpop", "teacherpop", "elderpop", "slowpop", "wapopL", "wapopR"].forEach(id => { document.getElementById(id).className = "headpop outline"; });
   document.getElementById("medalpop").className = "medalpop hidden";
   document.getElementById("medalMsg").classList.add("hidden");
   ["dayLabel", "lifeLabel", "hud", "speedo", "meter", "boostLabel"].forEach(id => document.getElementById(id).classList.add("hidden"));
@@ -1486,6 +1952,46 @@ function goTitle(){
 // ボタン（フォーカスを取らない：スペースで誤って押されないように）
 document.querySelectorAll("button").forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
 document.getElementById("btnPause").addEventListener("click", togglePause);
+// カメラ：押すと確認（ゲームはポーズ）→「はい」でいまのゲーム画面を画像に（ボタン類は写さない。UI オフならゲームの絵だけ）
+let camOpen = false, camUI = true, camPaused = false;
+function renderCamUI(){ const b = document.getElementById("camUI"); b.classList.toggle("on", camUI); b.setAttribute("aria-pressed", camUI); }
+function openCam(){
+  if(camOpen || menuOpen || exchangeOpen) return;
+  camOpen = true;
+  renderCamUI();
+  document.getElementById("camMenu").classList.remove("hidden");
+  if(isActive() && !paused){ paused = true; camPaused = true; stopBGM(); }
+}
+function closeCam(){
+  if(!camOpen) return;
+  camOpen = false;
+  document.getElementById("camMenu").classList.add("hidden");
+  if(camPaused){
+    camPaused = false; paused = false;
+    last = performance.now(); acc = 0;
+    if(state === "playing" || state === "goal") startBGM(false);
+  }
+}
+async function takeScreenshot(){
+  const blob = await captureScreen(camUI);   // メニューを閉じる前に（ポーズ中のその瞬間を）撮る
+  const fl = document.getElementById("camFlash");
+  fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
+  closeCam();
+  if(!blob) return;
+  const d = new Date(), pad = n => String(n).padStart(2, "0");
+  const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
+  const file = new File([blob], name, { type:"image/png" });
+  if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
+    try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+document.getElementById("btnCam").addEventListener("click", () => camOpen ? closeCam() : openCam());
+document.getElementById("camYes").addEventListener("click", takeScreenshot);
+document.getElementById("camNo").addEventListener("click", closeCam);
+document.getElementById("camUI").addEventListener("click", () => { camUI = !camUI; renderCamUI(); });
 document.querySelectorAll(".pmtab").forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
 document.getElementById("btnTitle").addEventListener("click", goTitle);
 document.getElementById("btnClose").addEventListener("click", closePause);
@@ -1530,7 +2036,7 @@ const RESULT_LOCK_MS = 2000;   // 結果画面は2秒間入力を受け付けな
 let inputLockUntil = 0;
 
 function proceed(){
-  if(menuOpen || exchangeOpen) return;
+  if(menuOpen || camOpen || exchangeOpen) return;
   if(performance.now() < inputLockUntil) return;
   if(state === "clear") nextDay();
   else if(state === "gameover"){ goTitle(); inputLockUntil = performance.now() + 400; }   // ゲームオーバー → 必ずタイトルへ（連打で即スタートしないよう少し待つ）
@@ -1540,7 +2046,7 @@ function proceed(){
 // ジャンプ操作（スペース・画面下のボタン共通）
 function pressJump(isRepeat){
   if(recordOpen){ if(!isRepeat) closeRecords(); return; }   // 記録表示中はまず閉じる（ジャンプはしない）
-  if(menuOpen) return;   // ポーズ中は何もしない（開け閉めはポーズボタン・Esc・P）
+  if(menuOpen || camOpen) return;   // ポーズ中は何もしない（開け閉めはポーズボタン・Esc・P）
   if(state === "playing" || state === "goal") jump();
   else if(!isRepeat) proceed();   // 押しっぱなしの連打では進まない
 }
@@ -1549,9 +2055,12 @@ window.addEventListener("keydown", e=>{
     e.preventDefault();
     if(e.code === "ArrowLeft" || e.code === "KeyA") moveExchange(-1);
     else if(e.code === "ArrowRight" || e.code === "KeyD") moveExchange(1);
+    else if(e.code === "ArrowUp" || e.code === "KeyW") moveExchangeRow(-1);
+    else if(e.code === "ArrowDown" || e.code === "KeyS") moveExchangeRow(1);
     else if(e.code === "Space" && !e.repeat && xCursor) chooseExchange(xCursor);
     return;
   }
+  if(camOpen){ e.preventDefault(); if(e.code === "Escape") closeCam(); return; }
   if(e.code === "Space"){
     e.preventDefault();
     pressJump(e.repeat);
@@ -1561,14 +2070,14 @@ window.addEventListener("keydown", e=>{
 });
 // 画面のどこをタップしてもジャンプ（ボタンとメニューの上は除く）
 document.querySelector(".screen").addEventListener("pointerdown", e=>{
-  if(menuOpen || exchangeOpen || e.target.closest("button, #pauseMenu")) return;
+  if(menuOpen || camOpen || exchangeOpen || e.target.closest("button, #pauseMenu, #camMenu")) return;
   if(state === "playing" || state === "goal") jump();
   else if(state === "menu" || state === "gameover") proceed();   // ゲームオーバーは画面タップでタイトルへ（クリア画面はボタンかスペースで）
 });
 document.getElementById("start").addEventListener("click", proceed);
 
 function jump(){
-  if(rolling > 0) return;
+  if(rolling > 0 || melonRide) return;   // バナナで転がり中・スイカに乗っている間はジャンプできない
   if(player.jumping){
     // 空中でもう一度：その場でクルッと1回転しながら少しだけ空中に止まる（1ジャンプ1回）
     if(!player.flipped && (state === "playing" || state === "goal")){
@@ -1613,7 +2122,7 @@ function showDamagePop(){
 }
 // ライフが減っていて、エナドリが healDrinks 本以上あれば自動で消費して ♥+1
 function tryHeal(afterDamage){
-  if(lives >= CONFIG.lives || drinkStock < CONFIG.healDrinks) return false;
+  if(lives >= maxLives || drinkStock < CONFIG.healDrinks) return false;
   drinkStock -= CONFIG.healDrinks;
   lives++;
   updateHUD();
@@ -1909,7 +2418,8 @@ function medalSVG(big, cls = "medal"){
 // 文章中の「（メダル）×数」
 const medalText = n => n < 1 ? "" : `<span class="medaltxt">${medalSVG(false, "medal")}×${n}</span>`;   // 0個のときはどこにも出さない
 let medals = 0;   // このプレイで獲得したメダル（最初からやり直すと0）
-let exchangeCredits = 0;   // メダル3つごとに1回ぶんの交換権（使えないときは持ち越し）
+let medalWallet = 0;   // 交換に使えるメダル（交換すると減る）
+let maxLives = 2;      // ハートの上限（交換で 3→4 まで増やせる。最初からやり直すと戻る）
 let onBike = false;        // 自転車に乗っている（ダメージを1回肩代わりして壊れる）
 let umbrella = 0;          // 傘の耐久（0＝持っていない）。カラスだけ防ぐ。2回で壊れる
 const UMBRELLA_HP = 2;
@@ -1924,7 +2434,7 @@ function renderMedals(isNew){
 // 先生の頭からメダルがポンと出る（キラキラつき）
 function awardMedal(){
   medals++;
-  if(medals % 3 === 0) exchangeCredits++;   // メダル3つで交換権1つ（メダル自体は減らない）
+  medalWallet++;   // 交換に使えるメダルも1つ増える
   document.getElementById("medalMsg").classList.remove("hidden");
   const pop = document.getElementById("medalpop");
   const tx = gateScreenX() - 16 + 6, ty = groundY - 30;
@@ -1981,14 +2491,15 @@ function updateHUD(){
   document.getElementById("meterNum").textContent = m;
   meter.classList.toggle("hidden", gateScreenX() < W + 20 || !(state === "playing" || state === "goal"));   // 正門が見えたら消す
   let hearts = "";
-  for(let i=0;i<CONFIG.lives;i++) hearts += `<span class="${i < lives ? "heart" : "heart lost"}">♥</span>`;
+  for(let i=0;i<maxLives;i++) hearts += `<span class="${i < lives ? "heart" : "heart lost"}">♥</span>`;
   // 右上：上から「週（第1週は出さない） 日にち」／時刻／メニュー
   setHTML("dayLabel", (week === 1 ? "" : `第<span class="num">${week}</span>週 `) + `<span class="num">${day}</span>日目`);   // 週と日にちは同じ行
   const rows = 0;
   hud.style.top = `calc(var(--dot) * ${16 + rows * 10})`;   // 日にちとの間を少しあける
   document.getElementById("btnPause").style.top = `calc(var(--dot) * ${28 + rows * 10})`;
+  document.getElementById("btnCam").style.top = `calc(var(--dot) * ${44 + rows * 10})`;
   document.getElementById("boostLabel").style.top = `calc(var(--dot) * ${42 + rows * 10})`;
-  const key = `${lives}/${CONFIG.lives}/${drinkStock}/${starT > 0}`;
+  const key = `${lives}/${maxLives}/${drinkStock}/${starT > 0}`;
   if(_htmlCache.lifeKey !== key){
     _htmlCache.lifeKey = key;
     let stock = "";
@@ -2036,6 +2547,11 @@ function spawnFromPlan(){
   while(planIdx.crows < plan.crows.length && worldOffset >= plan.crows[planIdx.crows].s){
     const c = plan.crows[planIdx.crows++];
     crows.push({ x:X, y:CROW_FLY.center, phase:c.phase, age:0 });
+  }
+  // スイカは後ろ（左）から来る：まず左に矢印を2回点滅させてから
+  if(plan.melons && planIdx.melons < plan.melons.length && worldOffset >= plan.melons[planIdx.melons].s && melonWarn === 0 && !melons.some(m => !m.broken) && !melonRide){
+    planIdx.melons++;
+    melonWarn = MELON_WARN_T;
   }
   while(planIdx.bananas < plan.bananas.length && worldOffset >= plan.bananas[planIdx.bananas].s){
     planIdx.bananas++;
@@ -2175,6 +2691,8 @@ function update(){
   for(let i=puddles.length-1;i>=0;i--){
     const p = puddles[i];
     p.x -= scroll;
+    if(p.gone){ puddles.splice(i, 1); continue; }
+    if(active && !p.hit && spinUmbHit({ x:p.x, y:groundY, w:p.w, h:4 })){ knockPuddle(p); puddles.splice(i, 1); continue; }
     if(active && !p.hit && !player.jumping && starT === 0 && playerBox().x + playerBox().w > p.x + 2 && playerBox().x < p.x + p.w - 2){
       stepPuddle(p);
       if(state === "gameover") return;
@@ -2185,7 +2703,13 @@ function update(){
   // バナナの皮
   for(let i=bananas.length-1;i>=0;i--){
     const b = bananas[i];
+    if(b.knock){   // 傘で吹っ飛ばされた皮
+      b.x += b.kvx; b.ky += b.kvy; b.kvy += 0.12;
+      if(b.x > W + 20 || b.ky > 60) bananas.splice(i, 1);
+      continue;
+    }
     b.x -= scroll;
+    if(active && !b.hit && spinUmbHit({ x:b.x, y:groundY - 4, w:7, h:4 })){ knockBanana(b); continue; }
     if(active && !b.hit && !player.jumping && rolling === 0 && starT === 0 && playerBox().x + playerBox().w > b.x + 1 && playerBox().x < b.x + 6){
       slipBanana(b);
     }
@@ -2208,6 +2732,9 @@ function update(){
     if(can.x < -12) cans.splice(i,1);
   }
 
+  // スイカ（夏）：後ろから転がってきて、当たると女の子（自転車ごと）が上に乗って進む。乗っているあいだはジャンプできない
+  if(active) updateMelons(scroll);
+
   // カラス（波型に飛んでくる）
   if(active){
     for(let i=crows.length-1;i>=0;i--){
@@ -2227,10 +2754,9 @@ function update(){
       // 傘を持っていれば、傘（宙返り中は回っている体全体）でもカラスを受けて吹っ飛ばす
       let umbHit = false;
       if(umbrella > 0 && rolling === 0){
-        if(player.flip > 0) umbHit = ov(flipBox(), b);
-        else { const u = umbrellaPos(); umbHit = ov({ x:u.cx, y:u.cy, w:UMB_CANOPY[0].length, h:UMB_CANOPY.length }, b) || ov(a, b); }
+        if(player.flip > 0) umbHit = ov(flipBox(), b);   // 傘の当たり判定は、宙返り（自分でアクションしたとき）だけ。歩いているだけでは何もはじかない
       }
-      if(!c.hit && invulT === 0 && starT === 0 && umbHit){
+      if(!c.hit && (invulT === 0 || player.flip > 0) && starT === 0 && umbHit){
         c.hit = true;
         umbrellaBlock();
         knockCrow(c);
@@ -2247,11 +2773,17 @@ function update(){
     for(let i=cats.length-1;i>=0;i--){
       const cat = cats[i];
       cat.age++;
+      if(cat.knock){   // 傘で吹っ飛ばされた猫
+        cat.x += cat.kvx; cat.y += cat.kvy; cat.kvy += 0.12;
+        if(cat.x > W + 30 || cat.y > H) cats.splice(i, 1);
+        continue;
+      }
       cat.x -= cat.isStationary ? scroll : scroll + cat.extra;
       if(cat.kind === "tabby"){
         cat.hopT++;
         cat.y = groundY - cat.h - Math.round(tabbyLift(cat.hopT));
       }
+      if(!cat.hit && spinUmbHit({ x:cat.x+2, y:cat.y+2, w:cat.w-4, h:cat.h-2 })){ knockCat(cat); continue; }
       if(!cat.hit && invulT === 0 && starT === 0 && hitPlayer(player, cat)){   // 転がり中でも当たる
         cat.hit = true;
         const who = cat.kind === "tabby" ? "tabby" : cat.type;
@@ -2263,6 +2795,8 @@ function update(){
   }
 
   updateParticles();
+  updatePetals(scroll);
+  updateRain();
   updateGhosts();
   updateFlyUmbs();
   // クリアのリザルトを2秒見せてから、交換できるなら交換画面（リザルト中1回だけ）
@@ -2279,7 +2813,7 @@ function drinkCan(can){
   if(starT === 0){
     drinkStock = Math.min(CONFIG.maxDrinks, drinkStock + 1);
     tryHeal();
-    if(lives >= CONFIG.lives && drinkStock >= CONFIG.starDrinks){
+    if(lives >= maxLives && drinkStock >= CONFIG.starDrinks){
       // ライフ満タンで10本：無敵タイム（キラキラ点滅しながらトップスピード）
       drinkStock = 0;
       starT = CONFIG.starTime;
@@ -2316,6 +2850,18 @@ function umbrellaPos(){
 // 宙返り用：女の子（または自転車）と傘をひとつの絵にまとめて、90°ずつ回したもの
 // 傘の色は女の子・自転車の色記号とぶつからないよう U,V,Z,Y,X に置きかえる
 const UMB_FLIP_PAL = { U:"#e03030", V:"#f26a6a", Z:"#d0d0dc", Y:"#c8c8d4", X:"#5a3a28" };
+// 無敵タイム中は傘も女の子と同じようにキラキラ点滅（女の子の点滅と同じタイミング）
+const UMB_STAR = [
+  { P:"#ffffff", p:"#ffe070", W:"#ffffff", M:"#fff4c0", H:"#f8d030", S:"#fff4c0" },
+  { P:"#ffd060", p:"#ff9030", W:"#fff0a0", M:"#ffe8a0", H:"#c06020", S:"#ffe8a0" },
+];
+const umbStarOn = () => starT > 0 && (state === "playing" || state === "goal");
+function umbPal(){ return umbStarOn() ? Object.assign({}, UMB_PAL, UMB_STAR[Math.floor(animTick / 3) % 2]) : UMB_PAL; }
+function umbFlipPal(){
+  if(!umbStarOn()) return UMB_FLIP_PAL;
+  const q = UMB_STAR[Math.floor(animTick / 3) % 2];
+  return { U:q.P, V:q.W, Z:q.M, Y:q.S, X:q.H };
+}
 const _flipCache = {};
 function flipComposite(withBike){
   const key = withBike ? "b" : "g";
@@ -2351,21 +2897,21 @@ function flipBox(){
 }
 function drawFlipWithUmbrella(pal){
   const fr = flipComposite(onBike)[flipFrameIndex()];
-  drawSprite(fr.rows, Math.round(player.x) + fr.dx, Math.round(player.y) + fr.dy, Object.assign({}, pal, UMB_FLIP_PAL));
+  drawSprite(fr.rows, Math.round(player.x) + fr.dx, Math.round(player.y) + fr.dy, Object.assign({}, pal, umbFlipPal()));
 }
-function drawUmbrellaAt(cx, cy, hx, hy){
+function drawUmbrellaAt(cx, cy, hx, hy, pal = UMB_PAL){
   const top = cy + UMB_CANOPY.length;
-  ctx.fillStyle = UMB_SHAFT;                    // 棒（銀）
+  ctx.fillStyle = pal.S || UMB_SHAFT;           // 棒（銀）
   ctx.fillRect(hx, top - 1, 1, Math.max(0, hy - 2 - (top - 1)));
-  ctx.fillStyle = UMB_PAL.H;                    // 取っ手（茶）
+  ctx.fillStyle = pal.H;                        // 取っ手（茶）
   ctx.fillRect(hx, hy - 2, 1, 3);
-  drawSprite(UMB_CANOPY, cx, cy, UMB_PAL);
+  drawSprite(UMB_CANOPY, cx, cy, pal);
 }
 function drawHeldUmbrella(){
   if(umbrella <= 0 || rolling > 0 || player.flip > 0 || state === "crash" || state === "clear") return;   // 宙返り中は女の子と一緒に回して描く
   if(blink > 0 && Math.floor(blink / 4) % 2) return;
   const u = umbrellaPos();
-  drawUmbrellaAt(u.cx, u.cy, u.hx, u.hy);
+  drawUmbrellaAt(u.cx, u.cy, u.hx, u.hy, umbPal());   // 持っている傘（無敵中は光る）
 }
 // 耐久を★で表示（減った★だけチカチカして消える）
 function showUmbStars(before, after){
@@ -2392,6 +2938,37 @@ function umbrellaBlock(){
     girlSay("傘がこわれた！", 90);
   }
   return true;
+}
+// 宙返り中に傘で吹き飛ばせるか（回っている絵全体が当たり判定）
+const boxOv = (p, q) => p.x < q.x+q.w && p.x+p.w > q.x && p.y < q.y+q.h && p.y+p.h > q.y;
+function spinUmbHit(box){ return umbrella > 0 && rolling === 0 && player.flip > 0 && starT === 0 && boxOv(flipBox(), box); }
+// 吹っ飛ばしたときの演出（光・破片・ゆれ・音）
+function knockFX(cx, cy, debris){
+  for(let k=0;k<12;k++){
+    const ang = k / 12 * Math.PI * 2;
+    particles.push({ x:cx, y:cy, vx:Math.cos(ang) * 2.2, vy:Math.sin(ang) * 2.2, life:12, c:k % 2 ? "#ffffff" : "#f8d030" });
+  }
+  for(let k=0;k<10;k++) particles.push({ x:cx, y:cy, vx:rand(-1.4, 2.2), vy:-rand(.2, 1.8), life:28, c:debris[k % debris.length] });
+  shakeT = 8;
+  playKnockSE();
+}
+function knockCat(cat){
+  cat.hit = true; cat.knock = true; cat.kvx = 3.6; cat.kvy = -3.4;
+  umbrellaBlock();
+  const pal = CAT_PAL[cat.type];
+  knockFX(cat.x + 7, cat.y + 4, Object.values(pal).filter(c => c && c[0] === "#").slice(0, 3));
+  npcSay(cat.kind === "tabby" ? "tabby" : cat.type, "ウニャー！", 80);
+}
+function knockBanana(b){
+  b.hit = true; b.knock = true; b.kvx = 3.4; b.kvy = -3.2; b.ky = 0;
+  umbrellaBlock();
+  knockFX(b.x + 3, groundY - 2, ["#f8d030", "#7a5a20"]);
+}
+function knockPuddle(p){
+  p.hit = true; p.gone = true;
+  umbrellaBlock();
+  knockFX(p.x + p.w / 2, groundY, [PAL.puddle, PAL.puddleHi]);
+  for(let k=0;k<14;k++) particles.push({ x:p.x + rand(0, p.w), y:groundY, vx:rand(-.6, 1.6), vy:-rand(.8, 2.2), life:30, c:k % 2 ? PAL.puddle : PAL.puddleHi });   // しぶき
 }
 // カラスを吹っ飛ばす：勢いよく飛ばして、パッと光る＋画面が少しゆれる＋「カーッ！」
 let shakeT = 0;
@@ -2429,12 +3006,28 @@ function drawFlyUmbs(){
 }
 
 // 自転車がダメージを1回肩代わりして壊れる。肩代わりしたら true
+// 自転車の耐久（2回まで肩代わり）。減ると★を表示（傘と同じ）
+const BIKE_HP = 2;
+let bikeHP = 0;
+function showBikeStars(before, after){
+  const el = document.getElementById("bikeStars");
+  let h = "";
+  for(let i = 0; i < before; i++) h += `<span class="${i >= after ? "lose" : ""}">★</span>`;
+  el.innerHTML = h;
+  el.style.left = ((player.x + 2) / W * 100) + "%";
+  el.style.top = ((player.y - 12 + VIEW_OY + LANE) / H * 100) + "%";
+  el.className = "umbstars outline"; void el.offsetWidth; el.className = "umbstars outline show";
+}
 function bikeAbsorb(){
   if(!onBike) return false;
-  onBike = false;
+  const before = bikeHP;
+  bikeHP--;
   invulT = 60;
-  setSpeed();
   playDamageSE();
+  showBikeStars(before, Math.max(0, bikeHP));
+  if(bikeHP > 0){ updateHUD(); return true; }   // まだ乗れる
+  onBike = false;
+  setSpeed();
   girlSay("自転車がこわれた！", 90);
   const cols = ["#38a0c8", "#24769c", "#b0b0bc", "#202028", "#c4c4ce"];
   for(let i=0;i<16;i++){
@@ -2462,8 +3055,8 @@ function slipBanana(b){
 
 function stepPuddle(p){
   p.hit = true;
-  dropUmbrella();
-  if(bikeAbsorb()) return;
+  if(bikeAbsorb()) return;       // 自転車が肩代わり（傘は無傷）
+  dropUmbrella();                // 自転車がなければダメージ＋傘を失う
   runT = 0; hurryArmed = true;   // 水たまりで足を取られたのもアクション扱い
   mul -= CONFIG.puddleDown; setSpeed();
   blink = 60;
@@ -2614,7 +3207,7 @@ async function prepareShareImage(){
   shareURL = URL.createObjectURL(blob);
 }
 // いま画面に出ているゲーム画面をそのまま画像にする（ボタン類だけ除く）
-async function captureScreen(){
+async function captureScreen(withUI = true){
   try{ await document.fonts.ready; }catch(e){}
   const scr = document.querySelector(".screen");
   const sr = scr.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
@@ -2625,7 +3218,8 @@ async function captureScreen(){
   const g = c.getContext("2d");
   g.imageSmoothingEnabled = false;
   const X = v => (v - sr.left) * k, Y = v => (v - sr.top) * k;
-  const SKIP = "button, .sharebar, .pausemenu, .xchg";
+  const SKIP = "button, .sharebar, .pausemenu, .xchg, .camflash";
+  const uiOff = !withUI;
   const loadImg = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
   const shadows = s => { const out = []; if(!s || s === "none") return out;
     const re = /(rgba?\([^)]*\)|#[0-9a-f]+)\s+(-?[\d.]+)px\s+(-?[\d.]+)px/gi; let m;
@@ -2662,6 +3256,7 @@ async function captureScreen(){
     const b = el.getBoundingClientRect();
     g.globalAlpha = alpha;
     if(el.tagName === "CANVAS"){ g.drawImage(el, X(b.left), Y(b.top), b.width * k, b.height * k); return; }
+    if(uiOff && el !== scr) return;   // UI オフ：ゲームの絵（canvas）だけ
     if(el !== scr && cs.boxShadow && cs.boxShadow !== "none") shadows(cs.boxShadow.replace(/[^,()]*inset[^,]*/g, "")).forEach(([col, dx, dy]) => {
       // CSS と同じく、影は要素の外側だけに描く
       const bx = X(b.left), by = Y(b.top), w = b.width * k, h = b.height * k;
@@ -2725,9 +3320,10 @@ function remainingMeters(){
 
 // 猫やカラスにぶつかった：1ダメージ（セリフはウィンドウに）。ライフが尽きたら true
 function hitBy(who, line){
-  if(who === "crow" && umbrellaBlock()) return false;   // カラスは傘で防ぐ
-  if(who !== "crow") dropUmbrella();                     // 地上の障害物：傘を手放す
-  if(bikeAbsorb()) return false;   // 自転車が肩代わり（セリフは「自転車がこわれた！」を見せる）
+  // ダメージ：自転車があれば自転車が肩代わり（傘は無傷）。なければ女の子がダメージを受けて、傘は失う
+  // （傘の耐久が減るのは、宙返りで吹き飛ばしたときだけ）
+  if(bikeAbsorb()) return false;      // 自転車が肩代わり（★−1、2回で壊れる）
+  dropUmbrella();
   lives--;
   tryHeal(true);
   invulT = 60; blink = 60;
@@ -2992,10 +3588,10 @@ function drawVerge(){
       ctx.fillStyle = PAL.brickHi;
       ctx.fillRect(x, VERGE_Y + 1, it.w, 1);
       for(let bx = x + 3; bx < x + it.w; bx += 6) ctx.fillRect(bx, VERGE_Y + 3, 1, 3);
-      // 植わっている草花
+      // 植わっている草花（夏のひまわりの花壇は、ひまわりだけ）
       ctx.fillStyle = PAL.leaf;
       ctx.fillRect(x + 1, VERGE_Y - 2, it.w - 2, 3);
-      it.flowers.forEach(f => {
+      if(!(season === 1 && it.sun)) it.flowers.forEach(f => {
         ctx.fillStyle = f.c;
         ctx.fillRect(x + f.dx, VERGE_Y - 3 + f.dy, 2, 2);
       });
@@ -3144,6 +3740,11 @@ function drawCan(can){
 function drawCat(cat){
   const pal = CAT_PAL[cat.type];
   const x = Math.round(cat.x);
+  if(cat.knock){   // 吹っ飛ばされた猫はひっくり返る
+    const rows = cat.isStationary ? CAT_SLEEP : [...(cat.kind === "tabby" ? TABBY_TOP : CAT_RUN_TOP), ...CAT_LEGS_A];
+    drawSprite(rows, x, Math.round(cat.y), pal, true);
+    return;
+  }
   ctx.fillStyle = "rgba(0,0,0,.18)";
   ctx.fillRect(x+1, groundY, 12, 1);
   if(cat.isStationary){
@@ -3228,19 +3829,33 @@ const UMB_ICON = UMB_CANOPY.concat(["", "", "", "", "", "", "", ""].map((_, k) =
 const bikeIconSVG  = () => pixSVG(BIKE_FRAMES[0], Object.assign({}, BIKE_BASE_PAL, GIRL_PAL, { s:"#d0a084" }), 2, false);
 const umbIconSVG   = () => pixSVG(UMB_ICON, Object.assign({ S:UMB_SHAFT }, UMB_PAL), 2, false);   // アイコンは全部 2倍（ドットの大きさをそろえる）
 const breadIconSVG = () => pixSVG(BREAD_ICON, { B:"#c8823c", b:"#a0602c", L:"#dea050", C:"#fff0c8" }, 2, false);   // 縁取りなし（ほかの絵と同じ）
-// 交換できるもの（左から）
+// ハートのアイコン（上限アップ用）：3つは三角、4つは四角に並べる
+const HEART_PX = [".RR.RR.", "RRRRRRR", "RRRRRRR", ".RRRRR.", "..RRR..", "...R..."];
+function heartsIcon(n){
+  const W7 = 7, H6 = 6, gap = 1;
+  const pos = n === 3 ? [[4, 0], [0, 7], [8, 7]] : [[0, 0], [8, 0], [0, 7], [8, 7]];
+  const w = 15, h = 13, rows = Array.from({ length:h }, () => [..."." .repeat(w)]);
+  pos.forEach(([ox, oy]) => HEART_PX.forEach((r, y) => [...r].forEach((c, x) => { if(c !== ".") rows[oy + y][ox + x] = c; })));
+  return pixSVG(rows.map(r => r.join("")), { R:"#ff5a5a" }, 2, false);
+}
+const costTag = n => `<span class="xcost">${medalText(n)}</span>`;
+// 交換できるもの。上段：自転車・傘・食パン／下段：ハートの上限 3・4・こうかんしない
 const XITEMS = [
-  { id:"bike",  ok:() => !onBike,               icon:() => bikeIconSVG(), got:"自転車をもらった！" },
-  { id:"umb",   ok:() => umbrella <= 0,          icon:() => umbIconSVG(),  got:"傘をもらった！" },
-  { id:"bread", ok:() => lives < CONFIG.lives,   icon:() => `<span class="hp"><b>♡</b>+1</span>` + breadIconSVG(), got:"食パンをもらった！" },
-  { id:"skip",  ok:() => true,                   icon:() => `<span>こうかん<br>しない</span>`, got:"" },
+  { id:"bike",  cost:2, ok:() => !onBike,           icon:() => bikeIconSVG(), got:"自転車をもらった！" },
+  { id:"umb",   cost:2, ok:() => umbrella <= 0,     icon:() => umbIconSVG(),  got:"傘をもらった！" },
+  { id:"bread", cost:1, ok:() => lives < maxLives,  icon:() => `<span class="hp"><b>♡</b>+1</span>` + breadIconSVG(), got:"食パンをもらった！" },
+  { id:"life3", cost:2, ok:() => maxLives < 3,      icon:() => heartsIcon(3), got:"ハートが3つになった！" },
+  { id:"life4", cost:4, ok:() => maxLives === 3,    icon:() => heartsIcon(4), got:"ハートが4つになった！" },   // 3つをとるまでは選べない
+  { id:"skip",  cost:0, ok:() => true,              icon:() => `<span>とっておく</span>`, got:"" },
 ];
+const XROWS = [["bike", "umb", "bread"], ["life3", "life4", "skip"]];
+const canBuy = it => it.ok() && medalWallet >= it.cost;
 let exchangeOpen = false, exchangeChosen = false, exchangeDone = false, xCursor = null, resultT = 0;
-function canExchange(){ return exchangeCredits > 0 && XITEMS.some(it => it.id !== "skip" && it.ok()); }
+function canExchange(){ return XITEMS.some(it => it.id !== "skip" && canBuy(it)); }
 function xBox(id){ return document.querySelector(`.xbox[data-x="${id}"]`); }
 function openExchange(){
   exchangeOpen = true; exchangeChosen = false; exchangeDone = true; xCursor = null;
-  XITEMS.forEach(it => { xBox(it.id).innerHTML = it.icon(); });
+  XITEMS.forEach(it => { xBox(it.id).innerHTML = it.icon() + (it.cost ? costTag(it.cost) : ""); });
   document.getElementById("xGot").textContent = "";
   document.getElementById("xPop").className = "xpop";
   document.getElementById("xPop").innerHTML = "";
@@ -3248,30 +3863,43 @@ function openExchange(){
   document.getElementById("xchg").classList.remove("hidden");
 }
 function renderExchange(){
+  document.getElementById("xWallet").innerHTML = `つかえるメダル ${medalText(medalWallet) || "×0"}`;
   XITEMS.forEach(it => {
-    xBox(it.id).classList.toggle("off", !it.ok());
+    xBox(it.id).classList.toggle("off", !canBuy(it));
     xBox(it.id).classList.toggle("sel", xCursor === it.id);
   });
 }
+// ←→：選べるものを順に（上段→下段）。↑↓：上下の段へ
 function moveExchange(dir){
   if(!exchangeOpen || exchangeChosen) return;
-  const en = XITEMS.filter(it => it.ok()).map(it => it.id);
+  const en = XROWS.flat().filter(id => canBuy(XITEMS.find(t => t.id === id)));
   if(!en.length) return;
   let k = en.indexOf(xCursor);
   if(k < 0) k = dir > 0 ? 0 : en.length - 1;   // 最初の一押しで、押した側の端に
   else k = Math.max(0, Math.min(en.length - 1, k + dir));
   xCursor = en[k]; renderExchange();
 }
+function moveExchangeRow(dir){
+  if(!exchangeOpen || exchangeChosen) return;
+  if(!xCursor){ moveExchange(1); return; }
+  const r = XROWS.findIndex(row => row.includes(xCursor)), c = XROWS[r].indexOf(xCursor);
+  const nr = r + dir;
+  if(nr < 0 || nr >= XROWS.length) return;
+  // 真上・真下が選べなければ、その段で近いものへ
+  const cand = XROWS[nr].map((id, i) => [id, Math.abs(i - c)]).filter(([id]) => canBuy(XITEMS.find(t => t.id === id))).sort((p, q) => p[1] - q[1]);
+  if(cand.length){ xCursor = cand[0][0]; renderExchange(); }
+}
 function chooseExchange(which){
   if(!exchangeOpen || exchangeChosen) return;
   const it = XITEMS.find(t => t.id === which);
-  if(!it || !it.ok()) return;
+  if(!it || !canBuy(it)) return;
   exchangeChosen = true; xCursor = which; renderExchange();
-  if(which === "skip"){ setTimeout(closeExchange, 200); return; }   // 交換しない（交換権はそのまま）
-  exchangeCredits--;
-  if(which === "bread"){ lives = Math.min(CONFIG.lives, lives + 1); playHealSE(); }
-  else if(which === "bike"){ onBike = true; playMedalSE(); }
+  if(which === "skip"){ setTimeout(closeExchange, 200); return; }   // 交換しない（メダルはそのまま持ち越し）
+  medalWallet -= it.cost;
+  if(which === "bread"){ lives = Math.min(maxLives, lives + 1); playHealSE(); }
+  else if(which === "bike"){ onBike = true; bikeHP = BIKE_HP; playMedalSE(); }   // 乗っているあいだは買い替えできない（ok で選べない）
   else if(which === "umb"){ umbrella = UMBRELLA_HP; playMedalSE(); }
+  else if(which === "life3" || which === "life4"){ maxLives++; lives = Math.min(maxLives, lives + 1); playHealSE(); }   // 上限が増えて、そのぶん回復
   updateHUD();
   document.getElementById("xGot").textContent = it.got;
   // 選んだ枠からアイコンがポンと出る
@@ -3282,7 +3910,16 @@ function chooseExchange(which){
   pop.style.left = (box.left + box.width / 2 - scr.left) + "px";
   pop.style.top = (box.top + box.height / 2 - scr.top) + "px";
   pop.className = "xpop"; void pop.offsetWidth; pop.className = "xpop go";
-  setTimeout(closeExchange, 1800);
+  renderExchange();
+  // 続けて交換できる（メダルが足りるあいだ）。もう何も交換できなければ閉じる
+  setTimeout(() => {
+    if(!exchangeOpen) return;
+    if(!canExchange()){ closeExchange(); return; }
+    exchangeChosen = false;
+    if(!canBuy(XITEMS.find(t => t.id === xCursor))) xCursor = null;
+    document.getElementById("xGot").textContent = "";
+    renderExchange();
+  }, 1300);
 }
 function closeExchange(){
   exchangeOpen = false;
@@ -3402,14 +4039,127 @@ function drawPlayer(){
   drawSprite(legs, x, y + 12, girlPal());
 }
 
+// ===== スイカ =====
+// 夏：後ろ（左）から転がってくる。来る前に左に矢印が「ピコン、ピコン」と2回点滅。
+// ジャンプでよけられる。当たると上に乗って（自転車でも）しばらく進み、そのあいだはジャンプできない（バナナと同じく、自分では動けない）。
+// 乗り終わるとスイカは割れて、半分ずつが道に残る
+const MELON_W = 12, MELON_H = 12;
+const MELON_PAL = { G:"#269c33", g:"#186923", R:"#de3733", r:"#b42626", K:"#181818", W:"#ececd2" };
+const MELON_WARN_T = 48;   // 矢印の点滅（2回）
+const MELON_V = 1.7;       // 画面の上で右へ進む速さ（女の子に追いつく）
+const MELON_RIDE_T = 80;   // 乗っている時間（フレーム）
+// 割れたあと：左右の半分（赤い中身と黒い種、下に緑の皮）
+const MELON_HALF_L = [
+  "..RRRR",
+  ".RRKRR",
+  "RRRRKR",
+  "RKRRRR",
+  "WWWWWW",
+  "GGGGGG",
+  ".gGGG.",
+];
+const MELON_HALF_R = MELON_HALF_L.map(r => [...r].reverse().join(""));
+const WARN_ARROW = ["...Y....", "...YY...", "YYYYYY..", "YYYYYYY.", "YYYYYY..", "...YY...", "...Y...."];
+// 丸ごと：まんまるに、ベースの緑と少し濃い緑のしま（roll で回る）
+function drawMelonWhole(x0, y0, roll){
+  const r = MELON_W / 2, c = Math.cos(.5 + roll), sn = Math.sin(.5 + roll);
+  for(let y = 0; y < MELON_H; y++) for(let x = 0; x < MELON_W; x++){
+    const dx = x - r + .5, dy = y - r + .5;
+    if(dx * dx + dy * dy > r * r) continue;
+    const u = dx * c + dy * sn;
+    ctx.fillStyle = (((Math.floor(u + 20) % 4) + 4) % 4) < 2 ? MELON_PAL.g : MELON_PAL.G;
+    ctx.fillRect(x0 + x, y0 + y, 1, 1);
+  }
+}
+function playPikonSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(1568, t); osc.frequency.setValueAtTime(2093, t + .05);
+  gain.gain.setValueAtTime(0.06, t); gain.gain.setValueAtTime(0.0001, t + .1);
+  osc.connect(gain); gain.connect(outNode());
+  osc.start(t); osc.stop(t + .11);
+}
+const melonRideY = () => groundY - MELON_H - player.h;
+function updateMelons(scroll){
+  // 予告の矢印 → スイカ登場
+  if(melonWarn > 0){
+    if(melonWarn === MELON_WARN_T || melonWarn === MELON_WARN_T - 24) playPikonSE();
+    if(--melonWarn === 0) melons.push({ x:-MELON_W - 2, roll:0, broken:false });
+  }
+  for(let i = melons.length - 1; i >= 0; i--){
+    const m = melons[i];
+    if(m.broken){ m.x -= scroll; if(m.x < -20) melons.splice(i, 1); continue; }
+    m.x += MELON_V; m.roll += MELON_V / 6;
+    const pb = playerBox(), feet = player.y + player.h;
+    const touch = m.x + MELON_W - 2 > pb.x && m.x + 2 < pb.x + pb.w;
+    if(touch && starT === 0 && feet > groundY - MELON_H + 3 && !melonRide){
+      // 当たった：上に乗る
+      melons.splice(i, 1);
+      melonRide = { t:MELON_RIDE_T, roll:m.roll };
+      player.vy = 0; player.jumping = false; player.flip = 0;
+      dropUmbrella();
+      playKnockSE();
+      setSpeed();
+      popAt("slowpop", "SLOW", "down", player.x + 6, player.y - 12);
+      popAt("wapopL", "わっ", "", player.x - 9, melonRideY() + 4);   // ぐらっ（左）
+      continue;
+    }
+    if(m.x > W + 20) melons.splice(i, 1);
+  }
+  // 乗っているあいだ：スイカの上で進む（ジャンプ不可）。終わったら割れる
+  if(melonRide){
+    player.y = melonRideY(); player.vy = 0;
+    melonRide.roll += scroll / 6;
+    // 焦りの汗：頭の上から、上へ向かって左右に飛ぶ
+    if(melonRide.t % 4 === 0){
+      const side = (melonRide.t / 4) % 2 ? -1 : 1;
+      particles.push({ x:player.x + 6 + side * 5, y:player.y, vx:side * rand(.4, .8), vy:-rand(1.1, 1.6), life:18, c:"#5fb2ee", w:2, h:2 });
+    }
+    if(melonRide.t === MELON_RIDE_T - 22) popAt("wapopR", "わっ", "", player.x + 21, melonRideY() + 4);   // →ぐらっ（右）
+    if(--melonRide.t <= 0){
+      const m = { x:player.x + (onBike ? 2 : 0), broken:true };
+      melons.push(m);
+      breakMelon(m);
+      melonRide = null;
+      setSpeed();
+      player.jumping = true;   // 地面へ落ちる
+    }
+  }
+}
+function drawMelon(m){
+  const x = Math.round(m.x);
+  ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(x + 1, groundY, MELON_W - 2, 1);
+  if(!m.broken){ drawMelonWhole(x, groundY - MELON_H, m.roll); return; }
+  drawSprite(MELON_HALF_L, x - 2, groundY - 7, MELON_PAL);
+  drawSprite(MELON_HALF_R, x + 8, groundY - 7, MELON_PAL);
+}
+// 乗っているスイカ（女の子の足もと）と、予告の矢印
+function drawMelonExtras(){
+  if(melonRide){
+    const x = Math.round(player.x + (onBike ? 2 : 0));
+    ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(x + 1, groundY, MELON_W - 2, 1);
+    drawMelonWhole(x, groundY - MELON_H, melonRide.roll);
+  }
+  if(melonWarn > 0 && Math.floor((MELON_WARN_T - melonWarn) / 12) % 2 === 0) drawSprite(WARN_ARROW, 3, groundY - 10, { Y:"#f8d030" });
+}
+// 割れる：赤い汁と黒い種が飛び散る
+function breakMelon(m){
+  m.broken = true;
+  const cx = m.x + MELON_W / 2, cy = groundY - MELON_H / 2;
+  for(let k = 0; k < 14; k++) particles.push({ x:cx, y:cy, vx:rand(-1.6, 1.6), vy:-rand(.6, 2.2), life:26, c:k % 3 === 0 ? MELON_PAL.K : (k % 3 === 1 ? MELON_PAL.R : MELON_PAL.r) });
+  shakeT = 6;
+  playKnockSE();
+}
 function drawBanana(b){
+  if(b.knock){ drawSprite(BANANA, Math.round(b.x), Math.round(groundY - 4 + b.ky), BANANA_PAL, true); return; }
   drawSprite(BANANA, b.x, groundY - 4, BANANA_PAL);
 }
 
 function drawParticles(){
   particles.forEach(p=>{
     ctx.fillStyle = p.c;
-    ctx.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), p.w || 1, p.h || 1);
   });
 }
 
@@ -3434,13 +4184,17 @@ function draw(){
   drawFarHouses();
   drawNearHouses();
   drawSchool(gx);
+  drawSakura();
   drawElder();
   drawFront(gx);
   drawRoad();
+  drawHydrangea();
   ctx.save();
   ctx.translate(0, LANE);   // ここから道の上（手前）のもの
   puddles.forEach(drawPuddle);
   bananas.forEach(drawBanana);
+  melons.forEach(drawMelon);
+  drawMelonExtras();
   drawGate(gx);
   drawTeacher(gx);
   cans.forEach(drawCan);
@@ -3452,6 +4206,10 @@ function draw(){
   drawFlyUmbs();
   drawParticles();
   ctx.restore();
+  drawSunflowers();
+  drawPetals();
+  drawRain();
+  drawSunRays();
   drawFireworks();
   drawConfetti();
   ctx.restore();
