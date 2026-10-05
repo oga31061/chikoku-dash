@@ -1221,13 +1221,15 @@ const FENCE_FACTOR = .6;   // 塀（layers.front）の流れる速さ
 const SUN_RAYS = [[17.5, 20.5], [31, 34.5], [45, 47.5], [60, 64]];   // 一筋ずつ細め   // 帯の角度（度：水平から下向き）
 const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];   // 網掛け（4×4 のディザ）
 // 画面の右上4分の1におさめる：下は画面の真ん中の高さ、左は画面の真ん中まで。そこへ向かって網掛けで消える
-function drawSunRays(){
-  if(season !== 1) return;
+let _sunCv = null;
+function buildSunRays(){
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const g = cv.getContext("2d");
+  g.translate(0, VIEW_OY);
+  g.fillStyle = "#fff6c8";
   const ox = W + 24, oy = -VIEW_OY - 34, D = Math.PI / 180;
   const top = -VIEW_OY, bottom = H / 2 - VIEW_OY, left = W / 2;
   const fadeY0 = top + (bottom - top) * .35, fadeX0 = left + (W - left) * .55;
-  ctx.fillStyle = "#fff6c8";
-  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
   for(let y = top; y < bottom; y++){
     const dy = y - oy;
     const fy = y < fadeY0 ? 0 : (y - fadeY0) / (bottom - fadeY0);
@@ -1237,11 +1239,18 @@ function drawSunRays(){
       const xa = Math.max(left, Math.min(x1, x2)), xb = Math.min(W, Math.max(x1, x2));
       for(let x = xa; x < xb; x++){
         const fx = x >= fadeX0 ? 0 : (fadeX0 - x) / (fadeX0 - left);
-        const level = Math.round(16 * (1 - Math.min(1, Math.max(fx, fy))));   // 残す割合（0〜16）
-        if(BAYER4[row + (x & 3)] < level) ctx.fillRect(x, y, 1, 1);
+        const level = Math.round(16 * (1 - Math.min(1, Math.max(fx, fy))));
+        if(BAYER4[row + (x & 3)] < level) g.fillRect(x, y, 1, 1);
       }
     });
   }
+  return cv;
+}
+function drawSunRays(){
+  if(season !== 1) return;
+  if(!_sunCv) _sunCv = buildSunRays();
+  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
+  ctx.drawImage(_sunCv, 0, -VIEW_OY);
   ctx.globalAlpha = 1;
 }
 // ===== アジサイのまわりの雨 =====
@@ -1287,11 +1296,12 @@ function drawRain(){
 // アジサイの花壇の真ん中に、小さなカエル（ときどきぴょんと跳ねる）
 const FROG = ["K.K", "GGG", "G.G"];   // 横3×たて3：目（K）が上に飛び出した小さなカエル
 const FROG_PAL = { G:"#8fd04a", K:"#1c2414" };   // 葉より明るい黄緑で目立つように
+const FROG_JUMP = FROG.slice(0, 2);
 function drawFrog(cx, seed){
   // ぴょーん：軽くふわっと、アジサイの高さまで（約0.7秒で18ドット）
   const t = (animTick + seed * 37) % 170;
   const hop = t < 44 ? Math.round(Math.sin(t / 44 * Math.PI) * 18) : 0;
-  const rows = hop > 0 ? FROG.slice(0, 2) : FROG;   // 跳んでいるあいだは足をたたむ
+  const rows = hop > 0 ? FROG_JUMP : FROG;   // 跳んでいるあいだは足をたたむ
   drawSprite(rows, Math.round(cx) - 1, 95 - hop, FROG_PAL);   // 花壇の前（足もとの地面）に座る
 }
 function buildHydrangea(){
@@ -1592,20 +1602,32 @@ const CAN = [
 ];
 const CAN_PAL = { O:"#202028", G:"#c8c8d0", Y:"#f8d030", R:"#e03030" };
 
-function drawSprite(rows, x, y, pal, flipV){
-  x = Math.round(x); y = Math.round(y);
+const _sprCache = new WeakMap();
+function sprCanvas(rows, pal, flipV){
+  let m = _sprCache.get(rows);
+  if(!m){ m = new Map(); _sprCache.set(rows, m); }
+  let sig = flipV ? "v" : "n";
+  for(const k in pal) sig += k + pal[k];
+  let cv = m.get(sig);
+  if(cv) return cv;
   const n = rows.length;
-  for(let r=0;r<n;r++){
-    const row = rows[flipV ? n-1-r : r];
-    for(let c=0;c<row.length;c++){
+  const w = rows.reduce((a, r) => Math.max(a, r.length), 1);
+  cv = document.createElement("canvas"); cv.width = w; cv.height = n;
+  const g = cv.getContext("2d");
+  for(let r = 0; r < n; r++){
+    const row = rows[flipV ? n - 1 - r : r];
+    for(let c = 0; c < row.length; c++){
       const col = pal[row[c]];
       if(!col) continue;
-      ctx.fillStyle = col;
-      ctx.fillRect(x+c, y+r, 1, 1);
+      g.fillStyle = col; g.fillRect(c, r, 1, 1);
     }
   }
+  m.set(sig, cv);
+  return cv;
 }
-
+function drawSprite(rows, x, y, pal, flipV){
+  ctx.drawImage(sprCanvas(rows, pal, flipV), Math.round(x), Math.round(y));
+}
 function pixelCircle(cx, cy, r){
   for(let dy=-r; dy<=r; dy++){
     const hw = Math.floor(Math.sqrt(r*r - dy*dy) + .3);
@@ -4218,6 +4240,21 @@ function draw(){
 player = createPlayer();
 createTown();
 
+// 夏にしか使わない絵を、先に作っておく（夏の初日のひっかかり防止）
+_sunCv = buildSunRays();
+sprCanvas(SUNFLOWER, SUNFLOWER_PAL, false);
+sprCanvas(SUN_LEAF, SUN_LEAF_PAL, false);
+sprCanvas(SUN_LEAF_R, SUN_LEAF_PAL, false);
+sprCanvas(MELON_HALF_L, MELON_PAL, false);
+sprCanvas(MELON_HALF_R, MELON_PAL, false);
+sprCanvas(WARN_ARROW, { Y:"#f8d030" }, false);
+sprCanvas(FROG, FROG_PAL, false);
+sprCanvas(FROG_JUMP, FROG_PAL, false);
+// 顔アイコンを先に作って、ブラウザにも読み込ませておく（ブースト初回の遅れ防止）
+faces();
+BOOST_FACES = [boostFaceURL(0), boostFaceURL(1)];
+[...Object.values(faces()), ...BOOST_FACES].forEach(u => { const im = new Image(); im.src = u; if(im.decode) im.decode().catch(() => {}); });
+
 // 固定タイムステップ（60Hz）
 const STEP = 1000/60;
 let last = performance.now();
@@ -4230,9 +4267,11 @@ function loop(now){
     requestAnimationFrame(loop);
     return;
   }
-  acc += Math.min(100, now - last);
+  let dt = Math.min(50, now - last);
   last = now;
-  while(acc >= STEP){
+  if(Math.abs(dt - STEP) < 2) dt = STEP;   // モニターの更新間隔に近いときは、ちょうど1回分として扱う
+  acc += dt;
+  while(acc >= STEP - 0.5){
     update();
     acc -= STEP;
   }
