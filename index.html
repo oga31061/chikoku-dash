@@ -1,0 +1,4247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- リンクを貼ったときのカード（X など）。ogp.png を index.html と同じ場所に置く -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="遅刻ダッシュ！">
+<meta property="og:description" content="寝坊した女の子が、猫やカラスをよけて学校まで全力ダッシュ！ブラウザですぐ遊べる無料ゲーム">
+<meta property="og:url" content="https://oga31061.github.io/chikoku-dash/">
+<meta property="og:image" content="https://oga31061.github.io/chikoku-dash/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="遅刻ダッシュ！">
+<meta name="twitter:description" content="寝坊した女の子が、猫やカラスをよけて学校まで全力ダッシュ！ブラウザですぐ遊べる無料ゲーム">
+<meta name="twitter:image" content="https://oga31061.github.io/chikoku-dash/ogp.png">
+<title>遅刻ダッシュ！</title>
+
+<style>
+/* 8×8ドットの日本語フォント
+   Fusion Pixel Font 8px  Copyright (c) 2022, TakWolf  https://github.com/TakWolf/fusion-pixel-font  (SIL Open Font License 1.1)
+   日本語グリフは 美咲フォント  Copyright (C) 2002-2021 Num Kadoma  https://littlelimit.net/misaki.htm
+   ライセンス全文は同梱の FONT_LICENSE.txt を参照。
+   ゲームで使う文字だけを埋め込み。1文字の1ドット＝ゲーム画面の1ドットになるよう大きさを合わせる */
+@font-face{
+  font-family:"PixelJP";
+  src:url(data:font/woff2;base64,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) format("woff2");
+  font-display:block;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#141820;
+  font-family:"PixelJP",monospace;
+  -webkit-font-smoothing:none;
+  font-smooth:never;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+  color:#f8f8f8;
+}
+.game-wrap{ position:relative; }
+.header{
+  padding:4px 8px;
+  font-size:16px;
+}
+.screen{ position:relative; overflow:hidden; }
+canvas{
+  display:block;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.heart{ color:#e03838; }
+.lifelabel .heart + .heart{ margin-left:calc(var(--dot) * 2); }   /* ハートどうしの間をあける */
+.stock{ display:inline-flex; gap:0; margin-left:calc(var(--dot) * 4); align-items:center; }
+.can{ display:block; }
+/* メダル（はやいな評価のごほうび） */
+.medal{ display:block; }
+.medaltxt{ white-space:nowrap; }
+/* リザルト・記録：文字と同じ行に置き、メダルの下端を文字の下端（基準線の2ドット下）にそろえる */
+.medaltxt .medal{ display:inline-block; vertical-align:-.25em; margin-right:.2em; }   /* 大きさはドット等倍（medalSVG が指定） */
+.medaltxt.mini .medal{ height:.8em; width:.8em; vertical-align:0; margin-right:.15em; }
+.medalstack{
+  position:absolute; right:calc(var(--dot) * 5); bottom:calc(var(--dot) * 5);   /* 画面下の地面の帯：右にメダル×数 */
+  display:flex; align-items:center; gap:calc(var(--dot) * 2); font-size:calc(var(--dot) * 8); color:#f8f8f8; white-space:nowrap;
+  pointer-events:none; z-index:4;
+}
+.medalstack.new{ animation:medalin .5s steps(5, end); }
+@keyframes medalin{ 0%{ transform:translateY(calc(var(--dot) * -6)); } 100%{ transform:none; } }
+.medalpop{
+  position:absolute; pointer-events:none; z-index:4;   /* クリア画面の文字より奥（文字にかぶらない） */
+  transform:translate(-50%, -100%);
+  animation:medalpop 2.2s steps(22, end) forwards;
+}
+
+@keyframes medalpop{
+  0%  { transform:translate(-50%, -100%); opacity:1; }
+  20% { transform:translate(-50%, calc(-100% - var(--dot) * 12)); opacity:1; }
+  85% { transform:translate(-50%, calc(-100% - var(--dot) * 14)); opacity:1; }
+  100%{ transform:translate(-50%, calc(-100% - var(--dot) * 14)); opacity:0; }
+}
+.medalpop .spark{ position:absolute; width:calc(var(--dot) * 5); height:calc(var(--dot) * 5); animation:spark .5s steps(1, end) infinite; }
+@keyframes spark{ 0%{ opacity:1; } 50%{ opacity:0; } }
+.screen.paused .medalpop, .screen.paused .medalpop .spark, .screen.paused .medalstack .new{ animation-play-state:paused !important; }
+.cangap{ display:block; width:calc(var(--dot) * 3); }
+
+/* 「−♥1」：マイナスは線で描いて高さを中央に、間隔は均等に */
+.dmg{ display:inline-flex; align-items:center; gap:.3em; }
+.dmg .minus{
+  display:inline-block;
+  width:.5em;
+  height:.14em;
+  background:#f8f8f8;
+  box-shadow:2px 2px 0 #1c2030, -1px -1px 0 #1c2030, 1px -1px 0 #1c2030, -1px 1px 0 #1c2030;
+}
+.dmg .neg, .dmg .pos{ display:inline-flex; align-items:center; gap:.15em; }
+.dmg .neg{ color:#ff5050; }
+.dmg .neg .minus{ background:#ff5050; }
+.dmg .pos{ color:#f8d030; }
+.dmg .pos .plus::before, .dmg .pos .plus::after{ background:#f8d030; }
+.dmg .plus{ position:relative; display:inline-block; width:.62em; height:.62em; }
+.dmg .plus::before, .dmg .plus::after{
+  content:""; position:absolute; background:#f8f8f8;
+  box-shadow:2px 2px 0 #1c2030;
+}
+.dmg .plus::before{ left:0; top:.24em; width:.62em; height:.14em; }
+.dmg .plus::after{ left:.24em; top:0; width:.14em; height:.62em; }
+.heart.lost{ color:#5a5c64; }
+.meter{
+  position:absolute;
+  top:50%;
+  right:2%;
+  transform:translateY(-50%);
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:.2em;
+}
+.meter .arrow{
+  width:1em;
+  height:1em;
+  fill:#f8f8f8;
+  filter:drop-shadow(2px 2px 0 #1c2030) drop-shadow(-1px -1px 0 #1c2030);
+}
+.daylabel{
+  position:absolute;
+  top:calc(var(--dot) * 4);
+  right:3%;
+  white-space:nowrap;
+  text-align:right;
+}
+/* 画面下：ゲームの情報だけ（ライフ・残り時間・スピード） */
+.lifelabel{
+  position:absolute;
+  top:calc(var(--dot) * 4);    /* 左上：ハートとエナドリ（その下にセリフウィンドウ） */
+  left:calc(var(--dot) * 5);
+  white-space:nowrap;
+  display:flex;
+  align-items:center;   /* ハートとエナドリの高さをそろえる */
+}
+.hud{
+  position:absolute;
+  top:calc(var(--dot) * 16);   /* 右上：日にちの下に今の時刻だけ */
+  right:3%;
+  white-space:nowrap;
+  letter-spacing:.05em;
+}
+.hurry{ color:#ff6060; }
+.meter .num, .num{ color:#f8d030; }
+.outline{
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+}
+.msgwin{
+  position:absolute;
+  top:calc(var(--dot) * 16);   /* ハートとエナドリの下 */
+  left:calc(var(--dot) * 3);
+  /* 一番長いセリフ（10文字）＋顔アイコンが収まる、ぎりぎりの幅 */
+  width:calc(var(--dot) * 118);
+  height:calc(var(--dot) * 30);
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  gap:calc(var(--dot) * 4);
+  padding:0 calc(var(--dot) * 4);
+  background:transparent;
+  border:var(--dot) solid #f8f8f8;
+  /* 枠にも1ドットの影 */
+  box-shadow:var(--dot) var(--dot) 0 #1c2030, inset var(--dot) var(--dot) 0 #1c2030;
+  color:#f8f8f8;
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+  white-space:nowrap;
+}
+.msgwin .msg{ text-align:left !important; }
+/* 「きょうははやいな！」のとき、セリフウィンドウの下に */
+.umbstars{ position:absolute; transform:translate(-50%, -100%); font-size:calc(var(--dot) * 8); color:#f8d030; white-space:nowrap; pointer-events:none; opacity:0; z-index:5; }
+.umbstars.show{ animation:umbshow 1.1s steps(1, end) forwards; }
+@keyframes umbshow{ 0%{ opacity:1; } 90%{ opacity:1; } 100%{ opacity:0; } }
+.umbstars .lose{ animation:umblose .5s steps(1, end) forwards; }
+@keyframes umblose{ 0%{ opacity:1; } 20%{ opacity:0; } 40%{ opacity:1; } 60%{ opacity:0; } 80%{ opacity:1; } 100%{ opacity:0; } }
+.screen.paused .umbstars, .screen.paused .umbstars .lose{ animation-play-state:paused !important; }
+.medalmsg{ position:absolute; top:calc(var(--dot) * 49); left:calc(var(--dot) * 4); font-size:calc(var(--dot) * 8); color:#f8d030; white-space:nowrap; z-index:4; }
+.daybanner{
+  position:absolute;
+  top:42%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:calc(var(--dot) * 24);
+  color:#f8f8f8;
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  text-shadow:calc(var(--dot) * 2) calc(var(--dot) * 2) 0 #1c2030, calc(var(--dot) * -2) 0 0 #1c2030, calc(var(--dot) * 2) 0 0 #1c2030, 0 calc(var(--dot) * -2) 0 #1c2030, 0 calc(var(--dot) * 2) 0 #1c2030;
+}
+.daybanner.show{ animation:daybanner 1.8s steps(1, end) forwards; }
+@keyframes daybanner{
+  0%   { opacity:1; }
+  85%  { opacity:1; }
+  100% { opacity:0; }
+}
+.screen.paused .daybanner{ animation-play-state:paused !important; }
+.hurrypop{
+  position:absolute;
+  transform:translate(-50%, -100%);
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+}
+.hurrypop.hop{ animation:hop 1s steps(10, end) forwards; }
+@keyframes hop{
+  0%   { opacity:1; transform:translate(-50%, -100%); }
+  15%  { opacity:1; transform:translate(-50%, -190%); }
+  30%  { opacity:1; transform:translate(-50%, -150%); }
+  75%  { opacity:1; transform:translate(-50%, -170%); }
+  100% { opacity:0; transform:translate(-50%, -190%); }
+}
+.msgwin .face{
+  width:calc(var(--dot) * 20);
+  height:calc(var(--dot) * 20);
+  image-rendering:pixelated;
+  flex:none;
+  background:#d6e2ea;
+  box-shadow:var(--dot) var(--dot) 0 #1c2030;
+}
+.msgwin .msg{ flex:1; min-width:0; text-align:center; overflow:hidden; }
+.msgwin .msg.red{ color:#ff6060; }
+.speedo{
+  display:none !important;   /* スピード表示はなし */
+  position:absolute;
+  top:calc(var(--dot) * 24);
+  right:3%;
+  white-space:nowrap;
+  letter-spacing:.08em;
+}
+.boostlabel{
+  display:none !important;   /* ブーストはセリフウィンドウの顔で知らせる */
+  position:absolute;
+  top:calc(var(--dot) * 24);
+  right:3%;
+  color:#f8d030;
+  white-space:nowrap;
+  letter-spacing:.08em;
+}
+.popup{
+  position:absolute;
+  top:30%;
+  left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+}
+.popup.show{ animation:pop 1.8s steps(1,end) forwards; }
+@keyframes pop{
+  0%   { opacity:1; transform:translate(-50%, 8px); }
+  8%   { opacity:1; transform:translate(-50%, 0); }
+  85%  { opacity:1; transform:translate(-50%, 0); }
+  100% { opacity:0; transform:translate(-50%, 0); }
+}
+.headpop{
+  position:absolute;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%, -100%);
+}
+.headpop.up{ color:#f8d030; }
+.headpop.red{ color:#ff6060; }
+.headpop.down{ color:#80c0ff; }
+.headpop.talk{ animation:talk 2.4s steps(1,end) forwards; }
+@keyframes talk{
+  0%   { opacity:1; }
+  88%  { opacity:1; }
+  100% { opacity:0; }
+}
+.headpop.show{ animation:headpop 1s steps(6,end) forwards; }
+@keyframes headpop{
+  0%   { opacity:1; transform:translate(-50%, -100%); }
+  80%  { opacity:1; transform:translate(-50%, -180%); }
+  100% { opacity:0; transform:translate(-50%, -180%); }
+}
+.controls{
+  position:absolute;
+  bottom:calc(var(--dot) * 3);
+  left:0; right:0;
+  display:flex;
+  justify-content:center;
+  gap:calc(var(--dot) * 6);
+  z-index:7;
+}
+.ctl{
+  background:transparent !important;
+  color:#f8f8f8 !important;
+  border:var(--dot) solid #f8f8f8 !important;
+  box-shadow:var(--dot) var(--dot) 0 #1c2030, inset var(--dot) var(--dot) 0 #1c2030 !important;
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+  font-size:calc(var(--dot) * 8) !important;
+  padding:calc(var(--dot) * 2) calc(var(--dot) * 6) !important;
+  animation:none !important;
+  line-height:1.2;
+}
+.ctl.vol{
+  width:calc(var(--dot) * 16);
+  height:calc(var(--dot) * 16);
+  padding:0 !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ctl.vol svg{
+  width:calc(var(--dot) * 12);
+  height:calc(var(--dot) * 12);
+  fill:#f8f8f8;
+  filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030);
+}
+.ctl:active{ transform:translate(var(--dot), var(--dot)); }
+/* ポーズボタン：ゲーム画面の上の真ん中（ハート列と時計のすきま） */
+.pausebtn{
+  position:absolute; right:3%; top:calc(var(--dot) * 28);   /* 右上：時刻の下に右寄せ（週があるときは JS で1行下げる） */
+  width:calc(var(--dot) * 12); height:calc(var(--dot) * 12);
+  padding:0 !important; display:flex; align-items:center; justify-content:center; z-index:10;
+}
+.pausebtn.on{ background:#f8f8f8 !important; }
+.cambtn{ top:calc(var(--dot) * 44); }
+.cammenu{ z-index:11; }
+.cambox{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 6); font-size:calc(var(--dot) * 8);
+  border:var(--dot) solid #f8f8f8; box-shadow:var(--dot) var(--dot) 0 #1c2030; padding:calc(var(--dot) * 8) calc(var(--dot) * 12); }
+.camrow{ display:flex; align-items:center; gap:calc(var(--dot) * 6); }
+/* UI スイッチ：つまみはいつも白。オン＝つまみが右で、あいた左側も白／オフ＝つまみが左で、あいた右側は透明 */
+.camsw{
+  position:relative; width:calc(var(--dot) * 16) !important; height:calc(var(--dot) * 12) !important; padding:0 !important;
+  background:transparent !important; border:var(--dot) solid #f8f8f8 !important; box-shadow:var(--dot) var(--dot) 0 #1c2030 !important;
+  animation:none !important; cursor:pointer;
+}
+.camsw i{
+  position:absolute; top:calc(var(--dot) * 1); left:calc(var(--dot) * 1);
+  width:calc(var(--dot) * 4); height:calc(var(--dot) * 8); box-sizing:border-box;
+  background:#f8f8f8;
+}
+.camsw::before{ content:""; position:absolute; inset:var(--dot); background:transparent; }   /* 枠の内側は1ドットあける */
+.camsw.on::before{ background:#f8f8f8; }
+.camsw.on i{ box-shadow:0 0 0 var(--dot) #1c2030; }   /* 白どうしでもつまみが見えるように、ふちだけ濃い色 */
+.camsw.on i{ left:calc(var(--dot) * 9); }   /* メニューの下：スクショ（カメラ） */
+.camflash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:20; }
+.camflash.go{ animation:camflash .35s steps(4, end) forwards; }
+@keyframes camflash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
+.pausebtn.on svg{ fill:#1c2030; filter:none; }
+.pausebtn svg, .volopt svg{ width:calc(var(--dot) * 8); height:calc(var(--dot) * 8); fill:#f8f8f8; filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030); display:block; }
+.pausemenu{
+  position:absolute; inset:0; background:rgba(16,18,28,.86);   /* 後ろのセリフ枠などが透けて見えにくい濃さ */
+  display:flex; align-items:center; justify-content:center;
+  color:#f8f8f8; z-index:8; padding-top:calc(var(--dot) * 10);
+}
+.pausemenu.hidden{ display:none; }
+/* 交換画面 */
+.xchg{
+  position:absolute; inset:0; z-index:12; background:rgba(16,18,28,.72);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--dot) * 2);
+  color:#f8f8f8; font-size:calc(var(--dot) * 8);
+}
+.xchg .xtext{ gap:calc(var(--dot) * 1); margin-bottom:calc(var(--dot) * 1); }
+.xcost{ position:absolute; right:calc(var(--dot) * 2); bottom:calc(var(--dot) * 1); line-height:1; }   /* 必要なメダル（右下） */
+.xgot{ position:absolute; left:0; right:0; bottom:calc(var(--dot) * 2); text-align:center; }
+.xchg.hidden{ display:none; }
+.xrow{ display:flex; align-items:center; gap:calc(var(--dot) * 6); }
+.xbox{ position:relative; }
+.xbox .hp{ position:absolute; top:calc(var(--dot) * 3); left:0; right:0; text-align:center; color:#f8f8f8; } .xbox .hp b{ color:#ff6a6a; font-weight:400; }
+.xbox > svg{ margin-top:0; }
+.xbox{
+  width:calc(var(--dot) * 54); height:calc(var(--dot) * 46); flex-direction:column; gap:calc(var(--dot) * 2); color:#f8f8f8; font-size:calc(var(--dot) * 8) !important; line-height:1.3; text-shadow:var(--dot) var(--dot) 0 #1c2030; padding:0 !important;
+  background:rgba(255,255,255,.08) !important; border:var(--dot) solid #a8b0bc !important;
+  box-shadow:var(--dot) var(--dot) 0 #1c2030 !important; animation:none !important;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.xbox.sel{ border-color:#f8d030 !important; background:rgba(248,208,48,.18) !important; outline:var(--dot) solid #f8d030; }
+.xbox.off{ opacity:.28; cursor:default; }
+.xbox svg, .xpop svg{ display:block; }
+.xtext{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 4); text-align:center; line-height:1.5; }
+/* アイコン列の下：左寄せ←、右寄せ→（操作説明を兼ねる） */
+.xarrows{ width:calc(var(--dot) * 174); display:flex; justify-content:space-between; margin-top:calc(var(--dot) * -2); }
+/* ゲームオーバー時の「結果をシェア」：画面の左下すみ */
+.sharebar{ position:absolute; left:calc(var(--dot) * 4); bottom:calc(var(--dot) * 4); z-index:7; display:flex; gap:calc(var(--dot) * 4); }
+.sharebar.hidden{ display:none; }
+.sharebar.right{ left:auto; right:calc(var(--dot) * 4); }   /* ゲームオーバー：右下に「タイトルへ」 */
+.overlay.over #start{ display:none; }
+.overlay.over .card{ transform:translateY(calc(var(--dot) * 8)) !important; }   /* ゲームオーバー：ボタンが下に移ったぶん文字を上げて、下のボタンとかぶらないように */
+.screen.over .medalstack{ bottom:calc(var(--dot) * 22); }   /* 右下のボタンの上によける */
+.sharebtn{
+  background:transparent !important; color:#f8f8f8 !important;
+  border:var(--dot) solid #f8f8f8 !important; padding:calc(var(--dot) * 2) calc(var(--dot) * 4) !important;
+  box-shadow:var(--dot) var(--dot) 0 #1c2030, inset var(--dot) var(--dot) 0 #1c2030 !important;
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+  font-size:calc(var(--dot) * 8) !important; line-height:1.2; cursor:pointer; animation:none !important;
+}
+.sharebtn:active{ transform:translate(var(--dot), var(--dot)); }
+
+.xgot{ min-height:calc(var(--dot) * 10); color:#f8d030; }
+.xpop{ position:absolute; pointer-events:none; transform:translate(-50%, -50%); }
+.xpop.go{ animation:xpop 1.2s steps(12, end) forwards; }
+@keyframes xpop{
+  0%  { transform:translate(-50%, -50%) scale(1); opacity:1; }
+  40% { transform:translate(-50%, calc(-50% - var(--dot) * 30)) scale(1.3); opacity:1; }
+  80% { transform:translate(-50%, calc(-50% - var(--dot) * 34)) scale(1.3); opacity:1; }
+  100%{ transform:translate(-50%, calc(-50% - var(--dot) * 34)) scale(1.3); opacity:0; }
+}
+.pmbox{ display:flex; gap:calc(var(--dot) * 6); align-items:stretch; height:calc(var(--dot) * 96); }
+.pmtabs{ display:flex; flex-direction:column; gap:calc(var(--dot) * 4); width:calc(var(--dot) * 56); }
+.pmtab, .pmclose{ width:100%; padding:calc(var(--dot) * 3) 0 !important; }
+.pmclose{ margin-top:auto; }   /* 項目の下（一番下）に「とじる」 */
+.pmtab.on{ background:#f8f8f8 !important; color:#1c2030 !important; text-shadow:none !important; }
+.pmbody{
+  width:calc(var(--dot) * 150); border:var(--dot) solid #f8f8f8; box-shadow:var(--dot) var(--dot) 0 #1c2030;
+  padding:calc(var(--dot) * 6); font-size:calc(var(--dot) * 8); box-sizing:border-box;
+}
+.pmpane{ display:none; height:100%; }
+.pmpane.on{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--dot) * 6); }
+.pmpane .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
+.pmq{ margin:0; text-align:center; line-height:1.6; }
+.pmsub{ color:#c8ccd8; }
+.volopts{ display:flex; align-items:center; gap:calc(var(--dot) * 3); }
+.volbar{ display:flex; align-items:flex-end; gap:var(--dot); height:calc(var(--dot) * 14); }
+.volseg{
+  width:calc(var(--dot) * 5); padding:0 !important; border:var(--dot) solid #f8f8f8 !important;
+  background:transparent !important; box-shadow:var(--dot) var(--dot) 0 #1c2030 !important; animation:none !important;
+}
+.volseg.on{ background:#f8f8f8 !important; }
+.volseg:nth-child(1){ height:calc(var(--dot) * 5); } .volseg:nth-child(2){ height:calc(var(--dot) * 6); }
+.volseg:nth-child(3){ height:calc(var(--dot) * 7); } .volseg:nth-child(4){ height:calc(var(--dot) * 8); }
+.volseg:nth-child(5){ height:calc(var(--dot) * 9); } .volseg:nth-child(6){ height:calc(var(--dot) * 10); }
+.volseg:nth-child(7){ height:calc(var(--dot) * 11); } .volseg:nth-child(8){ height:calc(var(--dot) * 12); }
+.volseg:nth-child(9){ height:calc(var(--dot) * 13); } .volseg:nth-child(10){ height:calc(var(--dot) * 14); }
+.volopt{ width:calc(var(--dot) * 14); height:calc(var(--dot) * 14); padding:0 !important; display:flex; align-items:center; justify-content:center; }
+.volopt.on{ background:#f8f8f8 !important; }
+.volopt.on svg{ fill:#1c2030; filter:none; }
+/* 遊び方：タイトルだけ */
+
+/* 記録（ポーズ中）：半透明の黒の上に上位5件 */
+.recpanel{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:calc(var(--dot) * 4);
+  color:#f8f8f8;
+  z-index:9;   /* ポーズメニューより手前 */
+}
+.recpanel .rectitle{ font-size:calc(var(--dot) * 16); }
+.recpanel .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
+.recpanel .rechint{ font-size:calc(var(--dot) * 8); color:#c8ccd8; }
+.recpanel.hidden{ display:none; }
+/* ポーズ中は画面内のアニメーションも止める */
+.screen.paused .headpop, .screen.paused .hurrypop, .screen.paused .popup{ animation-play-state:paused !important; }
+.help{
+  text-align:center;
+  margin-top:8px;
+  color:#a8b0bc;
+  font-size:15px;
+}
+.overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:5;
+}
+.overlay.clear{ background:transparent; }
+/* タイトル画面：ウィンドウを使わず、背景の上に文字を直接のせる */
+.overlay{ background:transparent !important; pointer-events:none; }
+.overlay button{ pointer-events:auto; }
+.overlay .card{ background:transparent; border:0; box-shadow:none; width:auto; }
+/* 結果画面は左上のセリフウィンドウと重ならないよう少し下げる */
+.overlay:not(.menu) .card{ transform:translateY(calc(var(--dot) * 24)); padding:0; }   /* 左上のセリフ枠とハート列の下、道の上あたりに */
+.overlay:not(.menu) .card h1{ margin-bottom:calc(var(--dot) * 3) !important; }
+.overlay .card p{ margin:calc(var(--dot) * 3) 0 calc(var(--dot) * 4) !important; }
+.overlay .card p{
+  color:#f8f8f8;
+  font-size:calc(var(--dot) * 8) !important;
+  line-height:1.6;
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+}
+.overlay .card h1{
+  font-size:calc(var(--dot) * 24) !important;
+  color:#f8f8f8;
+  margin:0 0 calc(var(--dot) * 10);
+  text-shadow:calc(var(--dot) * 2) calc(var(--dot) * 2) 0 #1c2030, calc(var(--dot) * -2) 0 0 #1c2030, calc(var(--dot) * 2) 0 0 #1c2030, 0 calc(var(--dot) * -2) 0 #1c2030, 0 calc(var(--dot) * 2) 0 #1c2030;
+}
+.overlay button{
+  background:transparent;
+  box-shadow:none;
+  color:#f8f8f8;
+  font-size:calc(var(--dot) * 8) !important;
+  text-shadow:var(--dot) var(--dot) 0 #1c2030, calc(var(--dot) * -1) 0 0 #1c2030, var(--dot) 0 0 #1c2030, 0 calc(var(--dot) * -1) 0 #1c2030, 0 var(--dot) 0 #1c2030;
+  animation:blink 1.2s steps(1, end) infinite;
+}
+/* 週クリア：タイトルとボタンを大きく（上のUIに重なってもよい） */
+.overlay.weekend .card{ transform:translateY(calc(var(--dot) * 10)) !important; }
+.overlay.weekend .card h1{ font-size:calc(var(--dot) * var(--tsize, 40)) !important; white-space:nowrap; }
+.overlay.weekend button{ font-size:calc(var(--dot) * 16) !important; }
+@keyframes blink{ 0%{ opacity:1; } 60%{ opacity:0; } 100%{ opacity:0; } }
+.card{
+  width:min(480px,90vw);
+  background:#1c2030;
+  border:6px solid #f8f8f8;
+  box-shadow:0 0 0 6px #1c2030;
+  padding:28px;
+  text-align:center;
+}
+.card h1{ margin:0 0 10px; font-size:36px; font-weight:400; }
+.card p:empty{ display:none; }
+.card p{ line-height:1.8; color:#d0d4dc; }
+button{
+  font-family:inherit;
+  border:0;
+  padding:12px 34px;
+  font-size:20px;
+  background:#f8d030;
+  color:#1c2030;
+  cursor:pointer;
+  box-shadow:4px 4px 0 #806018;
+}
+button:disabled{ opacity:.4; cursor:default; }
+button:active{ transform:translate(4px,4px); box-shadow:none; }
+
+/* ゲーム画面内の文字：8ドット＝1文字 */
+.hud, .daylabel, .lifelabel, .hurrypop, .meter, .speedo, .boostlabel, .headpop, .msgwin{ font-size:calc(var(--dot) * 8); line-height:1.2; }
+.popup{ font-size:calc(var(--dot) * 16); line-height:1.2; }
+.header{ font-size:var(--ui); display:flex; justify-content:space-between; align-items:center; line-height:1.2; gap:1em; }
+.header{ overflow:hidden; }
+.header .hint{ flex:1; min-width:0; text-align:left; color:#a8b0bc; font-size:.7em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+#bestLabel{ white-space:nowrap; }
+.ctl.vol{
+  width:calc(var(--dot) * 16);
+  height:calc(var(--dot) * 16);
+  padding:0 !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.ctl.vol svg{
+  width:calc(var(--dot) * 12);
+  height:calc(var(--dot) * 12);
+  fill:#f8f8f8;
+  filter:drop-shadow(var(--dot) var(--dot) 0 #1c2030);
+}
+.ctl:active{ transform:translate(var(--dot), var(--dot)); }
+/* 記録（ポーズ中）：半透明の黒の上に上位5件 */
+.recpanel{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:calc(var(--dot) * 4);
+  color:#f8f8f8;
+  z-index:9;   /* ポーズメニューより手前 */
+}
+.recpanel .rectitle{ font-size:calc(var(--dot) * 16); }
+.recpanel .reclist{ font-size:calc(var(--dot) * 8); line-height:1.6; margin:0; padding:0; list-style:none; text-align:left; }
+.recpanel .rechint{ font-size:calc(var(--dot) * 8); color:#c8ccd8; }
+.recpanel.hidden{ display:none; }
+/* ポーズ中は画面内のアニメーションも止める */
+.screen.paused .headpop, .screen.paused .hurrypop, .screen.paused .popup{ animation-play-state:paused !important; }
+.help{ font-size:var(--ui); }
+.card p{ font-size:var(--ui); }
+.card h1{ font-size:calc(var(--ui) * 2) !important; }
+button{ font-size:var(--ui) !important; }
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="game-wrap" id="wrap">
+  <div class="header"><span class="hint">Space/タップ ジャンプ</span><span id="bestLabel">Best: -</span></div>
+  <div class="screen">
+    <canvas id="game" width="264" height="144"></canvas>
+    <!-- 画面下中央のポーズボタン（左右どちらの手でも押せる）。ほかの場所はどこをタップしてもジャンプ -->
+    <button class="ctl icon pausebtn" id="btnPause" aria-label="メニュー"></button>
+    <button class="ctl icon pausebtn cambtn" id="btnCam" aria-label="スクリーンショット"><svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M2 1h4v1H2z M0 2h8v1H0z M0 3h2v1H0z M6 3h2v1H6z M0 4h1v1H0z M3 4h2v1H3z M7 4h1v1H7z M0 5h1v1H0z M3 5h2v1H3z M7 5h1v1H7z M0 6h2v1H0z M6 6h2v1H6z M0 7h8v1H0z" /></svg></button>
+    <div class="camflash" id="camFlash"></div>
+    <!-- カメラ：確認（ゲームはポーズ） -->
+    <div class="pausemenu cammenu hidden" id="camMenu">
+      <div class="cambox outline">
+        <p class="pmq">スクリーンショットをとりますか？</p>
+        <div class="camrow"><button class="ctl" id="camYes">はい</button><button class="ctl" id="camNo">いいえ</button></div>
+        <div class="camrow">UI <button class="camsw" id="camUI" aria-label="UI"><i></i></button></div>
+      </div>
+    </div>
+    <div class="daylabel outline hidden" id="dayLabel">1日目</div>
+    <div class="lifelabel outline hidden" id="lifeLabel"></div>
+    <div class="meter outline hidden" id="meter"><svg class="arrow" viewBox="0 0 9 9" shape-rendering="crispEdges"><path d="M0 3h4V0h1v1h1v1h1v1h1v1h1v1H8v1H7v1H6v1H5v1H4V6H0z"/></svg><span><span class="num" id="meterNum">400</span>m</span></div>
+    <div class="hud outline hidden" id="hud"></div>
+    <div class="popup outline" id="popup"></div>
+    <div class="headpop outline" id="headpop"></div>
+    <div class="headpop outline" id="teacherpop"></div>
+    <div class="medalpop hidden" id="medalpop"></div>
+    <div class="medalstack" id="medalStack"></div>
+    <div class="headpop outline" id="dmgpop"></div>
+    <div class="umbstars outline" id="umbStars"></div>
+    <div class="umbstars outline" id="bikeStars"></div>
+    <div class="headpop outline" id="usepop"></div>
+    <div class="headpop outline" id="healpop"></div>
+    <div class="headpop outline" id="slowpop"></div>
+    <div class="headpop outline" id="wapopL"></div>
+    <div class="headpop outline" id="wapopR"></div>
+    <div class="headpop outline" id="elderpop"></div>
+    <div class="boostlabel outline hidden" id="boostLabel">BOOST!</div>
+    <div class="speedo outline hidden" id="speedo">SPEED ×1.00</div>
+    <div class="hurrypop outline" id="hurry">いそげ！</div>
+    <div class="daybanner" id="dayBanner"></div>
+    <div class="medalmsg outline hidden" id="medalMsg">メダルをもらった！</div>
+    <div class="msgwin hidden" id="msgWin"><img class="face" id="faceL" alt=""><span class="msg" id="msgText"></span></div>
+    <!-- タイトル・結果（ゲーム画面の中に置くので、スマホの縦画面でも画面に対して中央） -->
+    <div class="overlay menu" id="overlay">
+      <div class="card">
+        <h1 id="title">遅刻ダッシュ！</h1>
+        <p id="message"></p>
+        <button id="start">スタート</button>
+      </div>
+    </div>
+    <!-- ポーズメニュー（タブ式）：左にタブ、右に中身。開け閉めは上のポーズボタンだけ -->
+    <!-- メダル3つの交換画面（クリアのリザルト中、いちばん手前）。アイコンは最下段に横並び -->
+    <div class="xchg hidden" id="xchg">
+      <div class="xtext outline"><div>メダルと こうかんできるよ！ えらんでね！</div><div id="xWallet"></div></div>
+      <div class="xrow">
+        <button class="xbox" data-x="bike" aria-label="自転車"></button>
+        <button class="xbox" data-x="umb" aria-label="傘"></button>
+        <button class="xbox" data-x="bread" aria-label="食パン"></button>
+      </div>
+      <div class="xrow">
+        <button class="xbox" data-x="life3" aria-label="ハートの上限3"></button>
+        <button class="xbox" data-x="life4" aria-label="ハートの上限4"></button>
+        <button class="xbox" data-x="skip" aria-label="とっておく"></button>
+      </div>
+      <div class="xarrows outline"><span>←</span><span>→</span></div>
+      <div class="xgot outline" id="xGot"></div>
+      <div class="xpop" id="xPop"></div>
+    </div>
+    <div class="sharebar hidden" id="shareBar"><button id="shareBtn" class="sharebtn">結果をシェア</button><button id="saveBtn" class="sharebtn">画像を保存</button></div>
+    <div class="sharebar right hidden" id="overTitleBar"><button id="overTitleBtn" class="sharebtn">タイトルへ</button></div>
+    <div class="pausemenu hidden" id="pauseMenu">
+      <div class="pmbox">
+        <div class="pmtabs">
+          <button class="ctl pmtab" data-tab="rec">記録</button>
+          <button class="ctl pmtab" data-tab="vol">音量</button>
+          <button class="ctl pmtab" data-tab="title" id="tabTitle">タイトルへ</button>
+          <button class="ctl pmclose" id="btnClose">とじる</button>
+        </div>
+        <div class="pmbody outline">
+          <div class="pmpane" data-pane="rec"><ol class="reclist" id="recList"></ol></div>
+          <div class="pmpane" data-pane="vol"><div class="volopts" id="volOpts"></div></div>
+          <div class="pmpane" data-pane="title"><p class="pmq">タイトルにもどる？<br><span class="pmsub">（ここまでの記録はのこります）</span></p><button class="ctl" id="btnTitle">もどる</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+//  低解像度（220×120）で描いて整数倍に拡大 → ドットの大きさが全画面で統一
+// =====================================================
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+
+const W = canvas.width;   // 264（少し引いた画：前方が広く見える）
+const H = canvas.height;  // 144
+// ゲーム内の座標は高さ120基準のまま。増えた24ドットを上（空）と下（道路）に半分ずつ足す
+const VIEW_OY = 10;   // 世界を上に寄せて、画面下の地面（ハート・エナドリ・メダルを置く帯）を広くとる
+const groundY = 98;
+// 道を広くして少し見下ろす感じに：女の子・猫・障害物・門などは、塀の下端（groundY）より LANE だけ手前（下）に描く。
+// 当たり判定などの計算はこれまでどおり groundY 基準のまま（見た目だけずらす）
+const LANE = 14;
+
+// ===== ゲーム設定（難易度はここで調整） =====
+const CONFIG = {
+  sectionLen:  640,    // 1区間（=100m）の長さ（ドット）
+  sections:    4,      // （表示用の区切り。実際の長さは courseMeters）
+  courseMeters: 600,   // 学校までの距離（m）
+  baseSpeed:   1.45,   // 初期スピード（ドット/フレーム）
+  autoUp:      0.08,   // ノーミスで走っていると 100m ごとに +0.08倍（永続、なめらかに上昇）。1日あたりの伸びは 800m時代と同じ
+  drinkBonus:  1.00,   // エナドリ：一定時間 +1.00倍（スピード表示には足さない）
+  drinkTime:   150,    // エナドリの効果時間（フレーム、60=1秒）
+  puddleDown:  0.20,   // 水たまり1回で −0.20倍（永続）
+  minMul:      1.00,   // 下がる下限（×1.0より下げない）
+  bananaDown:  0.20,   // バナナ1回で −0.20倍（永続）。ライフは減らない
+  rollTime:    48,     // バナナで転がっている時間（フレーム）
+  flipTime:    20,     // 空中クルッ：その高さで止まって1回転する時間（フレーム）
+  carrySpeed:  true,   // 次の日にスピード倍率を引き継ぐか（false = 毎朝×1.00から）
+  timeLimit:   37.5,   // 1日の制限時間（秒）。ゲーム内時計で 7:30 → 7:55（1.5秒＝1分）
+  secPerMinute: 1.5,   // 現実の何秒でゲーム内の1分が進むか
+  melonSlow:   0.45,   // スイカに乗っているあいだ、スピードをこの割合だけ落とす（バランスを取るぶん遅い）
+  rainSlow:    0.15,   // アジサイのまわりの雨に濡れているあいだ、スピードをこの割合だけ落とす（傘があれば無効）
+  rainPuddles: 1.6,    // アジサイの週は水たまりをこの倍に
+  lateDensity: 2.0,    // コース終盤の障害物密度（序盤を1として）。後半ほど難しく
+  maxDrinks:   10,     // エナドリのストック上限（日・週をまたいで持ち越し）
+  healDrinks:  5,      // ライフが減っているとき、この本数たまったら自動で消費して ♥+1
+  starDrinks:  10,     // ライフ満タンでこの本数たまると無敵タイム（全部消費）
+  bikeBonus:   0.15,   // 自転車に乗っている間のスピード上乗せ（少し速い）
+  starTime:    225,    // 無敵タイムの長さ（フレーム）。条件が厳しいのでエナドリの1.5倍（3日目あたりで無敵になれば「はやいな」メダルに届く）
+  starBonus:   3.00,   // 無敵タイム中の上乗せ（トップスピード）
+  clockStart:  450,    // 7:30（分）
+  daysPerWeek: 5,      // 月〜金の5日で1週
+  lives:       2,      // ライフ（0でゲームオーバー。日・週をまたいで持ち越し、回復はエナドリで）
+  tabbyFrom:   3,      // 茶トラが出はじめる日
+  tabbyPerDay: 0.08,   // 出はじめてから1日ごとに増える割合（3日目8%、4日目16%…）
+  tabbyMax:    0.3,    // 茶トラの割合の上限
+  canInterval: 900,    // エナドリの出現間隔（ドット、固定。640=100m → 約140mごと）
+  gateStopX:   150,    // 正門が画面のこの位置に来たらスクロール停止
+};
+// 日ごとの障害物の数：[1日目の数, 1日ごとの増加]（エリア分割でランダム配置）
+// 障害物の数：[第1週1日目の数, 1日ごとの増加, 1週ごとの増加]
+// 週が変わるとスピードはリセットされる代わりに、障害物の総数が毎週およそ2つずつ増える
+const DAY_COUNTS = {
+  // コース 800m → 600m に合わせて、密度が変わらないよう 0.71倍（障害物を置ける区間の長さの比）
+  cats:    [3.2, 0.53, 1.07],
+  crows:   [1.07, 0.32, 0.36],
+  melons:  [0.6, 0.25, 0.3],   // 夏だけ：転がってくるスイカ
+  puddles: [1.07, 0.32, 0.36],
+  bananas: [1.07, 0.27, 0.36],
+};
+function countFor(key){
+  const [b, incDay, incWeek] = DAY_COUNTS[key];
+  return Math.floor(b + incDay * (day - 1) + incWeek * (week - 1));
+}
+const COURSE = Math.round(CONFIG.courseMeters * CONFIG.sectionLen / 100);
+const pxPerMeter = CONFIG.sectionLen / 100;
+const RUN_CAT_EXTRA = 0.36;   // 走る猫の追加スピード
+const TABBY_EXTRA = 0;        // 茶トラはその場でぴょんぴょん跳ねる（地面と一緒に流れてくる）
+// 茶トラのジャンプ（ぴょんぴょん跳ね続ける）
+const TABBY_HOP = { v0:3.1, g:0.09, air:69, rest:10 };   // 大きく高く跳ぶ（最高で約53ドット、女の子の頭よりずっと上）
+function tabbyLift(t){
+  const k = t % (TABBY_HOP.air + TABBY_HOP.rest);
+  if(k >= TABBY_HOP.air) return 0;
+  return Math.max(0, TABBY_HOP.v0 * k - TABBY_HOP.g / 2 * k * k);
+}
+
+// 拡大率を「デバイスピクセル単位の整数」にする（ドット幅が1つ1つズレないように）
+let cssH = 600;
+function fitScreen(){
+  // 画面いっぱいに表示（縦横比は固定なので、どの環境でもUIの比率は同じ）
+  const root = document.documentElement.style;
+  root.setProperty("--ui", "16px");
+  const headerH = document.querySelector(".header").offsetHeight;
+  const maxW = window.innerWidth;
+  const maxH = window.innerHeight - headerH;
+  const scale = Math.min(maxW / W, maxH / H);
+  const cssW = Math.floor(W * scale);
+  cssH = Math.floor(H * scale);
+  canvas.style.width = cssW + "px";
+  canvas.style.height = cssH + "px";
+  document.getElementById("wrap").style.width = cssW + "px";
+  // 1ドットの大きさ（CSS px）。文字は 8ドット＝1文字 で表示してゲームのドットとそろえる
+  root.setProperty("--dot", (cssH / H) + "px");
+}
+window.addEventListener("resize", fitScreen);
+fitScreen();
+
+
+// =====================================================
+//  8bit BGM & SE（Web Audio API）
+// =====================================================
+let audioCtx = null;
+let bgmInterval = null;
+let isBgmPlaying = false;
+
+// 音階テーブル (Hz)
+const N = {
+  C3:130.81, D3:146.83, E3:164.81, F3:174.61, G3:196.00, A3:220.00, B3:246.94,
+  C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, B4:493.88,
+  C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99, A5:880.00, B5:987.77,
+  C6:1046.50, D6:1174.66, E6:1318.51,
+  _:0
+};
+
+const bgmMelody = [
+  // Aメロ：焦りつつ元気なフレーズ
+  N.E5, N.G5, N.A5, N.G5,  N.E5, N.D5, N.C4, N.D4,
+  N.E5, N.E5, N.D5, N.C4,  N.D5, N._,  N.G4, N._,
+  N.E5, N.G5, N.A5, N.G5,  N.C5, N.D5, N.E5, N.D5,
+  N.C5, N.A4, N.G4, N.A4,  N.C5, N._,  N._,  N._,
+  // Bメロ：コード展開で躍動感
+  N.A5, N.A5, N.G5, N.F5,  N.E5, N.F5, N.G5, N.E5,
+  N.D5, N.D5, N.C5, N.D5,  N.E5, N.D5, N.C5, N.G4,
+  N.A5, N.A5, N.G5, N.F5,  N.E5, N.G5, N.C6, N.B5,
+  N.A5, N.G5, N.F5, N.D5,  N.C5, N._,  N._,  N._
+];
+
+const bgmBass = [
+  N.C3, N._, N.C3, N._,  N.G3, N._, N.G3, N._,
+  N.A3, N._, N.A3, N._,  N.F3, N._, N.F3, N._,
+  N.C3, N._, N.C3, N._,  N.G3, N._, N.G3, N._,
+  N.F3, N._, N.G3, N._,  N.C3, N._, N.C3, N._,
+  N.F3, N._, N.F3, N._,  N.C3, N._, N.C3, N._,
+  N.G3, N._, N.G3, N._,  N.A3, N._, N.A3, N._,
+  N.F3, N._, N.F3, N._,  N.E3, N._, N.A3, N._,
+  N.D3, N._, N.G3, N._,  N.C3, N._, N.C3, N._
+];
+
+// 音量：最大 → 無音 → 1 → 2 → 最大 の順に切り替え（全部の音がマスター音量を通る）
+const VOL_STEPS = 10;   // 音量バーの目盛り（0＝無音〜10＝最大）
+let volStep = VOL_STEPS;
+const volGain = () => volStep / VOL_STEPS;
+let masterGain = null;
+function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = volGain();
+    masterGain.connect(audioCtx.destination);
+  }
+  if(audioCtx.state === "suspended") audioCtx.resume();
+}
+function outNode(){ return masterGain || audioCtx.destination; }
+
+function playNote(freq, type, duration, vol=0.08){
+  if(!audioCtx || !freq) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(outNode());
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playNoise(duration, vol=0.03){
+  if(!audioCtx) return;
+  const bufferSize = audioCtx.sampleRate * duration;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  noise.connect(gain);
+  gain.connect(outNode());
+  noise.start();
+}
+
+let bgmStep = 0;
+function startBGM(fromStart = true){
+  initAudio();
+  stopBGM();
+  if(fromStart) bgmStep = 0;
+  // 1ステップのミリ秒：通常 120、無敵中は速く
+  isBgmPlaying = true;
+  let acc = 120, prev = performance.now();
+  bgmInterval = setInterval(() => {
+    if(!isBgmPlaying) return;
+    const now = performance.now();
+    acc += Math.min(now - prev, 200); prev = now;
+    const fast = starT > 0;
+    const tempo = fast ? 75 : 120;
+    if(acc < tempo) return;
+    acc = Math.min(acc - tempo, tempo);
+    const k = tempo / 120;
+    const step = bgmStep;
+    const mFreq = bgmMelody[step % bgmMelody.length];
+    if(mFreq > 0) playNote(mFreq, "square", 0.11 * k, 0.06);      // メロディ（矩形波）
+    const bFreq = bgmBass[step % bgmBass.length];
+    if(bFreq > 0) playNote(bFreq, "triangle", 0.15 * k, 0.12);    // ベース（三角波）
+    if(step % 2 === 0) playNoise(0.03, 0.02);                 // ハイハット
+    if(step % 4 === 2) playNoise(0.08 * k, 0.05);             // スネア風
+    bgmStep++;
+  }, 10);
+}
+
+function stopBGM(){
+  isBgmPlaying = false;
+  if(bgmInterval){
+    clearInterval(bgmInterval);
+    bgmInterval = null;
+  }
+}
+
+// ジャンプ効果音
+function playJumpSE(){
+  if(!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(780, audioCtx.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+  osc.connect(gain);
+  gain.connect(outNode());
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.12);
+}
+
+// クリア用ファンファーレ
+function playClearMusic(){
+  if(!audioCtx) return;
+  // [周波数, 再生タイミング(秒), 音長(秒), タイプ]
+  const fanfare = [
+    [N.C5, 0.00, 0.12, "square"],
+    [N.E5, 0.12, 0.12, "square"],
+    [N.G5, 0.24, 0.12, "square"],
+    [N.C6, 0.36, 0.40, "square"],
+    [N.G5, 0.76, 0.12, "square"],
+    [N.C6, 0.88, 0.60, "square"],
+    // ハーモニー（ベース音）
+    [N.C4, 0.00, 0.48, "triangle"],
+    [N.G3, 0.36, 0.35, "triangle"],
+    [N.C4, 0.76, 0.70, "triangle"],
+  ];
+  fanfare.forEach(([freq, delay, dur, type]) => {
+    setTimeout(() => playNote(freq, type, dur, 0.12), delay * 1000);
+  });
+}
+
+// ダメージ音（ファミコンっぽい「ビビッ」＋ノイズ）
+function playDamageSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = "square";
+  // 高低を細かく行き来させながら下がっていく
+  const steps = [620, 310, 560, 280, 480, 240, 400, 200];
+  steps.forEach((f, i) => osc.frequency.setValueAtTime(f, t + i * 0.03));
+  gain.gain.setValueAtTime(0.09, t);
+  gain.gain.linearRampToValueAtTime(0.01, t + steps.length * 0.03);
+  osc.connect(gain);
+  gain.connect(outNode());
+  osc.start(t);
+  osc.stop(t + steps.length * 0.03);
+  playNoise(0.1, 0.06);
+}
+
+// 回復音（ドミソド↑のキラッとしたアルペジオ）
+function playHealSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  [523, 659, 784, 1047, 1319].forEach((f, i) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(f, t + i * 0.06);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.setValueAtTime(0.06, t + i * 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.14);
+    osc.connect(gain); gain.connect(outNode());
+    osc.start(t + i * 0.06); osc.stop(t + i * 0.06 + 0.15);
+  });
+}
+
+// 花火：打ち上げ（ヒュ〜）と破裂（ドン）
+function playLaunchSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(500, t);
+  osc.frequency.exponentialRampToValueAtTime(1500, t + 0.6);
+  gain.gain.setValueAtTime(0.03, t);
+  gain.gain.linearRampToValueAtTime(0.001, t + 0.6);
+  osc.connect(gain); gain.connect(outNode());
+  osc.start(t); osc.stop(t + 0.6);
+}
+function playBurstSE(){
+  if(!audioCtx) return;
+  playNoise(0.35, 0.07);
+  playNote(90, "triangle", 0.25, 0.12);
+}
+
+// メダル獲得音（キラリーン）
+function playMedalSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime;
+  [[1319, 0], [1568, .07], [2093, .14], [2637, .24]].forEach(([f, d]) => {
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(f, t + d);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.setValueAtTime(0.05, t + d);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + d + 0.3);
+    osc.connect(gain); gain.connect(outNode());
+    osc.start(t + d); osc.stop(t + d + 0.32);
+  });
+}
+
+// カラスを吹っ飛ばした音（パコーン）
+function playKnockSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(1400, t);
+  osc.frequency.exponentialRampToValueAtTime(420, t + 0.16);
+  gain.gain.setValueAtTime(0.08, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+  osc.connect(gain); gain.connect(outNode());
+  osc.start(t); osc.stop(t + 0.2);
+  playNoise(0.08, 0.06);
+}
+
+// 空中クルッの効果音
+function playFlipSE(){
+  if(!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.05);
+  osc.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.12);
+  gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+  osc.connect(gain);
+  gain.connect(outNode());
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.12);
+}
+
+// ゲームオーバー音
+function playGameOverSE(){
+  if(!audioCtx) return;
+  [300, 260, 220, 180].forEach((freq, i) => {
+    setTimeout(() => playNote(freq, "sawtooth", 0.15, 0.1), i * 100);
+  });
+}
+
+// ===== パレット =====
+const PAL = {
+  sky:      "#b4dcf0",
+  cloud:    "#c8e8f6",
+  hill:     "#a6d0e4",
+  farHouse: "#9ac6dc",
+  wall:     ["#d4dcdc", "#dcd8cc", "#ccd6dc"],
+  roof:     ["#8ea6bc", "#ae9e9c", "#98aab0"],
+  window:   "#a8c4d4",
+  tree:     "#8cbaa6",
+  wire:     "#8c8a86",
+  pole:     "#a29c92",
+  fence:    "#c6c2b6",
+  fenceLn:  "#b8b4a8",
+  path:     "#d8d2c6",
+  line:     "#eeeeea",
+  road:     "#5a5c64",
+  curbFar:  "#8a8a88",
+  verge:    "#6f9670",
+  leaf:     "#5c8460",
+  brick:    "#a87c6a",
+  brickHi:  "#bc927e",
+  flowers:  ["#f2c4cf", "#f0e08c", "#f4f2ea"],
+  school:   "#e2ded4",
+  schoolLn: "#c4beb2",
+  pillar:   "#9c968a",
+  pillarLn: "#7c776d",
+  gate:     "#6c7078",
+  puddle:   "#7ea6c4",
+  puddleHi: "#c4e2f2",
+};
+
+// ===== 季節（4週ごと：春→夏→秋→冬）=====
+// 春：学校に近づく後半に桜並木と舞い散る花びら／夏：青い空と、手前の花壇にひまわり（秋・冬はまだ）
+const BASE_PAL = Object.assign({}, PAL);
+const SEASON_PAL = [
+  {},                                                                    // 春：いつもの色
+  { sky:"#7cc6f2", cloud:"#f2fafe", hill:"#8cc4e2", farHouse:"#86bcdc", tree:"#5fa274", verge:"#5c9a58", leaf:"#4a8046" },   // 夏：青い空
+];
+const seasonOf = w => Math.floor((w - 1) / 4) % 4;   // 0 春 / 1 夏 / 2 秋 / 3 冬
+let season = 0;
+function applySeason(w){
+  season = seasonOf(w);
+  Object.assign(PAL, BASE_PAL, SEASON_PAL[season] || {});
+  // 春の第3週（アジサイ・梅雨）はくもり空
+  if(season === 0 && (w - 1) % 4 === 2) Object.assign(PAL, { sky:"#c3cbd3", cloud:"#d6dbe0", hill:"#b2bcc5", farHouse:"#a9b5bf" });
+}
+// 並木：スタート時はキャラの少し後ろに1本（電柱と同じ速さで流れる）、学校の前に3本（学校と一緒に流れる）
+// まず葉も花もない「幹と枝」を作り、季節ごとに上から 桜／緑の葉／紅葉／枯れ木 をのせる（いまは春・夏）
+// 形：短く太い幹から枝が扇のように広がり、その上に横長のドーム状に花や葉がつく。枝先はかならずドームの内側
+const SAKURA_FACTOR = .6;
+const TREE_TRUNK = { trunk:"#7e6052", dark:"#5f463c" };   // ファミコン風：幹もベース色＋影色の2色
+const FOLIAGE = [
+  // 春：桜
+  // ファミコン風に色数をしぼる：ベース色＋影色（春は＋αで白い花）
+  { base:"#f2c2d0", shade:"#df9fb4", accent:"#fff3f7" },
+  // 夏：緑の葉
+  { base:"#6fac62", shade:"#4c8846" },
+];
+const TRUNK_TOP = 60, CROWN_CY = 37, CROWN_RX = 40, CROWN_RY = 25, TREE_OX = 52, TREE_H = 90;
+let sakura = [], petals = [];   // sakura＝並木（名前は春から）
+function seeded(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+// 幹と枝（葉も花もない木）。形と比率はユーザーの下絵にならう：
+// 長めの幹が少しくねって半分くらいの高さで分かれ、左は横へ張ってから上へ、真ん中は上へ、右は横へ張ってから上へ。枝はところどころ折れ曲がる
+const TREE_LIMBS = [
+  // [点の列（分かれ目からの相対）, 太さ(元→先), 奥の枝か]
+  { pts:[[0,0],[-11,-7],[-24,-12],[-29,-19],[-31,-26]], w:[4,2], back:false },   // 左：横に張って上へ
+  { pts:[[0,0],[-5,-14],[-11,-26],[-13,-38]],            w:[4,1], back:false },   // 左上：まっすぐ上へ
+  { pts:[[0,0],[2,-13],[0,-26],[3,-36]],                 w:[3,1], back:true  },   // 真ん中（奥）
+  { pts:[[0,0],[9,-5],[19,-7],[24,-18],[31,-28]],        w:[4,2], back:false },   // 右：横に張って上へ
+  { pts:[[19,-7],[28,-12],[35,-18]],                     w:[3,1], back:true  },   // 右の外（奥）
+];
+const TREE_SPLIT = { x:1, y:60 };
+function makeTree(anchor, fixedSeed){
+  const seed = fixedSeed != null ? fixedSeed : Math.floor(Math.random() * 1e9), rnd = seeded(seed);
+  const rr = (a, b) => a + rnd() * (b - a);
+  const flip = rnd() < .5 ? -1 : 1;   // 左右反転で変化をつける（光は右上から固定）
+  // 花・葉の塊：大小の丸を重ねた形（上は右寄りに盛り上がり、下は左右がふくらんで真ん中が少しあく）
+  const lobes = [
+    [4, 24, 16], [15, 18, 12], [-9, 27, 13], [-22, 39, 11], [-25, 50, 8], [23, 37, 12],
+    [27, 49, 8], [1, 40, 13], [-12, 50, 8], [13, 50, 8], [-2, 14, 9],
+  ].map(([x, y, r]) => ({ x:(x + rr(-2, 2)) * flip, y:y + rr(-2, 2), r:r + rr(-1.5, 1.5) }));
+  // 枝先・小枝の先は塊の内側（少し内寄り）におさめる
+  const covered = (x, y) => lobes.some(l => (x * flip - l.x * flip) ** 2 + (y - l.y) ** 2 <= (l.r - 2) ** 2);
+  const segs = [];
+  const J = () => rr(-2, 2);
+  // 幹：根元から少しくねって分かれ目へ（太い→やや細い）
+  const trunk = [[0, 87], [J() * .5 - 1, 77], [1 + J() * .5, 68], [TREE_SPLIT.x, TREE_SPLIT.y]];
+  for(let i = 0; i < trunk.length - 1; i++) segs.push({ x0:trunk[i][0] * flip, y0:trunk[i][1], x1:trunk[i + 1][0] * flip, y1:trunk[i + 1][1], w:8 - i, back:false, trunk:true });
+  TREE_LIMBS.forEach(L => {
+    const pts = L.pts.map(([x, y], i) => i === 0 ? [x, y] : [x + J(), y + J()]);
+    const last = pts[pts.length - 1], prev = pts[pts.length - 2];
+    for(let k = 0; k < 10 && !covered((TREE_SPLIT.x + last[0]) * flip, TREE_SPLIT.y + last[1]); k++){ last[0] += (prev[0] - last[0]) * .2; last[1] += (prev[1] - last[1]) * .2; }
+    const n = pts.length - 1;
+    for(let i = 0; i < n; i++){
+      const w = Math.max(1, Math.round(L.w[0] + (L.w[1] - L.w[0]) * i / Math.max(1, n - 1)));
+      segs.push({ x0:(TREE_SPLIT.x + pts[i][0]) * flip, y0:TREE_SPLIT.y + pts[i][1], x1:(TREE_SPLIT.x + pts[i + 1][0]) * flip, y1:TREE_SPLIT.y + pts[i + 1][1], w, back:L.back });
+    }
+    // 小枝：途中の折れ目から短く
+    for(let i = 1; i < n; i++) if(rnd() < .45){
+      const [px, py] = pts[i], dir = px < 0 ? -1 : 1;
+      const ex = px + dir * rr(3, 6), ey = py - rr(3, 6);
+      if(!covered((TREE_SPLIT.x + ex) * flip, TREE_SPLIT.y + ey)) continue;
+      segs.push({ x0:(TREE_SPLIT.x + px) * flip, y0:TREE_SPLIT.y + py, x1:(TREE_SPLIT.x + ex) * flip, y1:TREE_SPLIT.y + ey, w:1, back:L.back });
+    }
+  });
+  const clumps = [];
+  for(let i = 0; i < 40; i++){ const l = lobes[Math.floor(rnd() * lobes.length)]; clumps.push({ x:l.x + rr(-l.r, l.r) * .7, y:l.y + rr(-l.r, l.r) * .7 }); }
+  const t = Object.assign({ seed, segs, lobes, clumps }, anchor);
+  t.cv = renderTree(t, treeFoliage());
+  return t;
+}
+// 幹と枝の上に、季節の花や葉をのせて1枚の絵にする（毎フレームは貼るだけ）。FOLIAGE がない季節は枯れ木
+function renderTree(t, sea){
+  const rnd = seeded(t.seed + 7), rr = (a, b) => a + rnd() * (b - a), ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+  const cv = document.createElement("canvas"); cv.width = TREE_OX * 2; cv.height = TREE_H;
+  const g = cv.getContext("2d"), X0 = TREE_OX, B = TREE_TRUNK, P = FOLIAGE[sea];
+  const line = (x0, y0, x1, y1, w, col) => {
+    g.fillStyle = col;
+    const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+    for(let i = 0; i <= n; i++){
+      const px = Math.round(X0 + x0 + (x1 - x0) * i / n), py = Math.round(y0 + (y1 - y0) * i / n);
+      g.fillRect(px - Math.floor((w - 1) / 2), py - (w >= 3 ? 1 : 0), w, w >= 3 ? 2 : 1);   // 太い枝は縦にも厚く
+    }
+  };
+  // 幹と枝は表面の模様なし。手前の枝はベース色、奥の枝は影色
+  const backBranches = () => t.segs.forEach(sg => { if(sg.back) line(sg.x0, sg.y0, sg.x1, sg.y1, sg.w, B.dark); });
+  const frontTree = () => {
+    t.segs.forEach(sg => { if(!sg.back) line(sg.x0, sg.y0, sg.x1, sg.y1, sg.w, B.trunk); });
+    g.fillStyle = B.trunk; g.fillRect(X0 - 4, 83, 9, 5);   // 根元の広がり
+  };
+  backBranches(); frontTree();
+  if(!P) return cv;   // 枯れ木
+  // 塊：2×2 ドット単位。ふちは少しだけ欠けたりはみ出したりして、でこぼこに
+  const inLobes = (x, y) => t.lobes.some(l => (x - l.x) ** 2 + (y - l.y) ** 2 <= l.r * l.r);
+  const cells = [];
+  for(let y = 0; y < 66; y += 2) for(let x = -TREE_OX; x < TREE_OX; x += 2){
+    const cx = x + 1, cy = y + 1;
+    let on = inLobes(cx, cy);
+    const edge = on !== inLobes(cx + 3, cy) || on !== inLobes(cx - 3, cy) || on !== inLobes(cx, cy + 3) || on !== inLobes(cx, cy - 3);
+    if(edge && rnd() < .18) on = !on;
+    if(on) cells.push({ x, y });
+  }
+  // ぽつんと離れたマスは消す（ふちが砂っぽくならないように）
+  const raw = new Set(cells.map(c => c.x + "," + c.y));
+  const nb = c => [[2,0],[-2,0],[0,2],[0,-2]].filter(([dx, dy]) => raw.has((c.x + dx) + "," + (c.y + dy))).length;
+  for(let i = cells.length - 1; i >= 0; i--) if(nb(cells[i]) < 2) cells.splice(i, 1);
+  const has = new Set(cells.map(c => c.x + "," + c.y));
+  // 光は右上から：左下ほど影色。境目は影のマスをまぜる
+  cells.forEach(c => {
+    const k = -(c.x - 6) / 34 * .6 + (c.y - 32) / 24 * .8 + rr(-.3, .3);
+    const under = !has.has(c.x + "," + (c.y + 2));
+    g.fillStyle = (k > .05 || under) ? P.shade : P.base;
+    g.fillRect(X0 + c.x, c.y, 2, 2);
+  });
+  if(P.accent){   // 春だけ：＋α の白い花（ぽつぽつ）と、下に散る花びら
+    g.fillStyle = P.accent;
+    cells.forEach(c => { if(rnd() < .05 && has.has((c.x - 2) + "," + c.y) && has.has((c.x + 2) + "," + c.y) && has.has(c.x + "," + (c.y - 2))) g.fillRect(X0 + c.x, c.y, 2, 2); });
+    for(let i = 0; i < 5; i++) g.fillRect(X0 + ri(-16, 16) * 2, ri(31, 38) * 2, 2, 2);
+  }
+  return cv;
+}
+// 春の第3週：塀の手前に花壇が点在して、アジサイが咲く（地面と同じ速さで流れる）。形は固定
+const HYD_LEAF = { base:"#5f9a56", shade:"#467a40" };
+const HYD_PURPLE = { base:"#a891dc", shade:"#8670bc" };   // 紫（ほとんどこれ）
+const HYD_WHITE  = { base:"#f4f2f8", shade:"#cfcadc" };   // 少しだけ白
+let hydrangea = [];
+// 手まりを2段に互い違いに（後ろの段が高い）。色は紫で、白はどの花壇も同じ位置（後ろの段の2つ目と、前の段のいちばん右）
+function hydHeads(w, ri){
+  const heads = [], back = [], front = [];
+  for(let hx = 6;  hx <= w - 6; hx += 9) back.push({ dx:hx + ri(-1, 1), dy:0, r:5, c:HYD_PURPLE });
+  for(let hx = 10; hx <= w - 9; hx += 9) front.push({ dx:hx + ri(-1, 1), dy:6, r:4, c:HYD_PURPLE });
+  if(back.length > 1) back[1].c = HYD_WHITE;
+  if(front.length) front[front.length - 1].c = HYD_WHITE;
+  return heads.concat(back, front);
+}
+// 塀の前の花壇：位置と大きさはいつも同じ（固定）。咲く花は季節で変える
+//   春の第3週＝アジサイ／それ以外＝手前の花壇と同じ小さな花（夏・秋・冬の花はまだ）
+let backBedFlower = "small";
+let rainZones = [];
+let fenceSuns = [];   // 夏：塀の前、花壇のセットとセットのあいだに咲くひまわり（塀の上での位置、固定）   // アジサイの2つセットのまわりだけ雨（塀の上での位置。花壇より広め）
+const isHydWeek = () => season === 0 && weekInSeason(week) === 2;
+const FENCE_FACTOR = .6;   // 塀（layers.front）の流れる速さ
+// ===== 夏：右上から差しこむ強い日差し（太陽そのものは描かない） =====
+// 画面の右上の外にある一点から、左下へ広がる光の帯。1行ずつ塗るので、ふちはドットの段々になる
+const SUN_RAYS = [[17.5, 20.5], [31, 34.5], [45, 47.5], [60, 64]];   // 一筋ずつ細め   // 帯の角度（度：水平から下向き）
+const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];   // 網掛け（4×4 のディザ）
+// 画面の右上4分の1におさめる：下は画面の真ん中の高さ、左は画面の真ん中まで。そこへ向かって網掛けで消える
+function drawSunRays(){
+  if(season !== 1) return;
+  const ox = W + 24, oy = -VIEW_OY - 34, D = Math.PI / 180;
+  const top = -VIEW_OY, bottom = H / 2 - VIEW_OY, left = W / 2;
+  const fadeY0 = top + (bottom - top) * .35, fadeX0 = left + (W - left) * .55;
+  ctx.fillStyle = "#fff6c8";
+  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
+  for(let y = top; y < bottom; y++){
+    const dy = y - oy;
+    const fy = y < fadeY0 ? 0 : (y - fadeY0) / (bottom - fadeY0);
+    const row = ((y % 4) + 4) % 4 * 4;
+    SUN_RAYS.forEach(([a1, a2]) => {
+      const x1 = Math.round(ox - dy / Math.tan(a1 * D)), x2 = Math.round(ox - dy / Math.tan(a2 * D));
+      const xa = Math.max(left, Math.min(x1, x2)), xb = Math.min(W, Math.max(x1, x2));
+      for(let x = xa; x < xb; x++){
+        const fx = x >= fadeX0 ? 0 : (fadeX0 - x) / (fadeX0 - left);
+        const level = Math.round(16 * (1 - Math.min(1, Math.max(fx, fy))));   // 残す割合（0〜16）
+        if(BAYER4[row + (x & 3)] < level) ctx.fillRect(x, y, 1, 1);
+      }
+    });
+  }
+  ctx.globalAlpha = 1;
+}
+// ===== アジサイのまわりの雨 =====
+const RAIN_COL = "#9cb4cc";
+const rainX0 = z => Math.round(z.x0 - worldOffset * FENCE_FACTOR);
+function inRainNow(){
+  const px = player.x + 6;
+  return rainZones.some(z => { const a = rainX0(z); return px >= a && px <= a + (z.x1 - z.x0); });
+}
+function updateRain(){
+  // 雨粒：ゾーンごとに、上から降って地面で小さくはねる
+  rainZones.forEach(z => {
+    const w = z.x1 - z.x0;
+    if(!z.drops.length) for(let i = 0; i < Math.round(w / 1.4); i++) z.drops.push({ x:Math.random() * w, y:rand(-VIEW_OY - 10, 120), v:rand(2.6, 3.4), end:rand(96, 126), sp:0 });
+    z.drops.forEach(d => {
+      if(d.sp > 0){ if(--d.sp === 0){ d.y = rand(-VIEW_OY - 8, -VIEW_OY); d.x = Math.random() * w; d.end = rand(96, 126); } return; }
+      d.y += d.v;
+      if(d.y >= d.end) d.sp = 6;   // しぶき
+    });
+  });
+  // 濡れているか（傘があれば濡れない）
+  const w = isActive() && umbrella <= 0 && inRainNow();
+  if(w !== wet){
+    wet = w; setSpeed();
+    if(wet) popAt("slowpop", "SLOW", "down", player.x + 6, player.y - 12);   // 雨に濡れはじめたら「SLOW」
+    if(wet && npcLineT === 0 && girlLineT === 0) girlSay("つめたいっ！", 90);   // ほかのセリフが出ているときはそちらを優先
+  }
+  if(wet && Math.random() < .25) particles.push({ x:player.x + rand(2, 10), y:player.y - 1, vx:rand(-.4, .4), vy:rand(-.6, -.2), life:10, c:RAIN_COL });   // 頭でしずくがはねる
+}
+function drawRain(){
+  rainZones.forEach(z => {
+    const a = rainX0(z), w = z.x1 - z.x0;
+    if(a > W + 8 || a + w < -8) return;
+    // 雨粒（1×3 の線）と、地面のしぶき
+    ctx.fillStyle = RAIN_COL;
+    z.drops.forEach(d => {
+      const x = Math.round(a + d.x);
+      if(d.sp > 0){ const y = Math.round(d.end); ctx.fillRect(x - 1, y - 1, 1, 1); ctx.fillRect(x + 1, y - 1, 1, 1); }
+      else ctx.fillRect(x, Math.round(d.y), 1, 4);
+    });
+  });
+}
+// アジサイの花壇の真ん中に、小さなカエル（ときどきぴょんと跳ねる）
+const FROG = ["K.K", "GGG", "G.G"];   // 横3×たて3：目（K）が上に飛び出した小さなカエル
+const FROG_PAL = { G:"#8fd04a", K:"#1c2414" };   // 葉より明るい黄緑で目立つように
+function drawFrog(cx, seed){
+  // ぴょーん：軽くふわっと、アジサイの高さまで（約0.7秒で18ドット）
+  const t = (animTick + seed * 37) % 170;
+  const hop = t < 44 ? Math.round(Math.sin(t / 44 * Math.PI) * 18) : 0;
+  const rows = hop > 0 ? FROG.slice(0, 2) : FROG;   // 跳んでいるあいだは足をたたむ
+  drawSprite(rows, Math.round(cx) - 1, 95 - hop, FROG_PAL);   // 花壇の前（足もとの地面）に座る
+}
+function buildHydrangea(){
+  hydrangea = [];
+  backBedFlower = isHydWeek() ? "hyd" : "small";
+  rainZones = []; fenceSuns = [];
+  let prevEnd = null;
+  const rnd = seeded(31415), ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+  const small = w => { const fl = []; for(let fx = 2; fx < w - 3; fx += ri(4, 7)) fl.push({ dx:fx, dy:ri(0, 1), c:ri(0, 2) }); return fl; };
+  // 塀と同じ速さで流れる：x は「塀の上での位置」。ゴールで止まる位置（門が x=150）より手前まで
+  // 2つ並んだ花壇のセット → 大きくあけて → また2つのセット
+  for(let x = 150; x < (COURSE - 150) * FENCE_FACTOR - 110; ){
+    let bx = x;
+    if(isHydWeek()) rainZones.push({ x0:x - 64, x1:0, drops:[] });
+    for(let k = 0; k < 2; k++){
+      const w = ri(38, 50);
+      hydrangea.push({ x:bx, w, heads:hydHeads(w, ri), small:small(w) });
+      bx += w + 12;
+    }
+    if(isHydWeek()) rainZones[rainZones.length - 1].x1 = bx - 12 + 64;
+    // 夏：ひとつ前のセットとのあいだの真ん中に、ひまわりを5本
+    if(season === 1 && prevEnd != null){
+      const mid = (prevEnd + x) / 2, hs = [24, 26, 18, 29, 21];   // 低い順の番号で左から 3,4,1,5,2
+      hs.forEach((h, k) => fenceSuns.push({ x:mid + (k - 2) * 9, h, i:k }));
+    }
+    prevEnd = bx - 12;
+    x = bx + ri(300, 380);
+  }
+  // 確定で置く花壇：校門の前に1つ、学校の敷地内に2つ（門と一緒に流れる）。3つとも同じ間隔（門柱をはさむ）
+  [-46, 10, 66].forEach(off => hydrangea.push({ off, w:42, heads:hydHeads(42, ri), small:small(42) }));
+}
+function drawHydrangea(){
+  fenceSuns.forEach(sf => {   // 塀と同じ速さで流れる
+    const x = Math.round(sf.x - worldOffset * FENCE_FACTOR);
+    if(x < -12 || x > W + 12) return;
+    drawSunflowerAt(x, 97, sf.h, sf.i);
+  });
+  hydrangea.forEach(h => {
+    // 塀と同じ速さ。門まわりの3つは、ゴールで止まったとき（門が x=150）に門からのずれの位置にくる
+    const x = h.off != null ? Math.round(150 + h.off - (worldOffset - (COURSE - 150)) * FENCE_FACTOR) : Math.round(h.x - worldOffset * FENCE_FACTOR);
+    if(x > W + 4 || x + h.w < -4) return;
+    if(backBedFlower === "small"){
+      // 手前の花壇と同じ小さな草花
+      ctx.fillStyle = PAL.leaf; ctx.fillRect(x + 1, 90, h.w - 2, 3);
+      h.small.forEach(fl => { ctx.fillStyle = PAL.flowers[fl.c]; ctx.fillRect(x + fl.dx, 89 + fl.dy, 2, 2); });
+    } else {
+    // 葉のしげみ（こんもり）
+    ctx.fillStyle = HYD_LEAF.shade; ctx.fillRect(x + 1, 84, h.w - 2, 10);
+    ctx.fillStyle = HYD_LEAF.base;
+    for(let lx = x + 5; lx < x + h.w - 3; lx += 7) pixelCircle(lx, 83, 5);
+    ctx.fillStyle = HYD_LEAF.shade;
+    for(let lx = x + 8; lx < x + h.w - 3; lx += 7) ctx.fillRect(lx, 84, 1, 4);   // 葉の切れ目
+    // 花（まるい手まり）：影 → ベース → 小さな花の粒
+    h.heads.forEach(f => {
+      const cx = x + f.dx, cy = 80 + f.dy;
+      ctx.fillStyle = f.c.shade; pixelCircle(cx, cy + 1, f.r);
+      ctx.fillStyle = f.c.base;  pixelCircle(cx - 1, cy, f.r - 1);
+      ctx.fillStyle = f.c.shade;
+      ctx.fillRect(cx - 2, cy - 1, 1, 1); ctx.fillRect(cx, cy - 2, 1, 1); ctx.fillRect(cx + 1, cy + 1, 1, 1); ctx.fillRect(cx - 2, cy + 2, 1, 1);
+    });
+    }
+    // レンガの花壇
+    ctx.fillStyle = PAL.brick;   ctx.fillRect(x, 93, h.w, 5);
+    ctx.fillStyle = PAL.brickHi; ctx.fillRect(x, 93, h.w, 1);
+    for(let bx = x + 3; bx < x + h.w; bx += 6) ctx.fillRect(bx, 95, 1, 3);
+    if(backBedFlower === "hyd") drawFrog(x + h.w / 2, Math.round(h.w * 7 + (h.off || 0)));
+  });
+}
+// 季節の中の週（0〜3）。春：第1週＝桜、第2週＝なし、第3週＝アジサイ、第4週＝なし
+const weekInSeason = w => (w - 1) % 4;
+// 桜は春の第1週の1・2日目だけ。そのあと（春の残り・夏）は緑の葉
+const isSakuraDay = () => season === 0 && weekInSeason(week) === 0 && day <= 2;
+const treeFoliage = () => isSakuraDay() ? 0 : season <= 1 ? 1 : season;
+function buildSakura(){
+  sakura = [];
+  buildHydrangea();
+  if(!FOLIAGE[season]) return;   // 秋・冬はまだ
+  sakura.push(makeTree({ s:(46 - W - 40) / SAKURA_FACTOR }, 18234));   // 形は固定（ランダムにしない）   // 幹がキャラのすぐ後ろ（奥）
+  sakura.push(makeTree({ s:(46 + 76 - W - 40) / SAKURA_FACTOR }, 6078));   // スタート地点にもう1本（学校前と同じ76ドット間隔）
+  // 学校の前に4本（形は固定）。ゴールで止まったとき（門が x=150 前後）に、花が重ならない76ドット間隔で均等に（両端は見切れてよい）
+  [[-132, 21273], [-56, 24312], [20, 4052], [96, 16208]].forEach(([off, sd]) => sakura.push(makeTree({ off }, sd)));
+}
+function sakuraX(t){ return t.off != null ? gateScreenX() + t.off : Math.round(W + 40 + (t.s - worldOffset) * SAKURA_FACTOR); }
+function drawSakura(){
+  sakura.forEach(t => {
+    const x = sakuraX(t);
+    if(x < -TREE_OX || x > W + TREE_OX) return;
+    ctx.drawImage(t.cv, x - TREE_OX, 0);
+  });
+}
+// 舞い散る花びら（後半ほど多く）
+function updatePetals(scroll){
+  if(isSakuraDay() && (state === "playing" || state === "goal")){   // 桜の日だけ
+    const newPetal = (x, y) => petals.push({ x, y, vx:-rand(.25, .6), vy:rand(.25, .5), ph:rand(0, 6), t:0, c:Math.random() < .6 ? "#f6c4d3" : "#fde4ec" });
+    // 見えている木の花から散る
+    sakura.forEach(t => {
+      const x = sakuraX(t);
+      if(x > -40 && x < W + 40 && petals.length < 90 && Math.random() < .22){ const c = t.clumps[irand(0, t.clumps.length - 1)]; newPetal(x + c.x, c.y); }
+    });
+    // 後半はあたり一面に（学校に近づくほど多く）
+    const prog = worldOffset / COURSE;
+    const rate = prog < .45 ? 0 : Math.min(1, (prog - .45) / .45) * .35;
+    if(petals.length < 90 && Math.random() < rate) newPetal(rand(20, W + 60), -VIEW_OY - 2);
+  }
+  for(let i = petals.length - 1; i >= 0; i--){
+    const p = petals[i];
+    p.t++;
+    p.x += p.vx - scroll * .5 + Math.sin(p.ph + p.t * .07) * .35;
+    p.y += p.vy;
+    if(p.x < -4 || p.y > H) petals.splice(i, 1);
+  }
+}
+function drawPetals(){
+  petals.forEach(p => {
+    ctx.fillStyle = p.c;
+    if(Math.floor((p.t + p.ph * 10) / 12) % 2) ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 1);
+    else ctx.fillRect(Math.round(p.x), Math.round(p.y), 1, 1);
+  });
+}
+// 夏：手前の花壇のひまわり（地面より手前なので、道の上のものより前に描く）
+const SUNFLOWER = [   // 11×11 の大輪
+  "....yYy....",
+  "..yYYYYYy..",
+  ".yYYCCCYYy.",
+  ".YYCcCcCYY.",
+  "yYCcCcCcCYy",
+  "YYCCcCcCCYY",
+  "yYCcCcCcCYy",
+  ".YYCcCcCYY.",
+  ".yYYCCCYYy.",
+  "..yYYYYYy..",
+  "....yYy....",
+];
+const SUNFLOWER_PAL = { Y:"#f8c818", y:"#e09c10", C:"#6a4020", c:"#8c5a26" };
+const SUN_LEAF = ["..GGG....", ".GGGGGG..", "GGgggGGGG", ".GGGGGGG.", "..GGGG..."];   // 左向きの葉（右向きは左右反転）
+const SUN_LEAF_PAL = { G:"#4f8a40", g:"#3a6a30" };
+const mirror = rows => rows.map(r => [...r].reverse().join(""));
+const SUN_LEAF_R = mirror(SUN_LEAF);
+// 花壇の上に背の高いひまわり（道の上のものより手前に描くので、通り過ぎるあいだ視界をさえぎる）
+function makeSunflowers(w){
+  const sun = [];
+  // 花が道の上（猫や女の子の高さ）にくるように。背の高さを混ぜて壁のように
+  for(let fx = 5; fx < w - 4; fx += irand(6, 8)) sun.push({ dx:fx, h:irand(18, 34) });
+  return sun;
+}
+// ひまわり1本（根もと base から高さ h）。i で葉の左右をずらす
+function drawSunflowerAt(fx, base, h, i){
+  const top = base - h;
+  ctx.fillStyle = "#3e7034"; ctx.fillRect(fx, top + 4, 2, h - 3);   // 太い茎
+  ctx.fillStyle = "#5c9a48"; ctx.fillRect(fx + 1, top + 4, 1, h - 3);
+  for(let ly = top + 8 + (i % 2) * 3, k = i; ly < base - 4; ly += 6, k++){   // 大きな葉を左右交互に
+    const left = k % 2 === 0;
+    drawSprite(left ? SUN_LEAF : SUN_LEAF_R, left ? fx - 8 : fx + 1, ly, SUN_LEAF_PAL);
+  }
+  drawSprite(SUNFLOWER, fx - 4, top - 5, SUNFLOWER_PAL);
+}
+function drawSunflowers(){
+  if(season !== 1) return;
+  eachVisible(layers.verge, (it, x) => {
+    if(it.kind !== "bed" || !it.sun) return;
+    it.sun.forEach((f, i) => {
+      const fx = x + f.dx, top = VERGE_Y - 1 - f.h;
+      ctx.fillStyle = "#3e7034"; ctx.fillRect(fx, top + 4, 2, f.h - 3);   // 太い茎
+      ctx.fillStyle = "#5c9a48"; ctx.fillRect(fx + 1, top + 4, 1, f.h - 3);
+      for(let ly = top + 8 + (i % 2) * 3, k = i; ly < VERGE_Y - 5; ly += 6, k++){   // 大きな葉を左右交互に
+        const left = k % 2 === 0;
+        drawSprite(left ? SUN_LEAF : SUN_LEAF_R, left ? fx - 8 : fx + 1, ly, SUN_LEAF_PAL);
+      }
+      drawSprite(SUNFLOWER, fx - 4, top - 5, SUNFLOWER_PAL);
+    });
+  });
+}
+
+// ===== スプライト =====
+const GIRL_TOP = [
+  "...KKKKK....",
+  "..KKKKKKK...",
+  ".KKKSSSSK...",
+  ".KKSSSKSS...",
+  ".KKSSSSSS...",
+  ".KK.SSSS....",
+  "..NNWWWWN...",
+  ".BNWWRRWSS..",
+  ".BNWWRWWW...",
+  ".BBWWWWWW...",
+  "..NNNNNNN...",
+  ".NNNNNNNNN..",
+];
+const GIRL_LEGS_A = [
+  "..SS...SS...",
+  ".SS.....SS..",
+  "DD.......DD.",
+];
+const GIRL_LEGS_B = [
+  "....SS.S....",
+  "....SS.S....",
+  "....DDDD....",
+];
+const GIRL_PAL = { K:"#2a2030", S:"#f0c0a0", W:"#f8f8f8", N:"#284888", R:"#d83838", B:"#8c6040", D:"#202028" };
+
+const CAT_RUN_TOP = [
+  ".O.O..........",
+  "OFOFO.......O.",
+  "OFFFO......OFO",
+  "OEFEFOOOOOOFO.",
+  "OFFFFFFFFFFFO.",
+  ".OPFFFFFFFFFO.",
+  "..OFFFFFFFFO..",
+];
+const CAT_LEGS_A = [
+  "..OFO....OFO..",
+  "..OO......OO..",
+];
+const CAT_LEGS_B = [
+  "...OFO..OFO...",
+  "....OO..OO....",
+];
+const CAT_SLEEP = [
+  ".O.O..........",
+  "OFOFO.........",
+  "OFFFOOOOOOOO..",
+  "OEEFFFFFFFFFO.",
+  "OFFFFFFFFFFFFO",
+  "OFFFFFFFFFFOOO",
+  ".OOOOOOOOOOO..",
+];
+const CAT_PAL = {
+  white: { O:"#202028", F:"#f8f8f8", E:"#202028", P:"#e04050" },
+  black: { O:"#202028", F:"#202028", E:"#f8d830", P:"#e04050" },
+  tabby: { O:"#202028", F:"#f0a050", T:"#b8602a", E:"#202028", P:"#e04050" },
+};
+// 茶トラ用（しま模様入り）
+const TABBY_TOP = [
+  ".O.O..........",
+  "OFOFO.......O.",
+  "OFFFO......OTO",
+  "OEFEFOOOOOOFO.",
+  "OFFFFTFTFTFFO.",
+  ".OPFFTFTFTFFO.",
+  "..OFFFFFFFFO..",
+];
+
+// 体ごと転がるための回転スプライト（0°,90°,180°,270°）
+const GIRL_FULL = GIRL_TOP.concat(GIRL_LEGS_A);
+function rotate90(rows){
+  const h = rows.length, w = rows[0].length, out = [];
+  for(let c=0;c<w;c++){
+    let line = "";
+    for(let r=h-1;r>=0;r--) line += rows[r][c];
+    out.push(line);
+  }
+  return out;
+}
+const GIRL_ROT = [GIRL_FULL];
+for(let i=0;i<3;i++) GIRL_ROT.push(rotate90(GIRL_ROT[i]));
+
+const BANANA = [
+  "...Y...",
+  "..YYD..",
+  ".YY.YY.",
+  "DY...YD",
+];
+const BANANA_PAL = { Y:"#f8d030", D:"#7a5a20" };
+
+// カラス（左向き、羽ばたき2コマ）
+const CROW_A = [
+  "......KK....",
+  ".....KKK....",
+  "..KK.KKK....",
+  ".KWKKKKKKKK.",
+  "BBKKKKKKKKKK",
+  "..KKKKKK..K.",
+  "....K..K....",
+];
+const CROW_B = [
+  "............",
+  "............",
+  "..KK........",
+  ".KWKKKKKKKK.",
+  "BBKKKKKKKKKK",
+  "..KKKKKKKK..",
+  ".....KKKK...",
+];
+const CROW_PAL = { K:"#202028", W:"#f8f8f8", B:"#585860" };
+// 波型の飛行：y は 32〜72 を大きく往復。地上を走っていれば当たらないが、ジャンプ中はかなりの範囲で当たる
+const CROW_FLY = { center:52, amp:20, period:110, extra:0.5 };
+
+const CAN = [
+  "..OOO..",
+  ".OGGGO.",
+  ".OYYYO.",
+  ".ORRRO.",
+  ".OYRYO.",
+  ".ORYRO.",
+  ".OYYYO.",
+  ".OYYYO.",
+  "..OOO..",
+];
+const CAN_PAL = { O:"#202028", G:"#c8c8d0", Y:"#f8d030", R:"#e03030" };
+
+function drawSprite(rows, x, y, pal, flipV){
+  x = Math.round(x); y = Math.round(y);
+  const n = rows.length;
+  for(let r=0;r<n;r++){
+    const row = rows[flipV ? n-1-r : r];
+    for(let c=0;c<row.length;c++){
+      const col = pal[row[c]];
+      if(!col) continue;
+      ctx.fillStyle = col;
+      ctx.fillRect(x+c, y+r, 1, 1);
+    }
+  }
+}
+
+function pixelCircle(cx, cy, r){
+  for(let dy=-r; dy<=r; dy++){
+    const hw = Math.floor(Math.sqrt(r*r - dy*dy) + .3);
+    ctx.fillRect(cx-hw, cy+dy, hw*2+1, 1);
+  }
+}
+
+// ===== 状態 =====
+// state: menu / playing / goal / crash / clear / gameover
+let state = "menu";
+let speed = CONFIG.baseSpeed;
+let mul = 1;             // 永続スピード倍率（ノーミスで上昇・水たまりで低下・バナナでリセット）
+let boostLeft = 0;       // エナドリ効果の残りフレーム
+let rolling = 0;         // バナナで転がっている残りフレーム
+let drinks = 0;
+let worldOffset = 0;
+let timeLeft = 0;        // フレーム
+let lives = 2;
+let animTick = 0;
+let sectionShown = 0;
+let passedGate = false;
+let gateClosing = false;
+let doorT = 0;           // 門扉の閉まり具合 0〜1
+let blink = 0;           // 点滅の残りフレーム
+let crashTimer = 0;
+let bounced = false;
+
+let plan = { cats:[], cans:[], puddles:[] };
+let planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0, melons:0 };
+let melons = [];
+let elder = null;      // 画面上のおじいさん { x }
+let elderTalk = 0;     // 会話の進み具合（0=まだ, 1〜=あいさつ後のフレーム）
+let cats = [], cans = [], puddles = [], bananas = [], crows = [];
+let particles = [], confetti = [];
+let confettiSpawn = 0;
+let fireworks = [], fwSpawn = 0, fwNext = 0;   // 週クリアの花火
+let player;
+
+const rand = (a,b)=> a + Math.random()*(b-a);
+const irand = (a,b)=> Math.floor(rand(a,b+1));
+
+const layers = {
+  clouds:    { period:660, factor:.03, items:[] },
+  hills:     { period:660, factor:.06, heights:[] },
+  farHouses: { period:440, factor:.14, items:[] },
+  nearHouses:{ period:440, factor:.3,  items:[] },
+  front:     { period:110, factor:.6 },
+  verge:     { period:960, factor:1.25, items:[] },   // 手前の植え込み（地面より速く流れる）
+};
+
+function fillPeriod(period, makeItem, gapMin, gapMax){
+  const items = [];
+  let x = irand(0, gapMax);
+  while(true){
+    const it = makeItem();
+    if(x + it.w > period - gapMin) break;
+    it.x = x;
+    items.push(it);
+    x += it.w + irand(gapMin, gapMax);
+  }
+  return items;
+}
+
+function createTown(){
+  layers.clouds.items = fillPeriod(660, ()=>({ w:irand(18,32), y:irand(14,34) }), 40, 90);
+  const p1 = rand(0,6), p2 = rand(0,6);
+  layers.hills.heights = [];
+  for(let x=0;x<660;x++){
+    const t = x/660*Math.PI*2;
+    layers.hills.heights.push(Math.round(66 + Math.sin(t*2+p1)*5 + Math.sin(t*5+p2)*2));
+  }
+  layers.farHouses.items = fillPeriod(440,
+    ()=>({ w:irand(12,20), wall:irand(7,11), roof:irand(4,6) }), 1, 8);
+  layers.nearHouses.items = fillPeriod(440,
+    ()=>({ w:irand(22,32), wall:irand(14,22), roof:irand(6,9), c:irand(0,2), tree:Math.random()<.5 }), 8, 22);
+  // 手前：花壇はたまに、野花はまばらに
+  layers.verge.items = fillPeriod(960, ()=>{
+    if(Math.random() < .3){
+      const w = irand(22, 34), flowers = [];
+      for(let fx = 2; fx < w - 3; fx += irand(4, 7)) flowers.push({ dx:fx, dy:irand(0, 1), c:PAL.flowers[irand(0, 2)] });
+      // 夏はこの花壇の半分くらいにひまわり（背の高さはまちまち）
+      return { kind:"bed", w, flowers, sun:Math.random() < .6 ? makeSunflowers(w) : null };
+    }
+    return { kind:"wild", w:7, c:PAL.flowers[irand(0, 2)] };
+  }, 90, 260);
+  {
+    // 走り出してすぐ、画面の右から流れてくる花壇（夏はひまわり）
+    const w = 46, at = W + 30, flowers = [];
+    for(let fx = 2; fx < w - 3; fx += irand(4, 7)) flowers.push({ dx:fx, dy:irand(0, 1), c:PAL.flowers[irand(0, 2)] });
+    layers.verge.items = layers.verge.items.filter(it => it.x + it.w < at - 40 || it.x > at + w + 60);
+    layers.verge.items.push({ kind:"bed", w, flowers, sun:makeSunflowers(w), x:at });
+  }
+}
+
+// ===== コース配置 =====
+// コースを「頭数分のエリア」に分け、各エリアに1つだけ置く。エリア内の位置はランダム。
+// s = その物が画面右端に現れるときのスクロール量
+function buildCourse(){
+  // 正門前の約40mは何も出さない（ゴール演出中に障害物が残らないように）
+  const start = 150, end = COURSE - W - 260;
+  // エリアに1つずつ、エリア内の位置は完全ランダム（種類をまたいだ調整はしない）
+  // 後半ほど密に：密度がコース頭→終わりで 1 → CONFIG.lateDensity 倍に直線的に上がるようにエリアを切る
+  // （後半はスピードも上がっているので、同じ間隔だと時間あたりの密度が薄く感じる）
+  const rd = CONFIG.lateDensity, tot = 1 + (rd - 1) / 2;
+  const edge = q => {   // 累積密度が q（0〜1）になる位置（0〜1）
+    if(rd === 1) return q;
+    const a = (rd - 1) / 2;   // a x² + x = q*tot を解く
+    return (-1 + Math.sqrt(1 + 4 * a * q * tot)) / (2 * a);
+  };
+  const scatter = (n, make)=>{
+    const out = [], N = Math.max(1, n);
+    for(let i=0;i<n;i++){
+      const a = edge(i / N), b = edge((i + 1) / N);
+      out.push(Object.assign({ s: start + (a + Math.random() * (b - a)) * (end - start) }, make()));
+    }
+    return out;
+  };
+
+  // エナドリ：固定の一定間隔（高さはランダム）
+  const cans = [];
+  // 1日目（やり直し直後）は遅さがつらいので、すぐにエナドリを置く
+  for(let s = start + CONFIG.canInterval / 2; s < end; s += CONFIG.canInterval){
+    cans.push({ s, y: irand(56, 68) });
+  }
+  const n = dayIdx(week, day) + 1;   // 通しで何日目か（茶トラは第1週3日目から）
+  const tabbyRate = n < CONFIG.tabbyFrom ? 0 : Math.min(CONFIG.tabbyMax, CONFIG.tabbyPerDay * (n - CONFIG.tabbyFrom + 1));
+  const makeCat = ()=>{
+    const r = Math.random();
+    const kind = r < tabbyRate ? "tabby" : (r < tabbyRate + .2 ? "sleep" : "run");
+    return { kind, sleeping: kind === "sleep",
+      type: kind === "tabby" ? "tabby" : (kind === "sleep" ? "white" : "black") };   // 白猫＝寝てる、黒猫＝走る
+  };
+  const cats = scatter(countFor("cats"), makeCat);
+  // 序盤の緊張感：最初の約150m（2エリア）に猫を1匹ずつ追加
+  const OPEN = 960, openL = OPEN / 2;
+  for(let i=0;i<2;i++) cats.push(Object.assign({ s: start + 120 + i*openL + Math.random()*(openL - 60) }, makeCat()));
+  cats.sort((a, b) => a.s - b.s);
+  const bananas = scatter(countFor("bananas"), ()=>({}));
+  const crows = scatter(countFor("crows"), ()=>({ phase: Math.random() * Math.PI * 2 }));
+  const puddles = season === 1 ? [] :   // 夏（日差しが強い）は水たまりなし
+    scatter(Math.round(countFor("puddles") * (isHydWeek() ? CONFIG.rainPuddles : 1)), ()=>({ w:irand(16, 24) }));   // アジサイの週は水たまり多め
+  const melons = season === 1 ? scatter(countFor("melons"), ()=>({})) : [];   // 夏だけ
+  return { cats, cans, puddles, bananas, crows, melons };
+}
+
+function createPlayer(){
+  return { x:36, y:groundY-15, w:12, h:15, vx:0, vy:0, jumping:false, jumpPower:-2.9, flip:0, flipped:false };
+}
+
+let wet = false;   // アジサイのまわりの雨に濡れている（傘なし）
+let melonWarn = 0, melonRide = null;   // スイカの予告・乗っている状態
+function setSpeed(){
+  mul = Math.max(CONFIG.minMul, mul);
+  const bonus = starT > 0 ? CONFIG.starBonus : (boostLeft > 0 ? CONFIG.drinkBonus : 0);
+  speed = CONFIG.baseSpeed * (mul + bonus + (onBike ? CONFIG.bikeBonus : 0)) * (wet ? 1 - CONFIG.rainSlow : 1) * (melonRide ? 1 - CONFIG.melonSlow : 1);   // スイカに乗っていると遅い   // 雨に濡れているとわずかに遅い
+}
+
+let week = 1, day = 1;
+let bestIdx = -1;   // やり通せた日数の最高（まだ遊んでいなければ -1）
+const dayIdx = (w, d) => (w - 1) * CONFIG.daysPerWeek + (d - 1);
+// 第1週のあいだは「週」を出さない（5日目を越えて、まだ先があると初めて知る驚きのため）
+const wdText = (w, d) => w === 1 ? `${d}日目` : `第${w}週 ${d}日目`;
+const idxLabel = i => `${i}日`;   // 記録＝やり通せた（セーフだった）日数。1日目で遅刻したら 0日
+const weekDayLabel = () => wdText(week, day);
+let invulT = 0;     // ぶつかった直後の無敵時間
+let drinkStock = 0; // 無敵タイムまでに飲んだエナドリ（starDrinks 本で無敵）
+let starT = 0;      // 無敵タイムの残りフレーム
+
+// 1日目から
+function resetGame(){ runRecorded = false; startDay(1, 1, 1); }
+// クリア後：次の日へ
+function nextDay(){
+  // 金曜（5日目）のあとは次の週の1日目。スピードは週ごとにリセット
+  if(day >= CONFIG.daysPerWeek) startDay(week + 1, 1, 1);
+  else startDay(week, day + 1, CONFIG.carrySpeed ? mul : 1);
+}
+
+function startDay(w, d, startMul){
+  week = w; day = d;
+  applySeason(w);
+  invulT = 0; starT = 0;
+  if(w === 1 && d === 1){ drinkStock = 0; maxLives = CONFIG.lives; lives = maxLives; medals = 0; medalWallet = 0; onBike = false; umbrella = 0; }   // ライフもエナドリも、最初からやり直すときだけリセット
+  teacherSaid = false;
+  ["dayLabel", "lifeLabel", "hud", "speedo"].forEach(id => document.getElementById(id).classList.remove("hidden"));
+  showMessageWindows(true);
+  // その日の始まりに「○日目」を真ん中に大きく
+  const banner = document.getElementById("dayBanner");
+  banner.textContent = weekDayLabel();
+  banner.className = "daybanner";
+  void banner.offsetWidth;
+  banner.className = "daybanner show";
+  timeLeft = CONFIG.timeLimit * 60;
+  startBGM();
+  wet = false;
+  mul = startMul; boostLeft = 0; rolling = 0; drinks = 0;
+  setSpeed();
+  worldOffset = 0;
+  animTick = 0;
+  sectionShown = 0;
+  passedGate = false;
+  gateClosing = false;
+  doorT = 0;
+  blink = 0;
+  crashTimer = 0;
+  bounced = false;
+  plan = buildCourse();
+  buildSakura(); petals = [];
+  planIdx = { cats:0, cans:0, puddles:0, bananas:0, crows:0, melons:0 };
+  cats = []; cans = []; puddles = []; bananas = []; crows = []; melons = []; melonWarn = 0; melonRide = null;
+  // 週の初め（スピードが戻る日）は、走り出してすぐ取れる位置にエナドリ
+  if(day === 1) cans.push({ x: 180, y: 64, age: 0 });   // 近すぎると気づく前に通り過ぎるので、見て判断できる距離に
+    // コースのちょうど真ん中であいさつするように置く（奥の層なので地面の0.3倍で流れてくる）
+  elder = { x: 36 + 60 + (COURSE / 2 - 36) * ELDER_FACTOR };
+  elderTalk = 0;
+  particles = []; confetti = []; confettiSpawn = 0; fireworks = []; fwSpawn = 0; healPopT = 0; ghosts = []; flyUmbs = [];
+  player = createPlayer();
+  createTown();
+  state = "playing";
+  const ov = document.getElementById("overlay");
+  ov.classList.add("hidden");
+  ov.classList.remove("clear");
+  updateHUD();
+  renderMedals();
+  document.getElementById("medalpop").className = "medalpop hidden";
+  document.getElementById("medalMsg").classList.add("hidden");
+}
+
+// ===== 記録・ポーズ・タイトルへ =====
+let records = [];        // { idx, medals, speed, at }（ページを開いている間）
+let runRecorded = false;
+function addRecord(idx, speed){
+  if(runRecorded) return;
+  runRecorded = true;
+  const d = new Date();
+  records.push({ idx, medals, speed, at: `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}` });
+  records.sort((a, b) => b.idx - a.idx || b.medals - a.medals || b.speed - a.speed);
+  records = records.slice(0, 5);
+  noteBest(idx);
+}
+// ベスト：日数が長い回。日数が同じならメダルが多い回
+let bestMedals = 0;
+function noteBest(idx){
+  if(idx > bestIdx || (idx === bestIdx && medals > bestMedals)){ bestIdx = idx; bestMedals = medals; }
+  updateBest();
+}
+const bestText = () => idxLabel(bestIdx) + (bestMedals > 0 ? "　" + medalText(bestMedals) : "");
+// 上の帯は簡略版：紐なしの金メダル（丸）だけ
+// 字と同じ高さの、縁取りなしの金色の丸だけ
+const MEDAL_MINI_SVG = `<svg class="medal" viewBox="0 0 5 5" shape-rendering="crispEdges"><path fill="#f8d030" d="M1 0h3v1h1v3h-1v1h-3v-1h-1v-3h1z"/><path fill="#c88820" d="M4 2h1v2h-1v1h-3v-1h3z"/><path fill="#fff0a8" d="M1 1h1v1h-1z"/></svg>`;
+const bestMini = () => idxLabel(bestIdx) + (bestMedals > 0 ? ` <span class="medaltxt mini">${MEDAL_MINI_SVG}×${bestMedals}</span>` : "");
+// 上の帯の右側に、いつでも最高記録
+function updateBest(){ document.getElementById("bestLabel").innerHTML = "Best: " + (bestIdx >= 0 ? bestMini() : "-"); }
+
+let paused = false;
+let recordOpen = false;   // （旧：記録パネル。いまはポーズメニューのタブ）
+let menuOpen = false;
+function isActive(){ return state === "playing" || state === "goal" || state === "crash"; }
+// メニューボタン：横三本線。開いているあいだは白く反転（押すと時間が止まる）
+const ICON_MENU = `<svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M1 1h6v1H1z M1 4h6v1H1z M1 7h6v1H1z"/></svg>`;
+function renderPauseBtn(){
+  const b = document.getElementById("btnPause");
+  b.innerHTML = ICON_MENU;
+  b.classList.toggle("on", menuOpen);
+}
+// ポーズメニュー：遊んでいる途中なら時間・BGM・アニメを止める（タイトルや結果画面でも開ける）
+function openPause(){
+  if(menuOpen || exchangeOpen || camOpen) return;
+  menuOpen = true;
+  document.getElementById("tabTitle").style.display = state === "menu" ? "none" : "";
+  renderRecords();
+  renderVolOpts();
+  selectTab("rec");
+  document.getElementById("pauseMenu").classList.remove("hidden");
+  document.getElementById("overlay").style.visibility = "hidden";   // 結果画面の文字と重ならないように
+  if(isActive()){
+    paused = true;
+    stopBGM();
+    document.querySelector(".screen").classList.add("paused");
+  }
+  renderPauseBtn();
+}
+function closePause(){
+  if(!menuOpen) return;
+  menuOpen = false;
+  document.getElementById("pauseMenu").classList.add("hidden");
+  document.getElementById("overlay").style.visibility = "";
+  if(paused){
+    paused = false;
+    document.querySelector(".screen").classList.remove("paused");
+    last = performance.now(); acc = 0;
+    if(state === "playing" || state === "goal") startBGM(false);   // 止めたところから
+  }
+  renderPauseBtn();
+}
+function togglePause(){ menuOpen ? closePause() : openPause(); }
+function selectTab(name){
+  document.querySelectorAll(".pmtab").forEach(t => t.classList.toggle("on", t.dataset.tab === name));
+  document.querySelectorAll(".pmpane").forEach(p => p.classList.toggle("on", p.dataset.pane === name));
+}
+function renderRecords(){
+  document.getElementById("recList").innerHTML = records.length
+    ? records.map((r, i) => `<li>${i + 1}．${idxLabel(r.idx)}　${r.medals > 0 ? medalText(r.medals) + "　" : ""}（${r.at}）</li>`).join("")
+    : "<li>まだ記録がありません</li>";
+}
+function openRecords(){ openPause(); selectTab("rec"); }
+function closeRecords(){}
+
+function goTitle(){
+  closePause();
+  // 途中でやめた場合も、そこまでの記録は残す
+  if(isActive()) addRecord(dayIdx(week, day), mul);
+  else if(state === "clear") addRecord(dayIdx(week, day) + 1, mul);
+  stopBGM();
+  state = "menu";
+  renderMedals();
+  confettiSpawn = 0; confetti = []; fireworks = []; fwSpawn = 0;
+  cats = []; cans = []; puddles = []; bananas = []; crows = []; melons = []; melonWarn = 0; melonRide = null; particles = []; elder = null;
+  setSpeed();
+  player = createPlayer(); worldOffset = 0;
+  applySeason(1); sakura = []; petals = []; hydrangea = []; rainZones = []; fenceSuns = []; wet = false;   // タイトルは春
+  // ダメージの点滅・無敵・ブースト・転倒などの状態も消す（タイトルで点滅したまま／その状態から始まらないように）
+  blink = 0; invulT = 0; starT = 0; boostLeft = 0; rolling = 0; ghosts = []; healPopT = 0;
+  ["headpop", "dmgpop", "usepop", "healpop", "teacherpop", "elderpop", "slowpop", "wapopL", "wapopR"].forEach(id => { document.getElementById(id).className = "headpop outline"; });
+  document.getElementById("medalpop").className = "medalpop hidden";
+  document.getElementById("medalMsg").classList.add("hidden");
+  ["dayLabel", "lifeLabel", "hud", "speedo", "meter", "boostLabel"].forEach(id => document.getElementById(id).classList.add("hidden"));
+  showMessageWindows(false);
+  document.getElementById("dayBanner").className = "daybanner";
+  const ov = document.getElementById("overlay");
+  ov.classList.remove("hidden", "clear");
+  ov.classList.add("menu");
+  document.getElementById("title").textContent = "遅刻ダッシュ！";
+  document.getElementById("message").innerHTML = bestIdx >= 0 ? `最高記録：${bestText()}` : "";
+  document.getElementById("shareBar").classList.add("hidden");
+  document.getElementById("overTitleBar").classList.add("hidden");
+  document.getElementById("overlay").classList.remove("over");
+  document.querySelector(".screen").classList.remove("over");
+  const btn = document.getElementById("start");
+  btn.textContent = "スタート";
+  btn.disabled = false;
+  inputLockUntil = 0;
+}
+
+// ボタン（フォーカスを取らない：スペースで誤って押されないように）
+document.querySelectorAll("button").forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
+document.getElementById("btnPause").addEventListener("click", togglePause);
+// カメラ：押すと確認（ゲームはポーズ）→「はい」でいまのゲーム画面を画像に（ボタン類は写さない。UI オフならゲームの絵だけ）
+let camOpen = false, camUI = true, camPaused = false;
+function renderCamUI(){ const b = document.getElementById("camUI"); b.classList.toggle("on", camUI); b.setAttribute("aria-pressed", camUI); }
+function openCam(){
+  if(camOpen || menuOpen || exchangeOpen) return;
+  camOpen = true;
+  renderCamUI();
+  document.getElementById("camMenu").classList.remove("hidden");
+  // 「スクリーンショットをとりますか？」を開いた時点でゲームを停止する。
+  if(isActive() && !paused){ paused = true; camPaused = true; stopBGM(); }
+}
+function closeCam(){
+  if(!camOpen) return;
+  camOpen = false;
+  document.getElementById("camMenu").classList.add("hidden");
+  if(camPaused){
+    camPaused = false; paused = false;
+    last = performance.now(); acc = 0;
+    if(state === "playing" || state === "goal") startBGM(false);
+  }
+}
+async function takeScreenshot(){
+  // 撮影メニューを開いたまま、ポーズ中のその瞬間を撮影する。
+  // 撮影後も closeCam() は呼ばず、メインゲームと撮影メニューを維持する。
+  const blob = await captureScreen(camUI);
+  const fl = document.getElementById("camFlash");
+  fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
+  if(!blob) return;
+  const d = new Date(), pad = n => String(n).padStart(2, "0");
+  const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
+  const file = new File([blob], name, { type:"image/png" });
+  if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
+    try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+document.getElementById("btnCam").addEventListener("click", () => camOpen ? closeCam() : openCam());
+document.getElementById("camYes").addEventListener("click", takeScreenshot);
+document.getElementById("camNo").addEventListener("click", closeCam);
+document.getElementById("camUI").addEventListener("click", () => { camUI = !camUI; renderCamUI(); });
+document.querySelectorAll(".pmtab").forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
+document.getElementById("btnTitle").addEventListener("click", goTitle);
+document.getElementById("btnClose").addEventListener("click", closePause);
+renderPauseBtn();
+
+// 音量ボタン：スピーカーのドット絵（波の数で音量、無音は×）
+function speakerSVG(level){
+  // 12×12ドット
+  let r = "M1 4h2v4H1z M3 4h1v4H3z M4 3h1v6H4z M5 2h1v8H5z M6 1h1v10H6z";
+  if(level === 0){
+    r += " M8 4h1v1H8z M11 4h1v1h-1z M9 5h1v1H9z M10 5h1v1h-1z M9 6h2v1H9z M9 7h1v1H9z M10 7h1v1h-1z M8 8h1v1H8z M11 8h1v1h-1z";
+  } else {
+    if(level >= 1) r += " M8 5h1v2H8z";
+    if(level >= 2) r += " M9 3h1v1H9z M10 4h1v4h-1z M9 8h1v1H9z";
+    if(level >= 3) r += " M10 1h1v1h-1z M11 2h1v8h-1z M10 10h1v1h-1z";
+  }
+  return `<svg viewBox="0 0 12 12" shape-rendering="crispEdges"><path d="${r}"/></svg>`;
+}
+// 音量タブ：［ミュートのアイコン］［■■■■■□□□□□］［最大のアイコン］。目盛りかアイコンを押して決める
+function renderVolOpts(){
+  const el = document.getElementById("volOpts");
+  let bar = "";
+  for(let k = 1; k <= VOL_STEPS; k++) bar += `<button class="volseg${k <= volStep ? " on" : ""}" data-step="${k}" aria-label="音量${k}"></button>`;
+  el.innerHTML = `<button class="ctl volopt${volStep === 0 ? " on" : ""}" data-step="0" aria-label="ミュート">${speakerSVG(0)}</button>`
+    + `<div class="volbar">${bar}</div>`
+    + `<button class="ctl volopt${volStep === VOL_STEPS ? " on" : ""}" data-step="${VOL_STEPS}" aria-label="最大">${speakerSVG(3)}</button>`;
+  el.querySelectorAll("button").forEach(b => {
+    b.addEventListener("mousedown", e => e.preventDefault());
+    b.addEventListener("click", () => setVolume(+b.dataset.step));
+  });
+}
+function setVolume(step){
+  volStep = step;
+  if(masterGain) masterGain.gain.value = volGain();
+  renderVolOpts();
+}
+
+
+
+// 結果画面が出てすぐは入力を受け付けない（誤爆で即再開しないように）
+const RESULT_LOCK_MS = 2000;   // 結果画面は2秒間入力を受け付けない（スクショを撮る間に誤って進まないように）
+let inputLockUntil = 0;
+
+function proceed(){
+  if(menuOpen || camOpen || exchangeOpen) return;
+  if(performance.now() < inputLockUntil) return;
+  if(state === "clear") nextDay();
+  else if(state === "gameover"){ goTitle(); inputLockUntil = performance.now() + 400; }   // ゲームオーバー → 必ずタイトルへ（連打で即スタートしないよう少し待つ）
+  else if(state === "menu") resetGame();
+}
+
+// ジャンプ操作（スペース・画面下のボタン共通）
+function pressJump(isRepeat){
+  if(recordOpen){ if(!isRepeat) closeRecords(); return; }   // 記録表示中はまず閉じる（ジャンプはしない）
+  if(menuOpen || camOpen) return;   // ポーズ中は何もしない（開け閉めはポーズボタン・Esc・P）
+  if(state === "playing" || state === "goal") jump();
+  else if(!isRepeat) proceed();   // 押しっぱなしの連打では進まない
+}
+window.addEventListener("keydown", e=>{
+  if(exchangeOpen){
+    e.preventDefault();
+    if(e.code === "ArrowLeft" || e.code === "KeyA") moveExchange(-1);
+    else if(e.code === "ArrowRight" || e.code === "KeyD") moveExchange(1);
+    else if(e.code === "ArrowUp" || e.code === "KeyW") moveExchangeRow(-1);
+    else if(e.code === "ArrowDown" || e.code === "KeyS") moveExchangeRow(1);
+    else if(e.code === "Space" && !e.repeat && xCursor) chooseExchange(xCursor);
+    return;
+  }
+  if(camOpen){ e.preventDefault(); if(e.code === "Escape") closeCam(); return; }
+  if(e.code === "Space"){
+    e.preventDefault();
+    pressJump(e.repeat);
+  } else if(e.code === "Escape" || e.code === "KeyP"){
+    togglePause();
+  }
+});
+// 画面のどこをタップしてもジャンプ（ボタンとメニューの上は除く）
+document.querySelector(".screen").addEventListener("pointerdown", e=>{
+  if(menuOpen || camOpen || exchangeOpen || e.target.closest("button, #pauseMenu, #camMenu")) return;
+  if(state === "playing" || state === "goal") jump();
+  else if(state === "menu" || state === "gameover") proceed();   // ゲームオーバーは画面タップでタイトルへ（クリア画面はボタンかスペースで）
+});
+document.getElementById("start").addEventListener("click", proceed);
+
+function jump(){
+  if(rolling > 0 || melonRide) return;   // バナナで転がり中・スイカに乗っている間はジャンプできない
+  if(player.jumping){
+    // 空中でもう一度：その場でクルッと1回転しながら少しだけ空中に止まる（1ジャンプ1回）
+    if(!player.flipped && (state === "playing" || state === "goal")){
+      player.flipped = true;
+      player.flip = CONFIG.flipTime;
+      player.vy = 0;
+      playFlipSE();
+    }
+    return;
+  }
+  playJumpSE();
+  player.vy = player.jumpPower;
+  player.jumping = true;
+  updateHUD();
+  for(let i=0;i<4;i++){
+    particles.push({ x:player.x+4, y:groundY-1, vx:-rand(0,.5), vy:-rand(0,.5), life:18, c:"#a8a296" });
+  }
+}
+
+function showPopup(text){
+  const el = document.getElementById("popup");
+  el.textContent = text;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+}
+
+// キャラの頭上に出る小さな表示
+function popAt(id, text, cls, x, y){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.style.left = (x / W * 100) + "%";
+  el.style.top  = ((y + VIEW_OY + LANE) / H * 100) + "%";   // 道の上のもの（女の子・先生）から出る
+  el.className = "headpop outline";
+  void el.offsetWidth;
+  el.className = "headpop outline show " + (cls || "");
+}
+// ライフが減ったときの「−♡1」
+function showDamagePop(){
+  popAt("dmgpop", "", "", player.x + 20, player.y - 12);
+  document.getElementById("dmgpop").innerHTML = `<span class="dmg"><i class="minus"></i><span class="heart">♥</span><span>1</span></span>`;
+}
+// ライフが減っていて、エナドリが healDrinks 本以上あれば自動で消費して ♥+1
+function tryHeal(afterDamage){
+  if(lives >= maxLives || drinkStock < CONFIG.healDrinks) return false;
+  drinkStock -= CONFIG.healDrinks;
+  lives++;
+  updateHUD();
+  // ダメージ直後は「−♡1」を見せてから。まず「缶−5」、それが上がりきるころに「♥+1」
+  healPopT = afterDamage ? 27 : 1;
+  return true;
+}
+let healPopT = 0;   // >0：「缶−5」を出すまでのフレーム、<0：「♥+1」を出すまでのフレーム
+function updateHealPop(){
+  if(healPopT > 0 && --healPopT === 0){
+    popAt("usepop", "", "", player.x + 6, player.y - 26);
+    document.getElementById("usepop").innerHTML = `<span class="dmg">${canIcon(true)}<span class="neg"><i class="minus"></i>${CONFIG.healDrinks}</span></span>`;
+    healPopT = -48;   // 1秒の上昇アニメの約8割＝最高点
+  } else if(healPopT < 0 && ++healPopT === 0){
+    popAt("healpop", "", "", player.x + 6, player.y - 26);
+    document.getElementById("healpop").innerHTML = `<span class="dmg"><span class="heart">♥</span><span class="pos"><i class="plus"></i>1</span></span>`;
+    playHealSE();
+  }
+}
+// 会話用：その場に少し長く残る
+// ===== メッセージウィンドウ（画面下の左右） =====
+// 顔アイコン（10×10ドット）
+const FACE_GIRL = [
+  "..KKKKKK..",
+  ".KKKKKKKK.",
+  "KKSSSSSSKK",
+  "KSSSSSSSSK",
+  "KSKSSSSKSK",
+  "KSSSSSSSSK",
+  "KSSSRRSSSK",
+  "KKSSSSSSKK",
+  "K.NNWWNN.K",
+  "..NNRRNN..",
+];
+const FACE_ELDER = [
+  "..CCCCCC..",
+  ".CCCCCCCC.",
+  "CCCCCCCCCC",
+  ".SSSSSSSS.",
+  ".SKSSSSKS.",
+  ".SSSSSSSS.",
+  "HSSSSSSSSH",
+  ".HSHHHHSH.",
+  "..SSSSSS..",
+  "..GGGGGG..",
+];
+const FACE_TEACHER = [
+  "..KKKKKK..",
+  ".KKKKKKKK.",
+  ".SSSSSSSS.",
+  ".SKKSSKKS.",
+  ".SSSSSSSS.",
+  ".SSSRRSSS.",
+  "..SSSSSS..",
+  "..JJYYJJ..",
+  ".JJJYJJJJ.",
+  "JJWJJJJWJJ",
+];
+const FACE_CAT = [
+  ".O......O.",
+  "OFO....OFO",
+  "OFFOOOOFFO",
+  "OFFFFFFFFO",
+  "OFEFFFFEFO",
+  "OFFFFFFFFO",
+  "OFFFPPFFFO",
+  "OFFFFFFFFO",
+  ".OFFFFFFO.",
+  "..OOOOOO..",
+];
+const FACE_TABBY = [
+  ".O......O.",
+  "OFO....OFO",
+  "OFFOOOOFFO",
+  "OFFTFTFFFO",
+  "OFEFFFFEFO",
+  "OFFFFFFFFO",
+  "OTFFPPFFTO",
+  "OFFFFFFFFO",
+  ".OFFFFFFO.",
+  "..OOOOOO..",
+];
+const FACE_CROW = [
+  "..........",
+  "...KKKK...",
+  "..KKKKKK..",
+  ".KKWKKKKK.",
+  "BBBKKKKKK.",
+  ".BBKKKKKK.",
+  "..KKKKKKK.",
+  "...KKKKKK.",
+  "....KKKK..",
+  "..........",
+];
+function faceURL(rows, pal){
+  const c = document.createElement("canvas");
+  c.width = rows[0].length; c.height = rows.length;
+  const g = c.getContext("2d");
+  rows.forEach((row, y) => [...row].forEach((ch, x) => {
+    if(pal[ch]){ g.fillStyle = pal[ch]; g.fillRect(x, y, 1, 1); }
+  }));
+  return c.toDataURL();
+}
+// ブースト中の女の子の顔：20×20ドットで、オレンジの顔＋十字に光る目＋上に「BOOST」
+const MINI_FONT = {   // 3×5 の小さい文字
+  B:["110","101","110","101","110"], O:["010","101","101","101","010"],
+  S:["011","100","010","001","110"], T:["111","010","010","010","010"],
+};
+function boostFaceURL(frame){
+  const c = document.createElement("canvas");
+  c.width = 20; c.height = 20;
+  const g = c.getContext("2d");
+  const pal = GIRL_PAL_BOOST;
+  FACE_GIRL.forEach((row, y) => [...row].forEach((ch, x) => {
+    let col = pal[ch];
+    if(y === 4 && (x === 2 || x === 7)) col = pal.S;   // 目はあとで十字の光にする
+    if(col){ g.fillStyle = col; g.fillRect(x * 2, y * 2, 2, 2); }
+  }));
+  // 目：十字に光る（2コマで大きさが変わってキラキラ）
+  const arm = frame ? 3 : 2;
+  [[4, 8], [14, 8]].forEach(([ex, ey]) => {
+    g.fillStyle = frame ? "#ffffff" : "#fff4a0";
+    g.fillRect(ex - arm, ey, 2 + arm * 2, 2);
+    g.fillRect(ex, ey - arm, 2, 2 + arm * 2);
+    g.fillStyle = "#ffffff";
+    g.fillRect(ex, ey, 2, 2);
+  });
+  // 上側に「BOOST」（影つき）
+  [..."BOOST"].forEach((ch, i) => {
+    MINI_FONT[ch].forEach((r, yy) => [...r].forEach((b, xx) => {
+      if(b !== "1") return;
+      const x = i * 4 + xx, y = 1 + yy;
+      g.fillStyle = "#5a1808"; g.fillRect(x + 1, y + 1, 1, 1);
+    }));
+  });
+  [..."BOOST"].forEach((ch, i) => {
+    MINI_FONT[ch].forEach((r, yy) => [...r].forEach((b, xx) => {
+      if(b === "1"){ g.fillStyle = "#f8d030"; g.fillRect(i * 4 + xx, 1 + yy, 1, 1); }
+    }));
+  });
+  return c.toDataURL();
+}
+let BOOST_FACES = null;
+let FACES = null;
+function faces(){
+  if(!FACES) FACES = {
+    girl:    faceURL(FACE_GIRL, GIRL_PAL),
+    elder:   faceURL(FACE_ELDER, ELDER_PAL),
+    teacher: faceURL(FACE_TEACHER, TEACHER_PAL),
+    white:   faceURL(FACE_CAT, CAT_PAL.white),
+    black:   faceURL(FACE_CAT, CAT_PAL.black),
+    tabby:   faceURL(FACE_TABBY, CAT_PAL.tabby),
+    crow:    faceURL(FACE_CROW, CROW_PAL),
+  };
+  return FACES;
+}
+
+const GIRL_DEFAULT_LINE = "いそげ！";
+// 左上のウィンドウを全員で共有（顔アイコンは左）。NPCがしゃべっている間はNPCが優先
+let girlLine = "", girlLineT = 0;
+let npcLine = "", npcWho = "", npcCls = "", npcLineT = 0;
+let girlQuietT = 0;   // 相手のセリフが終わってから少しの間は「いそげ！」を言わない
+let msgOn = false;
+function girlSay(text, frames = 90){ girlLine = text; girlLineT = frames; renderMessage(); }
+function npcSay(who, text, frames = 150, cls = ""){
+  npcWho = who; npcLine = text; npcCls = cls; npcLineT = frames;
+  renderMessage();
+}
+const QUIET_AFTER_LINE = 48;    // ほかのセリフのあと「いそげ！」まで0.8秒あける
+function updateMessages(){
+  let ended = false;
+  if(npcLineT > 0 && --npcLineT === 0) ended = true;
+  if(girlLineT > 0 && --girlLineT === 0) ended = true;
+  if(ended){ girlQuietT = QUIET_AFTER_LINE; hurryArmed = true; }
+  else if(npcLineT === 0 && girlLineT === 0 && girlQuietT > 0) girlQuietT--;
+  // 走っている時間を数える（ジャンプ・転倒などでリセット）
+  if(!player.jumping && rolling === 0) runT++;
+  else { runT = 0; hurryArmed = true; }   // ジャンプや転倒のあと、走りに戻ったら言う
+  renderMessage();
+}
+function renderMessage(){
+  const win = document.getElementById("msgWin");
+  const L = document.getElementById("faceL");
+  const t = document.getElementById("msgText");
+  let text = "", side = "";
+  // ブースト中（ほかの人のセリフがないとき）は、女の子の顔をブースト顔にしてウィンドウを出す
+  const boosting = msgOn && boostLeft > 0 && starT === 0 && (state === "playing" || state === "goal");
+  if(npcLineT > 0){ text = npcLine; side = "R"; }
+  else if(girlLineT > 0){ text = girlLine; side = "L"; }
+  else if(boosting){ side = "L"; }
+  renderHurry();
+  if(!msgOn || (!text && !boosting)){ win.classList.add("hidden"); return; }   // セリフがないときはウィンドウごと消す
+  win.classList.remove("hidden");
+  if(t.textContent !== text) t.textContent = text;
+  t.className = "msg " + (side === "R" ? npcCls : "");
+  // 顔アイコンは全員左（NPC のセリフ中はそちらが優先）
+  if(!BOOST_FACES) BOOST_FACES = [boostFaceURL(0), boostFaceURL(1)];
+  const src = side === "L" ? (boosting ? BOOST_FACES[Math.floor(animTick / 8) % 2] : faces().girl) : faces()[npcWho];
+  if(L.getAttribute("src") !== src) L.src = src;
+}
+// 「いそげ！」は女の子の頭上に。走っている間だけ出て、ジャンプや転倒で消える。
+// 走りに戻ってから0.8秒、ほかのセリフのあとは2秒あけてから出す
+const HURRY_DELAY = 48;
+let runT = 0;
+let hurryArmed = false;
+function renderHurry(){
+  const el = document.getElementById("hurry");
+  const running = (state === "playing" || state === "goal") && !player.jumping && rolling === 0;
+  if(!msgOn || !(state === "playing" || state === "goal")){ el.className = "hurrypop outline hidden"; return; }
+  if(hurryArmed && running && runT >= HURRY_DELAY && npcLineT === 0 && girlLineT === 0 && girlQuietT === 0){
+    hurryArmed = false;
+    // 頭の上でぴょんと跳ねて消える
+    el.style.left = ((player.x + 6) / W * 100) + "%";
+    el.style.top  = ((player.y - 8 + VIEW_OY + LANE) / H * 100) + "%";
+    el.className = "hurrypop outline";
+    void el.offsetWidth;
+    el.className = "hurrypop outline hop";
+  }
+}
+
+function showMessageWindows(on){
+  msgOn = on;
+  if(on){ girlLineT = 0; npcLineT = 0; girlQuietT = 0; runT = 0; hurryArmed = false; }
+  renderMessage();
+}
+
+function talkAt(id, text, x, y){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.style.left = (x / W * 100) + "%";
+  el.style.top  = ((y + VIEW_OY) / H * 100) + "%";
+  el.className = "headpop outline";
+  void el.offsetWidth;
+  el.className = "headpop outline talk";
+}
+function showHeadPop(text, cls, dx = 0, dy = 0){ popAt("headpop", text, cls, player.x + 6 + dx, player.y - 2 + dy); }
+// 体育教師のセリフ
+let teacherSaid = false;
+function teacherSay(text, cls){
+  const tx = gateScreenX() - 16;
+  popAt("teacherpop", text, cls, tx + 6, groundY - 28);
+}
+
+// ゲーム内時計：1秒＝1分。7:30 スタート、7:55 閉門
+function clockText(elapsedMin){
+  if(elapsedMin === undefined) elapsedMin = Math.floor((CONFIG.timeLimit * 60 - timeLeft) / 60 / CONFIG.secPerMinute);
+  const t = CONFIG.clockStart + elapsedMin;
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
+// ===== メダル =====
+// 中身だけ描いて、まわりの1ドットの黒縁はコードで付ける（ハートや缶と同じ見た目）
+// 上から：赤い紐（真ん中に白い線）→ 銀の金具 → 金メダル
+const MEDAL_S = [
+  ".RTR.",
+  ".RTR.",
+  ".RTR.",
+  "..S..",
+  ".YYY.",
+  "YWYYY",
+  "YYYYD",
+  "YYYDD",
+  ".DDD.",
+];
+const MEDAL_L = [   // 10個ごとの大メダル（一回り大きい）
+  "..RTR..",
+  "..RTR..",
+  "..RTR..",
+  "..RTR..",
+  "...S...",
+  "..YYY..",
+  ".WYYYY.",
+  "YYEEGYD",
+  "YYEGGYD",
+  "YYGGGYD",
+  ".YYYDD.",
+  "..DDD..",
+];
+// R 紐の赤 / T 紐の白い線 / S 銀の金具 / Y,W,D メダルの縁（明・ハイライト・影） / E,G 大メダルの中心（控えめなへこみ）
+const MEDAL_PAL = { R:"#e03030", T:"#ffffff", S:"#d0d0dc", Y:"#f8d030", W:"#fff0a8", D:"#d09828", E:"#d8a828", G:"#ecc030", O:"#1c2030" };
+function medalSVG(big, cls = "medal"){
+  const core = Array.isArray(big) ? big : (big ? MEDAL_L : MEDAL_S), h = core.length + 2, w = core[0].length + 2;
+  const at = (x, y) => y >= 0 && y < core.length && x >= 0 && x < core[0].length && core[y][x] !== ".";
+  let r = "";
+  for(let y = -1; y <= core.length; y++) for(let x = -1; x <= core[0].length; x++){
+    let c = null;
+    if(at(x, y)) c = MEDAL_PAL[core[y][x]];
+    else if(at(x-1, y) || at(x+1, y) || at(x, y-1) || at(x, y+1)) c = MEDAL_PAL.O;
+    if(c) r += `<rect x="${x+1}" y="${y+1}" width="1" height="1" fill="${c}"/>`;
+  }
+  const size = cls === "medal" ? ` style="width:calc(var(--dot) * ${w});height:calc(var(--dot) * ${h})"` : "";
+  return `<svg class="${cls}" viewBox="0 0 ${w} ${h}"${size} shape-rendering="crispEdges">${r}</svg>`;
+}
+// 文章中の「（メダル）×数」
+const medalText = n => n < 1 ? "" : `<span class="medaltxt">${medalSVG(false, "medal")}×${n}</span>`;   // 0個のときはどこにも出さない
+let medals = 0;   // このプレイで獲得したメダル（最初からやり直すと0）
+let medalWallet = 0;   // 交換に使えるメダル（交換すると減る）
+let maxLives = 2;      // ハートの上限（交換で 3→4 まで増やせる。最初からやり直すと戻る）
+let onBike = false;        // 自転車に乗っている（ダメージを1回肩代わりして壊れる）
+let umbrella = 0;          // 傘の耐久（0＝持っていない）。カラスだけ防ぐ。2回で壊れる
+const UMBRELLA_HP = 2;
+let flyUmbs = [];          // 手放して空へ飛んでいく傘
+// 右下：メダルのアイコン ×数
+function renderMedals(isNew){
+  const el = document.getElementById("medalStack");
+  el.innerHTML = `${medalSVG(false)}<span class="outline">×${medals}</span>`;
+  el.classList.toggle("hidden", medals < 1 || !(state === "playing" || state === "goal" || state === "clear" || state === "gameover" || state === "crash"));
+  if(isNew){ el.classList.remove("new"); void el.offsetWidth; el.classList.add("new"); }
+}
+// 先生の頭からメダルがポンと出る（キラキラつき）
+function awardMedal(){
+  medals++;
+  medalWallet++;   // 交換に使えるメダルも1つ増える
+  document.getElementById("medalMsg").classList.remove("hidden");
+  const pop = document.getElementById("medalpop");
+  const tx = gateScreenX() - 16 + 6, ty = groundY - 30;
+  pop.style.left = (tx / W * 100) + "%";
+  pop.style.top = ((ty + VIEW_OY + LANE) / H * 100) + "%";
+  const sparkSVG = c => `<svg viewBox="0 0 5 5" shape-rendering="crispEdges"><path fill="${c}" d="M2 0h1v5H2z M0 2h5v1H0z"/><path fill="#ffffff" d="M2 2h1v1H2z"/></svg>`;
+  const pos = [[-7, -2, "#ffffff", 0], [8, 1, "#f8d030", .25], [-5, 9, "#f8d030", .12], [9, 10, "#ffffff", .37], [1, -6, "#fff8c8", .5]];
+  pop.innerHTML = medalSVG(true) + pos.map(([x, y, c, d]) =>
+    `<i class="spark" style="left:calc(var(--dot) * ${x});top:calc(var(--dot) * ${y});animation-delay:${d}s">${sparkSVG(c)}</i>`).join("");
+  pop.className = "medalpop hidden";
+  void pop.offsetWidth;
+  pop.className = "medalpop";
+  playMedalSE();
+  // ポップが上がりきったころ右下に加える
+  setTimeout(() => { renderMedals(true); }, 700);
+}
+
+// ライフの右：エナドリのストック（starDrinks 本で無敵）
+function canIcon(full){
+  // ゲーム中の缶スプライト（CAN）をそのまま 1ドット＝1px で描く＋右下に影。空は中身を灰色1色に
+  const sh = "#1c2030", gray = "#6a6c74";
+  let shadow = "", body = "";
+  CAN.forEach((row, y) => [...row].forEach((ch, x) => {
+    if(ch === ".") return;
+    shadow += `<rect x="${x+1}" y="${y+1}" width="1" height="1" fill="${sh}"/>`;
+    const c = ch === "O" ? CAN_PAL.O : (full ? CAN_PAL[ch] : gray);
+    body += `<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`;
+  }));
+  shadow = "";   // 影なし
+  const w = CAN[0].length, h = CAN.length;
+  return `<svg class="can" viewBox="0 0 ${w} ${h}" style="width:calc(var(--dot) * ${w});height:calc(var(--dot) * ${h})" shape-rendering="crispEdges">${shadow}${body}</svg>`;
+}
+// 中身が変わったときだけ書きかえる（毎フレーム作り直すと重い）
+const _htmlCache = {};
+function setHTML(id, html){
+  if(_htmlCache[id] === html) return;
+  _htmlCache[id] = html;
+  document.getElementById(id).innerHTML = html;
+}
+function updateHUD(){
+  const hud = document.getElementById("hud");
+  const m = Math.max(0, Math.ceil((COURSE - worldOffset - player.x - 6) / pxPerMeter));
+  const sec = Math.max(0, Math.ceil(timeLeft / 60));
+  if(gateClosing){
+    setHTML("hud", `<span class="hurry">正門が閉まった！</span>`);
+  } else {
+    // 今の時刻だけ：ふだん白 → 7:45 から黄色 → 7:55（閉門）で赤
+    const min = Math.floor((CONFIG.timeLimit * 60 - timeLeft) / 60 / CONFIG.secPerMinute);
+    const cls = min >= CONFIG.timeLimit / CONFIG.secPerMinute ? "hurry" : (min >= 15 ? "num" : "");
+    const [hh, mm] = clockText().split(":");
+    setHTML("hud", `${hh}:<span class="${cls}">${mm}</span>`);   // 色が変わるのは「分」だけ
+  }
+  const meter = document.getElementById("meter");
+  document.getElementById("meterNum").textContent = m;
+  meter.classList.toggle("hidden", gateScreenX() < W + 20 || !(state === "playing" || state === "goal"));   // 正門が見えたら消す
+  let hearts = "";
+  for(let i=0;i<maxLives;i++) hearts += `<span class="${i < lives ? "heart" : "heart lost"}">♥</span>`;
+  // 右上：上から「週（第1週は出さない） 日にち」／時刻／メニュー
+  setHTML("dayLabel", (week === 1 ? "" : `第<span class="num">${week}</span>週 `) + `<span class="num">${day}</span>日目`);   // 週と日にちは同じ行
+  const rows = 0;
+  hud.style.top = `calc(var(--dot) * ${16 + rows * 10})`;   // 日にちとの間を少しあける
+  document.getElementById("btnPause").style.top = `calc(var(--dot) * ${28 + rows * 10})`;
+  document.getElementById("btnCam").style.top = `calc(var(--dot) * ${44 + rows * 10})`;
+  document.getElementById("boostLabel").style.top = `calc(var(--dot) * ${42 + rows * 10})`;
+  const key = `${lives}/${maxLives}/${drinkStock}/${starT > 0}`;
+  if(_htmlCache.lifeKey !== key){
+    _htmlCache.lifeKey = key;
+    let stock = "";
+    for(let i=0;i<CONFIG.maxDrinks;i++){
+      if(i === CONFIG.healDrinks) stock += `<i class="cangap"></i>`;   // 5本ずつ区切る
+      stock += canIcon(i < drinkStock || starT > 0);
+    }
+    document.getElementById("lifeLabel").innerHTML = hearts + `<span class="stock">${stock}</span>`;
+  }
+  document.getElementById("boostLabel").classList.toggle("hidden", !(boostLeft > 0 && (state === "playing" || state === "goal")));
+}
+
+// 当たり判定は見た目より内側（かんたん目）
+// 女の子の当たり判定。自転車のときは自転車の大きさ
+function playerBox(p = player){
+  if(onBike) return { x:p.x-3, y:p.y-4, w:19, h:p.h+3 };
+  return { x:p.x+3, y:p.y+2, w:6, h:p.h-2 };
+}
+function hitPlayer(p, c){
+  const a = playerBox(p);
+  const b = { x:c.x+2, y:c.y+2, w:c.w-4, h:c.h-2 };
+  return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+}
+
+function gateScreenX(){ return Math.round(COURSE - worldOffset); }
+function doorLeft(){ return gateScreenX() + 9 - Math.round(22 * doorT); }
+
+function spawnFromPlan(){
+  const X = W + 10;
+  while(planIdx.cats < plan.cats.length && worldOffset >= plan.cats[planIdx.cats].s){
+    const c = plan.cats[planIdx.cats];
+    const extra = c.sleeping ? 0 : (c.kind === "tabby" ? TABBY_EXTRA : RUN_CAT_EXTRA);
+    // 唯一の制約：猫どうしが物理的によけられないほど詰まる時だけ少し待つ
+    const arr = (X - player.x) / (speed + extra);
+    if(cats.some(k => Math.abs((k.x - player.x) / (speed + (k.isStationary ? 0 : k.extra)) - arr) < 60)) break;
+    planIdx.cats++;
+    const h = c.sleeping ? 7 : 9;
+    cats.push({ x:X, y:groundY - h, w:14, h, type:c.type, kind:c.kind, isStationary:c.sleeping, extra, age:0,
+      hopT: irand(0, TABBY_HOP.air + TABBY_HOP.rest - 1) });
+  }
+  while(planIdx.cans < plan.cans.length && worldOffset >= plan.cans[planIdx.cans].s){
+    const c = plan.cans[planIdx.cans++];
+    cans.push({ x:X, y:c.y, age:0 });
+  }
+  while(planIdx.crows < plan.crows.length && worldOffset >= plan.crows[planIdx.crows].s){
+    const c = plan.crows[planIdx.crows++];
+    crows.push({ x:X, y:CROW_FLY.center, phase:c.phase, age:0 });
+  }
+  // スイカは後ろ（左）から来る：まず左に矢印を2回点滅させてから
+  if(plan.melons && planIdx.melons < plan.melons.length && worldOffset >= plan.melons[planIdx.melons].s && melonWarn === 0 && !melons.some(m => !m.broken) && !melonRide){
+    planIdx.melons++;
+    melonWarn = MELON_WARN_T;
+  }
+  while(planIdx.bananas < plan.bananas.length && worldOffset >= plan.bananas[planIdx.bananas].s){
+    planIdx.bananas++;
+    bananas.push({ x:X, hit:false });
+  }
+  while(planIdx.puddles < plan.puddles.length && worldOffset >= plan.puddles[planIdx.puddles].s){
+    const p = plan.puddles[planIdx.puddles++];
+    puddles.push({ x:X, w:p.w, hit:false });
+  }
+}
+
+function update(){
+  const active = state === "playing" || state === "goal";
+
+  if(active){
+    animTick++;
+    // 朝のひとこと
+    if(animTick === 1) girlSay("ねぼうした！", 80);
+    if(animTick === 80) girlSay("ちこくしちゃう！", 90);
+    updateMessages();
+    // おじいさんとのあいさつ
+    if(elder){
+      // おじいさんは奥の庭にいて流れがゆっくりなので、速く走っていても読める
+      // おじいさんが先に声をかけ、女の子が「おはよー！」と返す
+      if(elderTalk === 0 && animTick >= ELDER_QUIET_TICK && elder.x - player.x < 80 && elder.x > player.x - 4){
+        elderTalk = 1;
+        npcSay("elder", "きょうもねぼうかい？", 100);
+      } else if(elderTalk >= 1 && elderTalk < 100){
+        elderTalk++;
+      } else if(elderTalk === 100){
+        elderTalk = 1000;
+        girlSay("おはよー！", 90);
+      }
+    }
+    // 先生に近づいたら
+    if(!teacherSaid && !gateClosing && gateScreenX() < W + 12 && player.x + 12 >= gateScreenX() - 16 - 24){
+      teacherSaid = true;
+      // 今の時刻（7:30 からの経過分）でセリフを変える
+      const min = Math.floor((CONFIG.timeLimit * 60 - timeLeft) / 60 / CONFIG.secPerMinute);
+      const line = min >= 15 ? "ギリギリだぞ！" : (min >= 10 ? "おはよう" : "きょうははやいな！");
+      npcSay("teacher", line, 1e9);   // ゴール後もずっと残す（次の日の始まりで消える）
+      if(min < 10 && lives > 0) awardMedal();   // 「きょうははやいな！」でメダル
+    }
+    if(!passedGate && !gateClosing){
+      timeLeft--;
+      if(timeLeft <= 0) timeUp();
+      if(state === "gameover") return;
+    }
+  }
+  if(gateClosing && doorT < 1) doorT = Math.min(1, doorT + 1/12);   // すぐさま閉まる
+  if(blink > 0) blink--;
+  if(invulT > 0) invulT--;
+
+  if(state === "playing"){
+    // エナドリ効果（空中で切れそうなら着地まで維持）
+    if(boostLeft > 0){
+      boostLeft--;
+      if(boostLeft === 0 && player.jumping) boostLeft = 1;
+    }
+    if(starT > 0){
+      starT--;
+      if(starT === 0 && player.jumping) starT = 1;   // 空中では切らさない
+      if(starT === 0) updateHUD();
+      if(animTick % 3 === 0){
+        particles.push({ x:player.x + rand(0, 12), y:player.y + rand(0, 15), vx:-rand(.3, 1.2), vy:-rand(0, .5), life:16, c:["#ffffff","#f8d030","#ff9030"][irand(0,2)] });
+      }
+    }
+    if(rolling > 0){
+      rolling--;
+      if(rolling === 0 && lives <= 0){ lifeGameOver("banana"); return; }
+    }
+    // ノーミスで走り続けると永続倍率がじわじわ上がる
+    else mul += CONFIG.autoUp * speed / CONFIG.sectionLen;
+    setSpeed();
+    worldOffset += speed;
+    if(worldOffset >= COURSE - CONFIG.gateStopX){
+      worldOffset = COURSE - CONFIG.gateStopX;
+      state = "goal";
+    }
+    const sec = Math.floor(worldOffset / CONFIG.sectionLen);
+    if(sec > sectionShown && sec < CONFIG.sections){
+      sectionShown = sec;
+      const left = Math.round((COURSE - sec * CONFIG.sectionLen) / pxPerMeter);
+    }
+    spawnFromPlan();
+  }
+
+  const scroll = state === "playing" ? speed : 0;
+
+  // おじいさんは地面と一緒に流れる（セリフも一緒に動く）
+  if(elder){
+    elder.x -= scroll * ELDER_FACTOR;   // 奥にいるぶんゆっくり流れる
+    // セリフはおじいさんの頭上に固定
+    if(elder.x < -16){
+      elder = null;
+      document.getElementById("elderpop").className = "headpop outline";
+    }
+  }
+
+  // プレイヤー
+  if(active){
+    if(player.flip > 0){
+      player.flip--;          // 空中クルッ中はその高さで静止
+      player.vy = 0;
+    } else {
+      player.vy += .115;
+      player.y += player.vy;
+    }
+    if(player.y >= groundY - player.h){
+      player.y = groundY - player.h;
+      player.vy = 0;
+      player.jumping = false;
+      player.flipped = false;
+      player.flip = 0;
+    }
+  }
+  if(state === "goal"){
+    // バナナで転がっている途中に正門前まで来た場合も、転がり終わりで判定する（最後のライフならゲームオーバー）
+    if(rolling > 0){
+      rolling--;
+      if(rolling === 0 && lives <= 0){ lifeGameOver("banana"); return; }
+    }
+    if(lives > 0){   // やられた状態では進まない（ゴールさせない）
+      player.x += Math.max(1.2, speed);
+      if(!gateClosing && !passedGate && player.x + 6 > gateScreenX() + 3) passedGate = true;
+      if(player.x > W + 4) gameClear();
+    }
+  }
+  // 閉まった門扉に激突
+  if(active && gateClosing && !passedGate){
+    const gx = gateScreenX();
+    if(gx < W + 12 && player.x + 9 >= doorLeft()) crash();
+  }
+  if(state === "crash") updateCrash();
+
+  // 水たまり
+  for(let i=puddles.length-1;i>=0;i--){
+    const p = puddles[i];
+    p.x -= scroll;
+    if(p.gone){ puddles.splice(i, 1); continue; }
+    if(active && !p.hit && spinUmbHit({ x:p.x, y:groundY, w:p.w, h:4 })){ knockPuddle(p); puddles.splice(i, 1); continue; }
+    if(active && !p.hit && !player.jumping && starT === 0 && playerBox().x + playerBox().w > p.x + 2 && playerBox().x < p.x + p.w - 2){
+      stepPuddle(p);
+      if(state === "gameover") return;
+    }
+    if(p.x + p.w < -4) puddles.splice(i,1);
+  }
+
+  // バナナの皮
+  for(let i=bananas.length-1;i>=0;i--){
+    const b = bananas[i];
+    if(b.knock){   // 傘で吹っ飛ばされた皮
+      b.x += b.kvx; b.ky += b.kvy; b.kvy += 0.12;
+      if(b.x > W + 20 || b.ky > 60) bananas.splice(i, 1);
+      continue;
+    }
+    b.x -= scroll;
+    if(active && !b.hit && spinUmbHit({ x:b.x, y:groundY - 4, w:7, h:4 })){ knockBanana(b); continue; }
+    if(active && !b.hit && !player.jumping && rolling === 0 && starT === 0 && playerBox().x + playerBox().w > b.x + 1 && playerBox().x < b.x + 6){
+      slipBanana(b);
+    }
+    if(b.x < -10) bananas.splice(i,1);
+  }
+
+  // エナドリ
+  for(let i=cans.length-1;i>=0;i--){
+    const can = cans[i];
+    can.x -= scroll;
+    can.age++;
+    const bob = Math.floor(can.age / 16) % 2;
+    const px = onBike ? player.x - 4 : player.x + 1, py = onBike ? player.y - 6 : player.y;
+    const pw = onBike ? 20 : 10, ph = onBike ? 21 : 15;   // 自転車のときは自転車の大きさで拾う
+    if(active && px < can.x + 7 && px + pw > can.x && py < can.y + bob + 9 && py + ph > can.y + bob){
+      drinkCan(can);
+      cans.splice(i,1);
+      continue;
+    }
+    if(can.x < -12) cans.splice(i,1);
+  }
+
+  // スイカ（夏）：後ろから転がってきて、当たると女の子（自転車ごと）が上に乗って進む。乗っているあいだはジャンプできない
+  if(active) updateMelons(scroll);
+
+  // カラス（波型に飛んでくる）
+  if(active){
+    for(let i=crows.length-1;i>=0;i--){
+      const c = crows[i];
+      c.age++;
+      if(c.knock){
+        // 傘ではじかれたカラス：勢いよく吹っ飛ぶ
+        c.x += c.kvx; c.y += c.kvy; c.kvy += 0.12;
+        if(c.x > W + 30 || c.y < -VIEW_OY - LANE - 30 || c.y > H) crows.splice(i, 1);
+        continue;
+      }
+      c.x -= scroll + CROW_FLY.extra;
+      c.y = Math.round(CROW_FLY.center + Math.sin(c.phase + c.age * Math.PI * 2 / CROW_FLY.period) * CROW_FLY.amp);
+      const a = playerBox();
+      const b = { x:c.x+1, y:c.y+3, w:10, h:3 };
+      const ov = (p, q) => p.x < q.x+q.w && p.x+p.w > q.x && p.y < q.y+q.h && p.y+p.h > q.y;
+      // 傘を持っていれば、傘（宙返り中は回っている体全体）でもカラスを受けて吹っ飛ばす
+      let umbHit = false;
+      if(umbrella > 0 && rolling === 0){
+        if(player.flip > 0) umbHit = ov(flipBox(), b);   // 傘の当たり判定は、宙返り（自分でアクションしたとき）だけ。歩いているだけでは何もはじかない
+      }
+      if(!c.hit && (invulT === 0 || player.flip > 0) && starT === 0 && umbHit){
+        c.hit = true;
+        umbrellaBlock();
+        knockCrow(c);
+      } else if(!c.hit && invulT === 0 && starT === 0 && ov(a, b)){   // 転がり中でも当たる
+        c.hit = true;
+        if(hitBy("crow", "カァー！じゃまだ！")) return;
+      }
+      if(c.x < -16) crows.splice(i,1);
+    }
+  }
+
+  // 猫
+  if(active){
+    for(let i=cats.length-1;i>=0;i--){
+      const cat = cats[i];
+      cat.age++;
+      if(cat.knock){   // 傘で吹っ飛ばされた猫
+        cat.x += cat.kvx; cat.y += cat.kvy; cat.kvy += 0.12;
+        if(cat.x > W + 30 || cat.y > H) cats.splice(i, 1);
+        continue;
+      }
+      cat.x -= cat.isStationary ? scroll : scroll + cat.extra;
+      if(cat.kind === "tabby"){
+        cat.hopT++;
+        cat.y = groundY - cat.h - Math.round(tabbyLift(cat.hopT));
+      }
+      if(!cat.hit && spinUmbHit({ x:cat.x+2, y:cat.y+2, w:cat.w-4, h:cat.h-2 })){ knockCat(cat); continue; }
+      if(!cat.hit && invulT === 0 && starT === 0 && hitPlayer(player, cat)){   // 転がり中でも当たる
+        cat.hit = true;
+        const who = cat.kind === "tabby" ? "tabby" : cat.type;
+        const line = who === "tabby" ? "どこみてんの！" : who === "white" ? "ふまないでよ！" : "……いたいんだけど";
+        if(hitBy(who, line)) return;
+      }
+      if(cat.x < -20) cats.splice(i,1);
+    }
+  }
+
+  updateParticles();
+  updatePetals(scroll);
+  updateRain();
+  updateGhosts();
+  updateFlyUmbs();
+  // クリアのリザルトを2秒見せてから、交換できるなら交換画面（リザルト中1回だけ）
+  if(state === "clear" && !exchangeDone && !menuOpen && ++resultT === 120 && canExchange()) openExchange();
+  updateConfetti();
+  updateFireworks();
+  updateHealPop();
+  if(active) updateHUD();
+  renderHurry();
+}
+
+function drinkCan(can){
+  boostLeft = CONFIG.drinkTime; drinks++;
+  if(starT === 0){
+    drinkStock = Math.min(CONFIG.maxDrinks, drinkStock + 1);
+    tryHeal();
+    if(lives >= maxLives && drinkStock >= CONFIG.starDrinks){
+      // ライフ満タンで10本：無敵タイム（キラキラ点滅しながらトップスピード）
+      drinkStock = 0;
+      starT = CONFIG.starTime;
+    }
+    updateHUD();
+  }
+  setSpeed();
+  for(let i=0;i<10;i++){
+    particles.push({ x:can.x+3, y:can.y+4, vx:(Math.random()-.5)*1.6, vy:-rand(0,1.4), life:26, c:i%2 ? "#f8d030" : "#ffffff" });
+  }
+}
+
+// ===== 傘 =====
+const UMB_CANOPY = [   // 赤い傘（横21ドット）。ドットの曲線：外側は下から2段ずつ縦→1段ずつ→上で横に開く。ふちの線は使わず、上のふちと骨をハイライトで
+  "..........M..........",
+  ".......WPPPPPP.......",
+  ".....WWPWPPPWPPP.....",
+  "....WPPWPPPPPWPPP....",
+  "...WPPWPPPPPPPWPPP...",
+  "..PPPPWPPPPPPPWPPPP..",
+  "..PPPWPPPPPPPPPWPPP..",
+  ".PPPPWPPPPPPPPPWPPPP.",
+  ".PPPPWPPPPPPPPPWPPPP.",
+  ".P...P....P....P...P.",
+];
+const UMB_PAL = { P:"#e03030", p:"#9c1c1c", W:"#f26a6a", M:"#d0d0dc", H:"#5a3a28" };
+const UMB_SHAFT = "#c8c8d4";   // 棒は銀色、手で持つところ（取っ手）は茶色
+// 傘を持っている位置（キャンバス座標）：キャノピーの左上と、持ち手の下端
+function umbrellaPos(){
+  const x = Math.round(player.x), y = Math.round(player.y);
+  if(onBike) return { cx:x - 3, cy:y - 18, hx:x + 7, hy:y + 1 };
+  return { cx:x - 2, cy:y - 12, hx:x + 8, hy:y + 7 };
+}
+// 宙返り用：女の子（または自転車）と傘をひとつの絵にまとめて、90°ずつ回したもの
+// 傘の色は女の子・自転車の色記号とぶつからないよう U,V,Z,Y,X に置きかえる
+const UMB_FLIP_PAL = { U:"#e03030", V:"#f26a6a", Z:"#d0d0dc", Y:"#c8c8d4", X:"#5a3a28" };
+// 無敵タイム中は傘も女の子と同じようにキラキラ点滅（女の子の点滅と同じタイミング）
+const UMB_STAR = [
+  { P:"#ffffff", p:"#ffe070", W:"#ffffff", M:"#fff4c0", H:"#f8d030", S:"#fff4c0" },
+  { P:"#ffd060", p:"#ff9030", W:"#fff0a0", M:"#ffe8a0", H:"#c06020", S:"#ffe8a0" },
+];
+const umbStarOn = () => starT > 0 && (state === "playing" || state === "goal");
+function umbPal(){ return umbStarOn() ? Object.assign({}, UMB_PAL, UMB_STAR[Math.floor(animTick / 3) % 2]) : UMB_PAL; }
+function umbFlipPal(){
+  if(!umbStarOn()) return UMB_FLIP_PAL;
+  const q = UMB_STAR[Math.floor(animTick / 3) % 2];
+  return { U:q.P, V:q.W, Z:q.M, Y:q.S, X:q.H };
+}
+const _flipCache = {};
+function flipComposite(withBike){
+  const key = withBike ? "b" : "g";
+  if(_flipCache[key]) return _flipCache[key];
+  const base = withBike ? { rows:BIKE_FRAMES[0], ox:-5, oy:-6 } : { rows:GIRL_FULL, ox:0, oy:0 };
+  const u = withBike ? { cx:-3, cy:-18, hx:7, hy:1 } : { cx:-2, cy:-12, hx:8, hy:7 };
+  const pivot = withBike ? { x:7, y:4 } : { x:6, y:8 };
+  const cw = UMB_CANOPY[0].length, ch = UMB_CANOPY.length;
+  const minX = Math.min(base.ox, u.cx), maxX = Math.max(base.ox + base.rows[0].length - 1, u.cx + cw - 1);
+  const minY = Math.min(base.oy, u.cy), maxY = Math.max(base.oy + base.rows.length - 1, u.hy);
+  const W2 = maxX - minX + 1, H2 = maxY - minY + 1;
+  const g = []; for(let y=0;y<H2;y++) g.push(new Array(W2).fill("."));
+  const put = (x, y, c) => { if(c !== ".") g[y - minY][x - minX] = c; };
+  base.rows.forEach((r, y) => [...r].forEach((c, x) => put(base.ox + x, base.oy + y, c)));
+  for(let y = u.cy + ch - 1; y <= u.hy; y++) put(u.hx, y, y >= u.hy - 2 ? "X" : "Y");
+  const map = { P:"U", W:"V", M:"Z" };
+  UMB_CANOPY.forEach((r, y) => [...r].forEach((c, x) => { if(c !== ".") put(u.cx + x, u.cy + y, map[c] || c); }));
+  let rows = g.map(r => r.join("")), p = { x:pivot.x - minX, y:pivot.y - minY };
+  const out = [];
+  for(let k=0;k<4;k++){
+    out.push({ rows, dx:pivot.x - p.x, dy:pivot.y - p.y });
+    const h = rows.length;
+    rows = rotate90(rows);
+    p = { x:h - 1 - p.y, y:p.x };   // 時計回りに90°回したときの回転の中心
+  }
+  return (_flipCache[key] = out);
+}
+function flipFrameIndex(){ return Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4))); }
+// 宙返り中（傘あり）のカラス用の当たり判定：回っている絵全体
+function flipBox(){
+  const fr = flipComposite(onBike)[flipFrameIndex()];
+  return { x:Math.round(player.x) + fr.dx + 1, y:Math.round(player.y) + fr.dy + 1, w:fr.rows[0].length - 2, h:fr.rows.length - 2 };
+}
+function drawFlipWithUmbrella(pal){
+  const fr = flipComposite(onBike)[flipFrameIndex()];
+  drawSprite(fr.rows, Math.round(player.x) + fr.dx, Math.round(player.y) + fr.dy, Object.assign({}, pal, umbFlipPal()));
+}
+function drawUmbrellaAt(cx, cy, hx, hy, pal = UMB_PAL){
+  const top = cy + UMB_CANOPY.length;
+  ctx.fillStyle = pal.S || UMB_SHAFT;           // 棒（銀）
+  ctx.fillRect(hx, top - 1, 1, Math.max(0, hy - 2 - (top - 1)));
+  ctx.fillStyle = pal.H;                        // 取っ手（茶）
+  ctx.fillRect(hx, hy - 2, 1, 3);
+  drawSprite(UMB_CANOPY, cx, cy, pal);
+}
+function drawHeldUmbrella(){
+  if(umbrella <= 0 || rolling > 0 || player.flip > 0 || state === "crash" || state === "clear") return;   // 宙返り中は女の子と一緒に回して描く
+  if(blink > 0 && Math.floor(blink / 4) % 2) return;
+  const u = umbrellaPos();
+  drawUmbrellaAt(u.cx, u.cy, u.hx, u.hy, umbPal());   // 持っている傘（無敵中は光る）
+}
+// 耐久を★で表示（減った★だけチカチカして消える）
+function showUmbStars(before, after){
+  const el = document.getElementById("umbStars");
+  let h = "";
+  for(let i = 0; i < before; i++) h += `<span class="${i >= after ? "lose" : ""}">★</span>`;
+  el.innerHTML = h;
+  const u = umbrellaPos();
+  el.style.left = ((u.cx + 10) / W * 100) + "%";
+  el.style.top = ((u.cy - 2 + VIEW_OY + LANE) / H * 100) + "%";
+  el.className = "umbstars outline"; void el.offsetWidth; el.className = "umbstars outline show";
+}
+// カラスを傘で防ぐ。防いだら true
+function umbrellaBlock(){
+  if(umbrella <= 0) return false;
+  const before = umbrella;
+  umbrella--;
+  invulT = 30;
+  showUmbStars(before, umbrella);
+  if(umbrella === 0){
+    // 耐久がなくなった：その場で壊れて消える
+    const u = umbrellaPos();
+    for(let i=0;i<18;i++) particles.push({ x:u.cx + rand(0, 21), y:u.cy + rand(0, 9), vx:rand(-1.2, 1.2), vy:-rand(.2, 1.4), life:30, c:[UMB_PAL.P, UMB_PAL.p, UMB_PAL.W][i % 3] });
+    girlSay("傘がこわれた！", 90);
+  }
+  return true;
+}
+// 宙返り中に傘で吹き飛ばせるか（回っている絵全体が当たり判定）
+const boxOv = (p, q) => p.x < q.x+q.w && p.x+p.w > q.x && p.y < q.y+q.h && p.y+p.h > q.y;
+function spinUmbHit(box){ return umbrella > 0 && rolling === 0 && player.flip > 0 && starT === 0 && boxOv(flipBox(), box); }
+// 吹っ飛ばしたときの演出（光・破片・ゆれ・音）
+function knockFX(cx, cy, debris){
+  for(let k=0;k<12;k++){
+    const ang = k / 12 * Math.PI * 2;
+    particles.push({ x:cx, y:cy, vx:Math.cos(ang) * 2.2, vy:Math.sin(ang) * 2.2, life:12, c:k % 2 ? "#ffffff" : "#f8d030" });
+  }
+  for(let k=0;k<10;k++) particles.push({ x:cx, y:cy, vx:rand(-1.4, 2.2), vy:-rand(.2, 1.8), life:28, c:debris[k % debris.length] });
+  shakeT = 8;
+  playKnockSE();
+}
+function knockCat(cat){
+  cat.hit = true; cat.knock = true; cat.kvx = 3.6; cat.kvy = -3.4;
+  umbrellaBlock();
+  const pal = CAT_PAL[cat.type];
+  knockFX(cat.x + 7, cat.y + 4, Object.values(pal).filter(c => c && c[0] === "#").slice(0, 3));
+  npcSay(cat.kind === "tabby" ? "tabby" : cat.type, "ウニャー！", 80);
+}
+function knockBanana(b){
+  b.hit = true; b.knock = true; b.kvx = 3.4; b.kvy = -3.2; b.ky = 0;
+  umbrellaBlock();
+  knockFX(b.x + 3, groundY - 2, ["#f8d030", "#7a5a20"]);
+}
+function knockPuddle(p){
+  p.hit = true; p.gone = true;
+  umbrellaBlock();
+  knockFX(p.x + p.w / 2, groundY, [PAL.puddle, PAL.puddleHi]);
+  for(let k=0;k<14;k++) particles.push({ x:p.x + rand(0, p.w), y:groundY, vx:rand(-.6, 1.6), vy:-rand(.8, 2.2), life:30, c:k % 2 ? PAL.puddle : PAL.puddleHi });   // しぶき
+}
+// カラスを吹っ飛ばす：勢いよく飛ばして、パッと光る＋画面が少しゆれる＋「カーッ！」
+let shakeT = 0;
+function knockCrow(c){
+  c.knock = true; c.kvx = 4.2; c.kvy = -3.6;
+  const cx = c.x + 6, cy = c.y + 4;
+  for(let k=0;k<12;k++){   // 白と黄色の光が放射状に
+    const ang = k / 12 * Math.PI * 2;
+    particles.push({ x:cx, y:cy, vx:Math.cos(ang) * 2.2, vy:Math.sin(ang) * 2.2, life:12, c:k % 2 ? "#ffffff" : "#f8d030" });
+  }
+  for(let k=0;k<10;k++) particles.push({ x:cx, y:cy, vx:rand(-1.4, 2.2), vy:-rand(.2, 1.8), life:28, c:k % 2 ? "#202028" : "#585860" });   // 羽
+  shakeT = 8;
+  playKnockSE();
+  npcSay("crow", "カーッ！", 80);
+}
+
+// 地上の障害物に当たった：傘を手放して、上にスーッと飛んでいく
+function dropUmbrella(){
+  if(umbrella <= 0) return;
+  const u = umbrellaPos();
+  flyUmbs.push({ cx:u.cx, cy:u.cy, hx:u.hx, hy:u.hy, age:0 });
+  umbrella = 0;
+}
+function updateFlyUmbs(){
+  for(let i = flyUmbs.length - 1; i >= 0; i--){
+    const f = flyUmbs[i];
+    f.age++;
+    const dy = 1.1, dx = -0.6;
+    f.cy -= dy; f.hy -= dy; f.cx += dx; f.hx += dx;
+    if(f.cy < -VIEW_OY - LANE - 30) flyUmbs.splice(i, 1);
+  }
+}
+function drawFlyUmbs(){
+  flyUmbs.forEach(f => drawUmbrellaAt(Math.round(f.cx), Math.round(f.cy), Math.round(f.hx), Math.round(f.hy)));
+}
+
+// 自転車がダメージを1回肩代わりして壊れる。肩代わりしたら true
+// 自転車の耐久（2回まで肩代わり）。減ると★を表示（傘と同じ）
+const BIKE_HP = 2;
+let bikeHP = 0;
+function showBikeStars(before, after){
+  const el = document.getElementById("bikeStars");
+  let h = "";
+  for(let i = 0; i < before; i++) h += `<span class="${i >= after ? "lose" : ""}">★</span>`;
+  el.innerHTML = h;
+  el.style.left = ((player.x + 2) / W * 100) + "%";
+  el.style.top = ((player.y - 12 + VIEW_OY + LANE) / H * 100) + "%";
+  el.className = "umbstars outline"; void el.offsetWidth; el.className = "umbstars outline show";
+}
+function bikeAbsorb(){
+  if(!onBike) return false;
+  const before = bikeHP;
+  bikeHP--;
+  invulT = 60;
+  playDamageSE();
+  showBikeStars(before, Math.max(0, bikeHP));
+  if(bikeHP > 0){ updateHUD(); return true; }   // まだ乗れる
+  onBike = false;
+  setSpeed();
+  girlSay("自転車がこわれた！", 90);
+  const cols = ["#38a0c8", "#24769c", "#b0b0bc", "#202028", "#c4c4ce"];
+  for(let i=0;i<16;i++){
+    particles.push({ x:player.x + rand(-4, 16), y:player.y + rand(4, 14), vx:rand(-1.4, 1.4), vy:-rand(.6, 1.8), life:34, c:cols[i % cols.length] });
+  }
+  updateHUD();
+  return true;
+}
+
+// バナナ：バナナ自体ではライフは減らない。スピードが落ちて転がる（転がっている間にほかの物に当たるとダメージ）。
+// 自転車のときは転ばず、スピードが落ちるだけ（自転車も壊れない）
+function slipBanana(b){
+  b.hit = true;
+  dropUmbrella();
+  mul -= CONFIG.bananaDown;
+  setSpeed();
+  if(!onBike) rolling = CONFIG.rollTime;
+  updateHUD();
+  playFlipSE();
+  showHeadPop("ツルッ！", "down");
+  for(let i=0;i<8;i++){
+    particles.push({ x:player.x+6, y:groundY-2, vx:(Math.random()-.5)*1.6, vy:-rand(.3,1.2), life:20, c:i%2 ? "#f8d030" : "#ffffff" });
+  }
+}
+
+function stepPuddle(p){
+  p.hit = true;
+  if(bikeAbsorb()) return;       // 自転車が肩代わり（傘は無傷）
+  dropUmbrella();                // 自転車がなければダメージ＋傘を失う
+  runT = 0; hurryArmed = true;   // 水たまりで足を取られたのもアクション扱い
+  mul -= CONFIG.puddleDown; setSpeed();
+  blink = 60;
+  lives--;
+  tryHeal(true);
+  updateHUD();
+  playDamageSE();
+  showDamagePop();
+  showHeadPop("バシャッ！", "down");
+  for(let i=0;i<10;i++){
+    particles.push({ x:player.x+6, y:groundY-1, vx:(Math.random()-.5)*1.4, vy:-rand(.4,1.4), life:22, c:i%2 ? "#7ea6c4" : "#c4e2f2" });
+  }
+  if(lives <= 0) lifeGameOver("puddle");
+}
+
+function updateParticles(){
+  for(let i=particles.length-1;i>=0;i--){
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += .04;
+    if(--p.life <= 0) particles.splice(i,1);
+  }
+}
+
+// ===== 紙吹雪 =====
+const CONFETTI_COLORS = ["#f8d030", "#e03030", "#3070e0", "#30c070", "#f870b0", "#ffffff"];
+function updateConfetti(){
+  if(confettiSpawn > 0){
+    confettiSpawn--;
+    const n = confettiSpawn > 120 ? 3 : 1;
+    for(let i=0;i<n;i++){
+      confetti.push({
+        x: rand(0, W), y: -2 - VIEW_OY,
+        vy: rand(.25, .6), phase: rand(0, 6), amp: rand(.2, .5),
+        c: CONFETTI_COLORS[irand(0, CONFETTI_COLORS.length-1)], t:0
+      });
+    }
+  }
+  for(let i=confetti.length-1;i>=0;i--){
+    const c = confetti[i];
+    c.t++;
+    c.y += c.vy;
+    c.x += Math.sin(c.phase + c.t * .06) * c.amp;
+    if(c.y > H + 2) confetti.splice(i,1);
+  }
+}
+
+// ===== 花火（週クリア） =====
+function launchFirework(){
+  // 狙った高さ（画面の上半分）でちょうど頂点になる初速で打ち上げる
+  const ty = rand(-VIEW_OY + 12, 44), y0 = H + 2;
+  fireworks.push({ kind:"rocket", x:rand(30, W - 30), y:y0, vy:-Math.sqrt(2 * .035 * (y0 - ty)),
+    c:CONFETTI_COLORS[irand(0, CONFETTI_COLORS.length-2)], t:0 });
+  playLaunchSE();
+}
+function burstFirework(r){
+  const n = irand(44, 56), sp = rand(1.5, 1.9);
+  const c2 = Math.random() < .5 ? "#ffffff" : r.c;
+  for(let i=0;i<n;i++){
+    const a = i / n * Math.PI * 2 + rand(-.08, .08), v = sp * rand(.85, 1.05);
+    fireworks.push({ kind:"spark", x:r.x, y:r.y, vx:Math.cos(a)*v, vy:Math.sin(a)*v,
+      c: i % 3 ? r.c : c2, life:irand(55, 75), t:0 });
+  }
+  playBurstSE();
+}
+function updateFireworks(){
+  if(fwSpawn > 0){
+    fwSpawn--;
+    if(--fwNext <= 0){
+      launchFirework();
+      if(Math.random() < .3) launchFirework();   // たまに2発同時
+      fwNext = irand(24, 48);
+    }
+  }
+  for(let i=fireworks.length-1;i>=0;i--){
+    const f = fireworks[i];
+    f.t++;
+    if(f.kind === "rocket"){
+      f.y += f.vy; f.vy += .035;
+      if(f.t % 2 === 0) fireworks.push({ kind:"spark", x:f.x + rand(-.5, .5), y:f.y + 2, vx:0, vy:.2, c:"#f8d030", life:10, t:0 });
+      if(f.vy >= 0){ burstFirework(f); fireworks.splice(i, 1); }
+    } else {
+      f.x += f.vx; f.y += f.vy; f.vx *= .965; f.vy = f.vy * .965 + .012;
+      if(--f.life <= 0) fireworks.splice(i, 1);
+    }
+  }
+}
+function drawFireworks(){
+  fireworks.forEach(f=>{
+    if(f.kind === "spark" && f.life < 18 && f.t % 4 < 2) return;   // 消える前にチカチカ
+    ctx.fillStyle = f.c;
+    // 火花は 2×2、尾を引く光は 1×1、玉は 2×3
+    const big = f.kind === "rocket" || f.vx !== 0;
+    ctx.fillRect(Math.round(f.x), Math.round(f.y), big ? 2 : 1, f.kind === "rocket" ? 3 : (big ? 2 : 1));
+  });
+}
+
+// ===== 結果 =====
+function showResult(title, message, clear){
+  document.getElementById("overlay").classList.remove("menu");
+  stopBGM();
+  // クリア時も先生のセリフを残す（ゲームオーバー時も最後のセリフを残す）
+  if(!clear) playGameOverSE();
+  document.getElementById("boostLabel").classList.add("hidden");
+  const ov = document.getElementById("overlay");
+  ov.classList.remove("hidden");
+  ov.classList.toggle("clear", !!clear);
+  ov.classList.toggle("weekend", !!clear && day >= CONFIG.daysPerWeek);   // 週クリアは大きく
+  document.getElementById("title").textContent = title;
+  // 週クリアの見出し：画面幅（264ドット）に収まる範囲で最大 40ドット
+  document.getElementById("title").style.setProperty("--tsize", Math.min(40, Math.floor(256 / [...title].length)));
+  document.getElementById("message").innerHTML = message;
+  inputLockUntil = performance.now() + RESULT_LOCK_MS;
+  const btn = document.getElementById("start");
+  btn.disabled = true;
+  setTimeout(() => { btn.disabled = false; }, RESULT_LOCK_MS);
+  if(clear){
+    document.getElementById("start").textContent = day >= CONFIG.daysPerWeek ? "次の週へ" : "次の日へ";
+  } else {
+    addRecord(dayIdx(week, day), mul);
+    shareDays = dayIdx(week, day); shareMedals = medals;
+    document.getElementById("message").innerHTML = `${weekDayLabel()}、遅刻しちゃった…<br>最高記録：${bestText()}`;
+    document.getElementById("start").textContent = "タイトルへ";
+  }
+  document.getElementById("shareBar").classList.toggle("hidden", !!clear);   // ゲームオーバーのときだけ
+  document.getElementById("overTitleBar").classList.toggle("hidden", !!clear);
+  ov.classList.toggle("over", !clear);
+  document.querySelector(".screen").classList.toggle("over", !clear);
+  if(!clear){ shareFile = null; setTimeout(() => { if(ov.classList.contains("over")) prepareShareImage(); }, 1200); }
+}
+
+// ===== 結果をX（旧Twitter）にポスト =====
+const GAME_URL = "https://oga31061.github.io/chikoku-dash/";
+let shareDays = 0, shareMedals = 0;
+function shareText(){
+  const d = shareDays;
+  let t = d > 0 ? `『遅刻ダッシュ！』で${d}日連続 遅刻せずに登校できた！` : "『遅刻ダッシュ！』1日目から遅刻しちゃった…";
+  if(shareMedals > 0) t += `\nメダル×${shareMedals}`;
+  return t + "\n#遅刻ダッシュ";
+}
+// ゲームオーバーの瞬間の画面に、結果の文字を重ねた画像を作っておく（ボタンを押したらすぐ使えるように）
+let shareFile = null, shareURL = null;
+async function prepareShareImage(){
+  shareFile = null;
+  if(shareURL){ URL.revokeObjectURL(shareURL); shareURL = null; }
+  const blob = await captureScreen();
+  if(!blob) return;
+  shareFile = new File([blob], "chikoku-dash.png", { type:"image/png" });
+  shareURL = URL.createObjectURL(blob);
+}
+// いま画面に出ているゲーム画面をそのまま画像にする（ボタン類だけ除く）
+async function captureScreen(withUI = true){
+  try{ await document.fonts.ready; }catch(e){}
+  const scr = document.querySelector(".screen");
+  const sr = scr.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
+  if(!cr.width) return null;
+  const k = (W * 4) / cr.width;   // ゲーム 1ドット＝4px
+  const c = document.createElement("canvas");
+  c.width = Math.round(sr.width * k); c.height = Math.round(sr.height * k);
+  const g = c.getContext("2d");
+  g.imageSmoothingEnabled = false;
+  const X = v => (v - sr.left) * k, Y = v => (v - sr.top) * k;
+  const SKIP = "button, .sharebar, .pausemenu, .xchg, .camflash";
+  const uiOff = !withUI;
+  const loadImg = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
+  const shadows = s => { const out = []; if(!s || s === "none") return out;
+    const re = /(rgba?\([^)]*\)|#[0-9a-f]+)\s+(-?[\d.]+)px\s+(-?[\d.]+)px/gi; let m;
+    while((m = re.exec(s))) out.push([m[1], +m[2], +m[3]]); return out; };
+  async function walk(el, alpha){
+    if(el.nodeType === 3){
+      const t = el.textContent; if(!t.trim()) return;
+      const cs = getComputedStyle(el.parentElement);
+      g.font = `${cs.fontStyle} ${cs.fontWeight} ${parseFloat(cs.fontSize) * k}px ${cs.fontFamily}`;
+      g.textBaseline = "alphabetic"; g.textAlign = "left";
+      const asc = g.measureText("あ").fontBoundingBoxAscent || parseFloat(cs.fontSize) * k * .8;
+      const sh = shadows(cs.textShadow), r = document.createRange();
+      let i = 0;
+      for(const ch of t){
+        const n = ch.length;
+        if(ch.trim()){
+          r.setStart(el, i); r.setEnd(el, i + n);
+          const b = r.getBoundingClientRect();
+          if(b.width){
+            const x = X(b.left), y = Y(b.top) + asc;
+            g.globalAlpha = alpha;
+            sh.forEach(([col, dx, dy]) => { g.fillStyle = col; g.fillText(ch, x + dx * k, y + dy * k); });
+            g.fillStyle = cs.color; g.fillText(ch, x, y);
+          }
+        }
+        i += n;
+      }
+      return;
+    }
+    if(el.nodeType !== 1 || el.matches(SKIP)) return;
+    const cs = getComputedStyle(el);
+    if(cs.display === "none" || cs.visibility === "hidden") return;
+    alpha *= parseFloat(cs.opacity); if(alpha <= 0) return;
+    const b = el.getBoundingClientRect();
+    g.globalAlpha = alpha;
+    if(el.tagName === "CANVAS"){ g.drawImage(el, X(b.left), Y(b.top), b.width * k, b.height * k); return; }
+    if(uiOff && el !== scr) return;   // UI オフ：ゲームの絵（canvas）だけ
+    if(el !== scr && cs.boxShadow && cs.boxShadow !== "none") shadows(cs.boxShadow.replace(/[^,()]*inset[^,]*/g, "")).forEach(([col, dx, dy]) => {
+      // CSS と同じく、影は要素の外側だけに描く
+      const bx = X(b.left), by = Y(b.top), w = b.width * k, h = b.height * k;
+      g.save(); g.beginPath(); g.rect(0, 0, c.width, c.height); g.rect(bx, by, w, h); g.clip("evenodd");
+      g.fillStyle = col; g.fillRect(bx + dx * k, by + dy * k, w, h); g.restore();
+    });
+    if(el !== scr && cs.backgroundColor && !/rgba\(.*,\s*0\)$/.test(cs.backgroundColor) && cs.backgroundColor !== "transparent"){
+      g.fillStyle = cs.backgroundColor; g.fillRect(X(b.left), Y(b.top), b.width * k, b.height * k);
+    }
+    const bw = parseFloat(cs.borderTopWidth);
+    if(bw > 0 && cs.borderTopStyle !== "none"){
+      g.strokeStyle = cs.borderTopColor; g.lineWidth = bw * k;
+      g.strokeRect(X(b.left) + bw * k / 2, Y(b.top) + bw * k / 2, (b.width - bw) * k, (b.height - bw) * k);
+    }
+    if(el.tagName === "IMG"){ if(el.complete && el.naturalWidth) g.drawImage(el, X(b.left), Y(b.top), b.width * k, b.height * k); return; }
+    if(el.tagName.toLowerCase() === "svg"){
+      const s = el.cloneNode(true);
+      s.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      s.setAttribute("width", b.width); s.setAttribute("height", b.height);
+      if(!s.getAttribute("fill")) s.setAttribute("fill", cs.fill && cs.fill !== "none" ? cs.fill : cs.color);
+      const im = await loadImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(s)));
+      if(im){ g.globalAlpha = alpha; g.drawImage(im, X(b.left), Y(b.top), b.width * k, b.height * k); }
+      return;
+    }
+    for(const ch of el.childNodes) await walk(ch, alpha);
+  }
+  g.fillStyle = "#000"; g.fillRect(0, 0, c.width, c.height);
+  await walk(scr, 1);
+  return await new Promise(res => c.toBlob(res, "image/png"));
+}
+const isTouchDevice = () => window.matchMedia && window.matchMedia("(pointer:coarse)").matches;
+function shareResult(){
+  const text = shareText() + "\n" + GAME_URL;
+  // スマホ：共有メニューで画像つき（X を選べばスクショつきの投稿画面）
+  if(isTouchDevice() && shareFile && navigator.canShare && navigator.canShare({ files:[shareFile] })){
+    navigator.share({ files:[shareFile], text }).catch(err => {
+      if(err && err.name === "AbortError") return;   // 自分でキャンセルした
+      openIntent();
+    });
+    return;
+  }
+  openIntent();   // PC など：文章だけの投稿画面（リンクには画像カードが出る）
+}
+function openIntent(){
+  const url = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText()) + "&url=" + encodeURIComponent(GAME_URL);
+  window.open(url, "_blank", "noopener");
+}
+function saveShareImage(){
+  if(!shareURL) return;
+  const a = document.createElement("a");
+  a.href = shareURL; a.download = "chikoku-dash.png";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById("shareBtn").addEventListener("click", shareResult);
+document.getElementById("saveBtn").addEventListener("click", saveShareImage);
+document.getElementById("overTitleBtn").addEventListener("click", proceed);   // ゲームオーバー → タイトルへ
+
+function remainingMeters(){
+  return Math.max(0, Math.round((COURSE - worldOffset - player.x) / pxPerMeter));
+}
+
+// 猫やカラスにぶつかった：1ダメージ（セリフはウィンドウに）。ライフが尽きたら true
+function hitBy(who, line){
+  // ダメージ：自転車があれば自転車が肩代わり（傘は無傷）。なければ女の子がダメージを受けて、傘は失う
+  // （傘の耐久が減るのは、宙返りで吹き飛ばしたときだけ）
+  if(bikeAbsorb()) return false;      // 自転車が肩代わり（★−1、2回で壊れる）
+  dropUmbrella();
+  lives--;
+  tryHeal(true);
+  invulT = 60; blink = 60;
+  runT = 0; hurryArmed = true;
+  updateHUD();
+  playDamageSE();
+  showDamagePop();
+  for(let i=0;i<10;i++){
+    particles.push({ x:player.x+6, y:player.y+6, vx:(Math.random()-.5)*1.5, vy:-rand(0,1.2), life:30, c:"#f8f8f8" });
+  }
+  if(lives <= 0){
+    state = "gameover";
+    npcSay(who, line, 1e9);
+    showResult("GAME OVER", "");
+    return true;
+  }
+  npcSay(who, line, 90);
+  return false;
+}
+
+function crowGameOver(c){
+  state = "gameover";
+  for(let i=0;i<10;i++){
+    particles.push({ x:c.x+6, y:c.y+3, vx:(Math.random()-.5)*1.5, vy:-rand(0,1), life:35, c:"#202028" });
+  }
+  npcSay("crow", "カァー！じゃまだ！", 1e9);
+  showResult("GAME OVER", "");
+}
+
+function catGameOver(cat){
+  state = "gameover";
+  for(let i=0;i<14;i++){
+    particles.push({ x:cat.x+7, y:cat.y, vx:(Math.random()-.5)*1.5, vy:-rand(0,1.2), life:35, c:"#f8f8f8" });
+  }
+  // セリフは左上のウィンドウに（短く）
+  if(cat.kind === "tabby") npcSay("tabby", "どこみてんの！", 1e9);
+  else if(cat.type === "white") npcSay("white", "ふまないでよ！", 1e9);
+  else npcSay("black", "……いたいんだけど", 1e9);
+  showResult("GAME OVER", "");
+}
+
+// タイムアップ：正門がすぐさま閉まる
+function lifeGameOver(kind){
+  state = "gameover";
+  npcLineT = 0;
+  girlSay("もう走れない…", 1e9);
+  showResult("GAME OVER", "");
+}
+
+function timeUp(){
+  timeLeft = 0;
+  gateClosing = true;
+  updateHUD();
+  if(gateScreenX() > W + 12){
+    // 正門がまだ見えていない → その場で終了
+    state = "gameover";
+    npcLineT = 0;
+    girlSay("まにあわなかった…", 1e9);
+    showResult("タイムアップ", "");
+    return;
+  }
+  // 正門が見えている → 先生が怒鳴り、女の子は門扉に激突する
+  npcSay("teacher", "コラー！", 200, "red");
+}
+
+function crash(){
+  state = "crash";
+  crashTimer = 0;
+  bounced = false;
+  player.vx = -1.6;
+  player.vy = -2.6;
+  player.jumping = true;
+  const dx = doorLeft();
+  for(let i=0;i<12;i++){
+    particles.push({ x:dx, y:player.y + rand(0, 12), vx:-rand(.2, 1.6), vy:-rand(0, 1.4), life:30, c:i%2 ? "#f8d030" : "#ffffff" });
+  }
+}
+
+function updateCrash(){
+  crashTimer++;
+  if(player.jumping){
+    player.x += player.vx;
+    player.vy += .115;
+    player.y += player.vy;
+    if(player.y >= groundY - player.h && player.vy > 0){
+      player.y = groundY - player.h;
+      if(!bounced){
+        bounced = true;
+        player.vy = -1.3;
+        player.vx *= .5;
+      } else {
+        player.vy = 0;
+        player.jumping = false;
+      }
+    }
+  }
+  if(crashTimer === 100){
+    state = "gameover";
+    showResult("タイムアップ", "");
+  }
+}
+
+function gameClear(){
+  state = "clear";
+  resultT = 0; exchangeDone = false;
+  confettiSpawn = 240;
+  noteBest(dayIdx(week, day) + 1);   // 次の日まで到達
+  playClearMusic();
+  const weekEnd = day >= CONFIG.daysPerWeek;
+  if(weekEnd){ fwSpawn = 480; fwNext = 1; }   // 週クリア：下から花火を打ち上げる（約8秒）
+  showResult(weekEnd ? (week === 1 ? "クリア！" : `第${week}週 クリア！`) : "セーフ！！",
+    `${weekDayLabel()}　到着 ${clockText()}<br>最高記録：${bestText()}`, true);
+}
+
+// ===== 描画：背景 =====
+function layerOffset(layer){
+  return Math.round(worldOffset * layer.factor) % layer.period;
+}
+function eachVisible(layer, fn){
+  const off = layerOffset(layer);
+  layer.items.forEach(it=>{
+    for(let k=0;k<3;k++){
+      const sx = it.x - off + k*layer.period;
+      if(sx + it.w > -12 && sx < W + 12) fn(it, sx);
+    }
+  });
+}
+
+function drawSky(){
+  ctx.fillStyle = PAL.sky;
+  ctx.fillRect(0,0,W,H);
+}
+
+function drawClouds(){
+  ctx.fillStyle = PAL.cloud;
+  eachVisible(layers.clouds, (c,x)=>{
+    ctx.fillRect(x, c.y+3, c.w, 4);
+    ctx.fillRect(x+3, c.y+1, Math.round(c.w*.45), 2);
+    ctx.fillRect(x+Math.round(c.w*.4), c.y, Math.round(c.w*.35), 3);
+  });
+}
+
+function drawHills(){
+  const L = layers.hills, off = layerOffset(L);
+  ctx.fillStyle = PAL.hill;
+  for(let x=0;x<W;x++){
+    const h = L.heights[(x + off) % L.period];
+    ctx.fillRect(x, h, 1, groundY - h);
+  }
+}
+
+function drawHouse(x, base, w, wall, roof, wallCol, roofCol){
+  const top = base - wall;
+  ctx.fillStyle = wallCol;
+  ctx.fillRect(x, top, w, wall);
+  ctx.fillStyle = roofCol;
+  for(let i=0;i<roof;i++){
+    const inset = Math.round(i * (w/2 + 2) / roof);
+    ctx.fillRect(x - 2 + inset, top - 1 - i, w + 4 - inset*2, 1);
+  }
+}
+
+function drawFarHouses(){
+  eachVisible(layers.farHouses, (h,x)=>{
+    drawHouse(x, 90, h.w, h.wall, h.roof, PAL.farHouse, PAL.farHouse);
+  });
+}
+
+function drawNearHouses(){
+  eachVisible(layers.nearHouses, (h,x)=>{
+    const base = 88;
+    drawHouse(x, base, h.w, h.wall, h.roof, PAL.wall[h.c], PAL.roof[h.c]);
+    ctx.fillStyle = PAL.window;
+    const top = base - h.wall;
+    ctx.fillRect(x+4, top+3, 5, 4);
+    ctx.fillRect(x+h.w-9, top+3, 5, 4);
+    if(h.wall >= 18) ctx.fillRect(x+4, top+10, 5, 4);
+    if(h.tree){
+      ctx.fillStyle = PAL.tree;
+      pixelCircle(x + h.w + 3, base - 9, 5);
+    }
+  });
+}
+
+function drawSchool(gx){
+  if(gx > W + 10) return;
+  const left = gx + 10;
+  ctx.fillStyle = PAL.school;
+  ctx.fillRect(left, 48, W - left + 200, 42);
+  ctx.fillStyle = PAL.schoolLn;
+  ctx.fillRect(left, 48, W - left + 200, 2);
+  const tx = left + 44;
+  ctx.fillStyle = PAL.school;
+  ctx.fillRect(tx, 32, 18, 17);
+  ctx.fillStyle = PAL.schoolLn;
+  ctx.fillRect(tx, 32, 18, 2);
+  ctx.fillStyle = "#f8f8f8";
+  pixelCircle(tx + 9, 41, 4);
+  ctx.fillStyle = "#5a5c64";
+  ctx.fillRect(tx + 9, 38, 1, 4);
+  ctx.fillRect(tx + 9, 41, 3, 1);
+  ctx.fillStyle = PAL.window;
+  for(let row=0; row<3; row++){
+    for(let x = left + 6; x < W + 10; x += 11){
+      ctx.fillRect(x, 54 + row*10, 7, 5);
+    }
+  }
+}
+
+function drawFront(gx){
+  const L = layers.front;
+  const off = layerOffset(L);
+  const wireEnd = Math.min(W, gx);
+  if(wireEnd > 0){
+    ctx.fillStyle = PAL.wire;
+    ctx.fillRect(0, 38, wireEnd, 1);
+    ctx.fillRect(0, 42, wireEnd, 1);
+  }
+  ctx.fillStyle = PAL.pole;
+  for(let k=0;k<4;k++){
+    const x = 50 - off + k*L.period;
+    if(x < -12 || x > W + 12 || x > gx - 8) continue;
+    ctx.fillRect(x, 32, 3, 58);
+    ctx.fillRect(x-4, 37, 11, 2);
+  }
+  const fTop = 84, fBot = groundY;
+  ctx.fillStyle = PAL.fence;
+  ctx.fillRect(0, fTop, W, fBot - fTop);
+  ctx.fillStyle = PAL.fenceLn;
+  ctx.fillRect(0, fTop, W, 1);
+  ctx.fillRect(0, fTop + 5, W, 1);
+  const seamOff = Math.round(worldOffset * L.factor) % 16;
+  for(let x = -seamOff; x < W; x += 16){
+    ctx.fillRect(x, fTop+1, 1, 4);
+    ctx.fillRect(x+8, fTop+6, 1, fBot - fTop - 6);
+  }
+}
+
+function drawRoad(){
+  // 塀の下に細い路側帯 → 広いアスファルト（この上を走る）→ 縁石 → わずかな植え込み
+  ctx.fillStyle = PAL.path;
+  ctx.fillRect(0, groundY, W, 3);
+  ctx.fillStyle = PAL.line;
+  ctx.fillRect(0, groundY + 3, W, 1);
+  ctx.fillStyle = PAL.road;
+  ctx.fillRect(0, groundY + 4, W, VERGE_Y - 1 - (groundY + 4));
+  ctx.fillStyle = PAL.curbFar;
+  ctx.fillRect(0, VERGE_Y - 1, W, 1);
+  ctx.fillStyle = PAL.verge;
+  ctx.fillRect(0, VERGE_Y, W, H - VERGE_Y);
+  drawVerge();
+}
+
+// 手前をたまに流れていく花壇・野花（さりげなく、まばらに）
+const VERGE_Y = groundY + LANE + 12;   // 走る位置より少し下まで道。植え込みは画面の下にわずかだけ
+function drawVerge(){
+  eachVisible(layers.verge, (it, x) => {
+    if(it.kind === "bed"){
+      // レンガの花壇
+      ctx.fillStyle = PAL.brick;
+      ctx.fillRect(x, VERGE_Y + 1, it.w, 5);
+      ctx.fillStyle = PAL.brickHi;
+      ctx.fillRect(x, VERGE_Y + 1, it.w, 1);
+      for(let bx = x + 3; bx < x + it.w; bx += 6) ctx.fillRect(bx, VERGE_Y + 3, 1, 3);
+      // 植わっている草花（夏のひまわりの花壇は、ひまわりだけ）
+      ctx.fillStyle = PAL.leaf;
+      ctx.fillRect(x + 1, VERGE_Y - 2, it.w - 2, 3);
+      if(!(season === 1 && it.sun)) it.flowers.forEach(f => {
+        ctx.fillStyle = f.c;
+        ctx.fillRect(x + f.dx, VERGE_Y - 3 + f.dy, 2, 2);
+      });
+    } else {
+      // 野花のひとむら
+      ctx.fillStyle = PAL.leaf;
+      ctx.fillRect(x + 1, VERGE_Y + 2, 1, 3);
+      ctx.fillRect(x + 3, VERGE_Y + 1, 1, 4);
+      ctx.fillRect(x + 5, VERGE_Y + 2, 1, 3);
+      ctx.fillStyle = it.c;
+      ctx.fillRect(x + 1, VERGE_Y + 1, 1, 1);
+      ctx.fillRect(x + 3, VERGE_Y, 1, 1);
+      ctx.fillRect(x + 5, VERGE_Y + 1, 1, 1);
+    }
+  });
+}
+
+function drawPuddle(p){
+  const x = Math.round(p.x), w = p.w;
+  ctx.fillStyle = PAL.puddle;
+  ctx.fillRect(x + 3, groundY, w - 6, 1);
+  ctx.fillRect(x, groundY + 1, w, 2);
+  ctx.fillRect(x + 2, groundY + 3, w - 4, 1);
+  ctx.fillStyle = PAL.puddleHi;
+  ctx.fillRect(x + 4, groundY + 1, Math.round(w * .35), 1);
+}
+
+// 正門：門柱＋門扉（タイムアップで左へスライドして閉まる）
+// 正門前の体育教師（赤ジャージ、腕を振って急かしている）
+const TEACHER_A = [
+  "....KKKK....",
+  "...KKKKKK...",
+  "...SSSSSK...",
+  "...SKSSSS...",
+  "...SSSSSS...",
+  "....SSSS....",
+  "..JJJYJJJ...",
+  ".JJJJYJJJJ..",
+  ".JWJJYJJWJ..",
+  ".JWJJJJJWJ..",
+  ".SWJJJJJWS..",
+  "..JJJJJJJ...",
+  "..JJJ.JJJ...",
+  "..JWJ.JWJ...",
+  "..JWJ.JWJ...",
+  "..JWJ.JWJ...",
+  "..JJJ.JJJ...",
+  ".DDDD.DDDD..",
+];
+const TEACHER_B = TEACHER_A.slice();
+TEACHER_B[4]  = "S..SSSSSS...";
+TEACHER_B[5]  = "S...SSSS....";
+TEACHER_B[6]  = "SJJJJYJJJ...";
+TEACHER_B[8]  = "..JJJYJJWJ..";
+TEACHER_B[9]  = "..JJJJJJWJ..";
+TEACHER_B[10] = "..JJJJJJWS..";
+const TEACHER_PAL = { K:"#2a2030", S:"#e8b088", J:"#c83838", W:"#f8f8f8", Y:"#f8d030", D:"#303038" };
+
+// 庭木を剪定しているおじいさん（横向き、ハンチング帽にカーディガン）
+const ELDER = [
+  "...CCCC.....",
+  "..CCCCCC....",
+  "..CCCCCCCC..",
+  "...SSSSS....",
+  "...HSSKS....",
+  "...HSSSS....",
+  "....SSS.....",
+  "..GGGGG.SS..",
+  "..GGGGGGSS..",
+  "..GGGGGG....",
+  "..GGGGGG....",
+  "..GGGGGG....",
+  "..PPPPPP....",
+];
+const ELDER_PAL = { C:"#9a8a66", S:"#e8b890", K:"#2a2030", H:"#ececec", G:"#8a9a7a", W:"#f0f0e0", P:"#5c5650", D:"#3a3430" };
+
+// おじいさんは塀の奥（自宅の庭）で庭木を剪定していて、塀から上半身が見えている。
+// 奥にいるので、地面よりゆっくり流れる（＝画面に長くいる）
+const ELDER_FACTOR = 0.3;    // 手前の家並みと同じ流れ
+const ELDER_Y = 70;
+const ELDER_QUIET_TICK = 260;   // 朝のひとことの直後はセリフを続けない（この間はあいさつしない）
+function drawElder(){
+  if(!elder) return;
+  const x = Math.round(elder.x);
+  if(x < -14 || x > W + 24) return;
+  // 庭木（下は塀に隠れる）
+  ctx.fillStyle = PAL.tree;
+  pixelCircle(x + 21, ELDER_Y + 4, 7);
+  ctx.fillRect(x + 16, ELDER_Y + 8, 11, 6);
+  // おじいさん
+  drawSprite(ELDER, x, ELDER_Y, ELDER_PAL);
+  // 剪定ばさみ（チョキチョキ）
+  ctx.fillStyle = "#a0a4ac";
+  if(Math.floor(animTick / 10) % 2){
+    ctx.fillRect(x + 10, ELDER_Y + 7, 4, 1);
+  } else {
+    ctx.fillRect(x + 10, ELDER_Y + 7, 3, 1);
+    ctx.fillRect(x + 13, ELDER_Y + 6, 1, 1);
+    ctx.fillRect(x + 13, ELDER_Y + 8, 1, 1);
+  }
+}
+
+function drawTeacher(gx){
+  const x = gx - 16;
+  if(x < -14 || x > W + 2) return;
+  ctx.fillStyle = "rgba(0,0,0,.18)";
+  ctx.fillRect(x + 1, groundY, 10, 1);
+  drawSprite(Math.floor(animTick / 18) % 2 ? TEACHER_B : TEACHER_A, x, groundY - 18, TEACHER_PAL);
+}
+
+function drawGate(gx){
+  if(gx < -30 || gx > W + 30) return;
+  // 道の手前側（LANE ぶん下）に描かれるので、門柱は上へ LANE ぶん伸ばして頭の高さを校舎にそろえる
+  const top = 64 - LANE;
+  ctx.fillStyle = PAL.pillar;
+  ctx.fillRect(gx, top, 8, groundY - top);
+  ctx.fillStyle = PAL.pillarLn;
+  ctx.fillRect(gx, top, 8, 2);
+  ctx.fillRect(gx - 1, top - 2, 10, 2);
+  ctx.fillStyle = "#f0ece0";
+  ctx.fillRect(gx + 2, top + 5, 4, 16);
+  ctx.fillStyle = "#6a6458";
+  for(let y = top + 7; y < top + 20; y += 3) ctx.fillRect(gx + 3, y, 2, 1);
+
+  const dx = doorLeft();
+  ctx.fillStyle = PAL.gate;
+  ctx.fillRect(dx, 70, 11, 1);
+  ctx.fillRect(dx, 97, 11, 1);
+  for(let x = dx; x < dx + 11; x += 3) ctx.fillRect(x, 70, 1, 28);
+}
+
+// ===== 描画：キャラクター =====
+function drawCan(can){
+  const bob = Math.floor(can.age / 16) % 2;
+  const x = Math.round(can.x), y = can.y + bob;
+  drawSprite(CAN, x, y, CAN_PAL);
+  if(Math.floor(can.age / 20) % 2){
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x+7, y-1, 1, 1);
+    ctx.fillRect(x+6, y-2, 1, 1);
+    ctx.fillRect(x+8, y-2, 1, 1);
+    ctx.fillRect(x+7, y-3, 1, 1);
+  }
+}
+
+function drawCat(cat){
+  const pal = CAT_PAL[cat.type];
+  const x = Math.round(cat.x);
+  if(cat.knock){   // 吹っ飛ばされた猫はひっくり返る
+    const rows = cat.isStationary ? CAT_SLEEP : [...(cat.kind === "tabby" ? TABBY_TOP : CAT_RUN_TOP), ...CAT_LEGS_A];
+    drawSprite(rows, x, Math.round(cat.y), pal, true);
+    return;
+  }
+  ctx.fillStyle = "rgba(0,0,0,.18)";
+  ctx.fillRect(x+1, groundY, 12, 1);
+  if(cat.isStationary){
+    drawSprite(CAT_SLEEP, x, groundY - 7, pal);
+  } else if(cat.kind === "tabby"){
+    const y = Math.round(cat.y);
+    const inAir = y < groundY - 9;
+    drawSprite(TABBY_TOP, x, y, pal);
+    drawSprite(inAir ? CAT_LEGS_B : CAT_LEGS_A, x, y + 7, pal);
+  } else {
+    const f = Math.floor(cat.age / 5) % 2;
+    const y = groundY - 9 - f;
+    drawSprite(CAT_RUN_TOP, x, y, pal);
+    drawSprite(f ? CAT_LEGS_B : CAT_LEGS_A, x, y + 7, pal);
+  }
+}
+
+// エナドリのブースト中は体がオレンジ色に
+const GIRL_PAL_BOOST = { K:"#a04818", S:"#ffc890", W:"#ffb050", N:"#e86a18", R:"#ff4818", B:"#b85818", D:"#783010" };
+// 無敵タイム中はキラキラ点滅
+const GIRL_PAL_STAR = [
+  { K:"#fff4c0", S:"#ffffff", W:"#ffffff", N:"#ffe070", R:"#ffffff", B:"#ffe070", D:"#f8d030" },
+  { K:"#f8d030", S:"#ffe8a0", W:"#ffd060", N:"#ff9030", R:"#ff6030", B:"#f8a040", D:"#c06020" },
+];
+function girlPal(){
+  const live = state === "playing" || state === "goal";
+  if(live && starT > 0) return GIRL_PAL_STAR[Math.floor(animTick / 3) % 2];
+  return boostLeft > 0 && live ? GIRL_PAL_BOOST : GIRL_PAL;
+}
+
+// ===== 自転車 =====
+const BIKE_FRAMES = [[".......KKKKK............", "......KKKKKKK...........", ".....KKKSSSSK...........", ".....KKSSSKSS...........", ".....KKSSSSSS...........", ".....KK.SSSS............", "......NNWWWWN...........", ".....BNWWRRWWS..........", ".....BNWWRWWW.SS..ccccc.", ".....BBWWWWWW..DDDCcCcC.", "......NNNNNNN....fcCcCc.", ".....NNNNNNNNN..ffCcCcC.", "..ccc...FsSS.....fcCcCc.", "...DDcccFFSS...FFffDD...", "..D.G..FDFDDDFF.D.f..D..", ".D..G.F.DFHD...D..f...D.", ".D..HFFFF......D..HfGGD.", ".DGGFF..D......DGGHf..D.", ".D...G..D......D...G..D.", "..D..G.D........D..G.D..", "...DDDD..........DDDD..."], [".......KKKKK............", "......KKKKKKK...........", ".....KKKSSSSK...........", ".....KKSSSKSS...........", ".....KKSSSSSS...........", ".....KK.SSSS............", "......NNWWWWN...........", ".....BNWWRRWWS..........", ".....BNWWRWWW.SS..ccccc.", ".....BBWWWWWW..DDDCcCcC.", "......NNNNNNN....fcCcCc.", ".....NNNNNNNNN..ffCcCcC.", "..ccc...FsSS.....fcCcCc.", "...DDcccFFSS...FFffDD...", "..D....FDFDDDFF.D.f..D..", ".D.G..F.DFHD...D.Gf.G.D.", ".D..HFFFF......D..Hf..D.", ".D..FF..D......D..Hf..D.", ".D.G..G.D......D.G..G.D.", "..D....D........D....D..", "...DDDD..........DDDD..."]];
+const BIKE_BASE_PAL = { F:"#38a0c8", f:"#24769c", G:"#b0b0bc", H:"#d0d0dc", C:"#c4c4ce", c:"#8c8c98" };
+function bikePal(){
+  const gp = girlPal();
+  return Object.assign({}, BIKE_BASE_PAL, gp, { s: gp === GIRL_PAL ? "#d0a084" : gp.S });
+}
+// 宙返り用：自転車ごと90°ずつ回した4コマ
+const BIKE_ROT = [BIKE_FRAMES[0]];
+for(let i=0;i<3;i++) BIKE_ROT.push(rotate90(BIKE_ROT[i]));
+function bikeFrame(){
+  const moving = state === "playing" || state === "goal";
+  return BIKE_FRAMES[moving ? Math.floor(animTick / 5) % 2 : 0];
+}
+
+// ===== メダル3つの交換画面 =====
+// 自転車・ハートのアイコン（ドット絵を SVG に）
+function pixSVG(rows, pal, scale, outline){
+  const h = rows.length, w = rows[0].length, o = outline ? 1 : 0;
+  let r = "";
+  const at = (x, y) => y >= 0 && y < h && x >= 0 && x < w && rows[y][x] !== ".";
+  for(let y = -o; y < h + o; y++) for(let x = -o; x < w + o; x++){
+    let c = null;
+    if(at(x, y)) c = pal[rows[y][x]];
+    else if(outline && (at(x-1, y) || at(x+1, y) || at(x, y-1) || at(x, y+1))) c = "#1c2030";
+    if(c) r += `<rect x="${x+o}" y="${y+o}" width="1" height="1" fill="${c}"/>`;
+  }
+  return `<svg viewBox="0 0 ${w+o*2} ${h+o*2}" style="width:calc(var(--dot) * ${(w+o*2)*scale});height:calc(var(--dot) * ${(h+o*2)*scale})" shape-rendering="crispEdges">${r}</svg>`;
+}
+// 食パン：切っていない1斤をななめから。左が断面、右に側面（上は焼き色）
+const BREAD_ICON = [   // 上がふんわりはみ出した、よくある食パンの形
+  "..BBBBBBB.LL...",
+  ".BCCCCCCCBLLL..",
+  "BCCCCCCCCCBLLL.",
+  "BCCCCCCCCCBLLL.",
+  ".BCCCCCCCBbbbb.",
+  ".BCCCCCCCBbbbb.",
+  ".BCCCCCCCBbbbb.",
+  ".BCCCCCCCBbbbb.",
+  ".BCCCCCCCBbbbb.",
+  ".BBBBBBBBBbbbb.",
+];
+const UMB_ICON = UMB_CANOPY.concat(["", "", "", "", "", "", "", ""].map((_, k) => {
+  // 棒（銀）→ 取っ手（茶）→ 曲がった持ち手
+  const row = [...".".repeat(UMB_CANOPY[0].length)];
+  if(k < 5) row[10] = "S"; else if(k < 7) row[10] = "H";
+  if(k === 6) row[8] = "H";
+  if(k === 7){ row[9] = "H"; }
+  if(k === 5) row[7] = ".";
+  return row.join("");
+}));
+const bikeIconSVG  = () => pixSVG(BIKE_FRAMES[0], Object.assign({}, BIKE_BASE_PAL, GIRL_PAL, { s:"#d0a084" }), 2, false);
+const umbIconSVG   = () => pixSVG(UMB_ICON, Object.assign({ S:UMB_SHAFT }, UMB_PAL), 2, false);   // アイコンは全部 2倍（ドットの大きさをそろえる）
+const breadIconSVG = () => pixSVG(BREAD_ICON, { B:"#c8823c", b:"#a0602c", L:"#dea050", C:"#fff0c8" }, 2, false);   // 縁取りなし（ほかの絵と同じ）
+// ハートのアイコン（上限アップ用）：3つは三角、4つは四角に並べる
+const HEART_PX = [".RR.RR.", "RRRRRRR", "RRRRRRR", ".RRRRR.", "..RRR..", "...R..."];
+function heartsIcon(n){
+  const W7 = 7, H6 = 6, gap = 1;
+  const pos = n === 3 ? [[4, 0], [0, 7], [8, 7]] : [[0, 0], [8, 0], [0, 7], [8, 7]];
+  const w = 15, h = 13, rows = Array.from({ length:h }, () => [..."." .repeat(w)]);
+  pos.forEach(([ox, oy]) => HEART_PX.forEach((r, y) => [...r].forEach((c, x) => { if(c !== ".") rows[oy + y][ox + x] = c; })));
+  return pixSVG(rows.map(r => r.join("")), { R:"#ff5a5a" }, 2, false);
+}
+const costTag = n => `<span class="xcost">${medalText(n)}</span>`;
+// 交換できるもの。上段：自転車・傘・食パン／下段：ハートの上限 3・4・こうかんしない
+const XITEMS = [
+  { id:"bike",  cost:2, ok:() => !onBike,           icon:() => bikeIconSVG(), got:"自転車をもらった！" },
+  { id:"umb",   cost:1, ok:() => umbrella <= 0,     icon:() => umbIconSVG(),  got:"傘をもらった！" },
+  { id:"bread", cost:1, ok:() => lives < maxLives,  icon:() => `<span class="hp"><b>♡</b>+1</span>` + breadIconSVG(), got:"食パンをもらった！" },
+  { id:"life3", cost:2, ok:() => maxLives < 3,      icon:() => heartsIcon(3), got:"ハートが3つになった！" },
+  { id:"life4", cost:3, ok:() => maxLives === 3,    icon:() => heartsIcon(4), got:"ハートが4つになった！" },   // 3つをとるまでは選べない
+  { id:"skip",  cost:0, ok:() => true,              icon:() => `<span>とっておく</span>`, got:"" },
+];
+const XROWS = [["bike", "umb", "bread"], ["life3", "life4", "skip"]];
+const canBuy = it => it.ok() && medalWallet >= it.cost;
+let exchangeOpen = false, exchangeChosen = false, exchangeDone = false, xCursor = null, resultT = 0;
+function canExchange(){ return XITEMS.some(it => it.id !== "skip" && canBuy(it)); }
+function xBox(id){ return document.querySelector(`.xbox[data-x="${id}"]`); }
+function openExchange(){
+  exchangeOpen = true; exchangeChosen = false; exchangeDone = true; xCursor = null;
+  XITEMS.forEach(it => { xBox(it.id).innerHTML = it.icon() + (it.cost ? costTag(it.cost) : ""); });
+  document.getElementById("xGot").textContent = "";
+  document.getElementById("xPop").className = "xpop";
+  document.getElementById("xPop").innerHTML = "";
+  renderExchange();
+  document.getElementById("xchg").classList.remove("hidden");
+}
+function renderExchange(){
+  document.getElementById("xWallet").innerHTML = `つかえるメダル ${medalText(medalWallet) || "×0"}`;
+  XITEMS.forEach(it => {
+    xBox(it.id).classList.toggle("off", !canBuy(it));
+    xBox(it.id).classList.toggle("sel", xCursor === it.id);
+  });
+}
+// ←→：選べるものを順に（上段→下段）。↑↓：上下の段へ
+function moveExchange(dir){
+  if(!exchangeOpen || exchangeChosen) return;
+  const en = XROWS.flat().filter(id => canBuy(XITEMS.find(t => t.id === id)));
+  if(!en.length) return;
+  let k = en.indexOf(xCursor);
+  if(k < 0) k = dir > 0 ? 0 : en.length - 1;   // 最初の一押しで、押した側の端に
+  else k = Math.max(0, Math.min(en.length - 1, k + dir));
+  xCursor = en[k]; renderExchange();
+}
+function moveExchangeRow(dir){
+  if(!exchangeOpen || exchangeChosen) return;
+  if(!xCursor){ moveExchange(1); return; }
+  const r = XROWS.findIndex(row => row.includes(xCursor)), c = XROWS[r].indexOf(xCursor);
+  const nr = r + dir;
+  if(nr < 0 || nr >= XROWS.length) return;
+  // 真上・真下が選べなければ、その段で近いものへ
+  const cand = XROWS[nr].map((id, i) => [id, Math.abs(i - c)]).filter(([id]) => canBuy(XITEMS.find(t => t.id === id))).sort((p, q) => p[1] - q[1]);
+  if(cand.length){ xCursor = cand[0][0]; renderExchange(); }
+}
+function chooseExchange(which){
+  if(!exchangeOpen || exchangeChosen) return;
+  const it = XITEMS.find(t => t.id === which);
+  if(!it || !canBuy(it)) return;
+  exchangeChosen = true; xCursor = which; renderExchange();
+  if(which === "skip"){ setTimeout(closeExchange, 200); return; }   // 交換しない（メダルはそのまま持ち越し）
+  medalWallet -= it.cost;
+  if(which === "bread"){ lives = Math.min(maxLives, lives + 1); playHealSE(); }
+  else if(which === "bike"){ onBike = true; bikeHP = BIKE_HP; playMedalSE(); }   // 乗っているあいだは買い替えできない（ok で選べない）
+  else if(which === "umb"){ umbrella = UMBRELLA_HP; playMedalSE(); }
+  else if(which === "life3" || which === "life4"){ maxLives++; lives = Math.min(maxLives, lives + 1); playHealSE(); }   // 上限が増えて、そのぶん回復
+  updateHUD();
+  document.getElementById("xGot").textContent = it.got;
+  // 選んだ枠からアイコンがポンと出る
+  const box = xBox(which).getBoundingClientRect();
+  const scr = document.querySelector(".screen").getBoundingClientRect();
+  const pop = document.getElementById("xPop");
+  pop.innerHTML = it.icon();
+  pop.style.left = (box.left + box.width / 2 - scr.left) + "px";
+  pop.style.top = (box.top + box.height / 2 - scr.top) + "px";
+  pop.className = "xpop"; void pop.offsetWidth; pop.className = "xpop go";
+  renderExchange();
+  // 続けて交換できる（メダルが足りるあいだ）。もう何も交換できなければ閉じる
+  setTimeout(() => {
+    if(!exchangeOpen) return;
+    if(!canExchange()){ closeExchange(); return; }
+    exchangeChosen = false;
+    if(!canBuy(XITEMS.find(t => t.id === xCursor))) xCursor = null;
+    document.getElementById("xGot").textContent = "";
+    renderExchange();
+  }, 1300);
+}
+function closeExchange(){
+  exchangeOpen = false;
+  document.getElementById("xchg").classList.add("hidden");
+  inputLockUntil = performance.now() + 400;   // リザルトにもどる。進むのはボタン（かSPACE）を押してから
+}
+document.querySelectorAll(".xbox").forEach(b => {
+  b.addEventListener("mousedown", e => e.preventDefault());
+  b.addEventListener("click", () => chooseExchange(b.dataset.x));
+});
+
+// ===== ブースト中の残像 =====
+// いまの女の子の絵（パーツと位置）を返す。残像用
+function girlParts(){
+  const x = Math.round(player.x), y = Math.round(player.y);
+  if(onBike){
+    if(player.flip > 0){
+      const f = Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4)));
+      const spr = BIKE_ROT[f];
+      return [[spr, x + 7 - Math.floor(spr[0].length/2), y + 4 - Math.floor(spr.length/2)]];
+    }
+    return [[bikeFrame(), x - 5, y - 6]];
+  }
+  if(player.flip > 0){
+    const f = Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4)));
+    const spr = GIRL_ROT[f];
+    return [[spr, x + 6 - Math.floor(spr[0].length/2), y + 8 - Math.floor(spr.length/2)]];
+  }
+  if(rolling > 0){
+    const f = Math.floor((CONFIG.rollTime - rolling) / 4) % 4;
+    const spr = GIRL_ROT[f];
+    return [[spr, x + 6 - Math.floor(spr[0].length/2), groundY - spr.length]];
+  }
+  const legs = (!player.jumping && Math.floor(animTick / 6) % 2) ? GIRL_LEGS_B : GIRL_LEGS_A;
+  return [[GIRL_TOP, x, y], [legs, x, y + 12]];
+}
+let ghosts = [];
+const GHOST_LIFE = 14;
+function updateGhosts(){
+  const live = state === "playing" || state === "goal";
+  if(live && (boostLeft > 0 || starT > 0) && animTick % 3 === 0){
+    ghosts.push({ parts: girlParts(), pal: onBike ? bikePal() : girlPal(), dx: 0, life: GHOST_LIFE });
+  }
+  for(let i = ghosts.length - 1; i >= 0; i--){
+    const g = ghosts[i];
+    g.dx -= 1.6;   // 後ろへ流れていく
+    if(--g.life <= 0) ghosts.splice(i, 1);
+  }
+}
+function drawGhosts(){
+  ghosts.forEach(g => {
+    if(g.bike) g.pal = bikePal();
+    ctx.globalAlpha = 0.45 * g.life / GHOST_LIFE;
+    g.parts.forEach(([spr, x, y]) => drawSprite(spr, Math.round(x + g.dx), y, g.pal));
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawPlayer(){
+  if(state === "clear") return;
+  const x = Math.round(player.x);
+  const y = Math.round(player.y);
+
+  if(state === "crash"){
+    // 吹っ飛んでひっくり返る
+    drawSprite(GIRL_LEGS_A, x, y, GIRL_PAL, true);
+    drawSprite(GIRL_TOP, x, y + 3, GIRL_PAL, true);
+    return;
+  }
+
+  if(onBike){
+    // 自転車に乗っている
+    if(blink > 0 && Math.floor(blink / 4) % 2) return;
+    if(player.flip > 0 && umbrella > 0){ drawFlipWithUmbrella(bikePal()); return; }   // 自転車＋傘ごと回る
+    if(player.flip > 0){
+      // 空中クルッ：自転車ごと前回り1回転（中心は自転車の真ん中）
+      const f = Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4)));
+      const spr = BIKE_ROT[f], w = spr[0].length, h = spr.length;
+      drawSprite(spr, x + 7 - Math.floor(w/2), y + 4 - Math.floor(h/2), bikePal());
+      return;
+    }
+    ctx.fillStyle = "rgba(0,0,0,.18)";
+    ctx.fillRect(x - 1, groundY, player.jumping ? 14 : 20, 1);
+    drawSprite(bikeFrame(), x - 5, y - 6, bikePal());
+    return;
+  }
+
+  if(player.flip > 0 && umbrella > 0){ drawFlipWithUmbrella(girlPal()); return; }   // 傘ごと回る
+  if(player.flip > 0){
+    // 空中クルッ（前回り1回転）
+    const f = Math.min(3, Math.floor((CONFIG.flipTime - player.flip) / (CONFIG.flipTime / 4)));
+    const spr = GIRL_ROT[f];
+    const w = spr[0].length, h = spr.length;
+    drawSprite(spr, x + 6 - Math.floor(w/2), y + 8 - Math.floor(h/2), girlPal());
+    return;
+  }
+
+  if(rolling > 0){
+    // 体ごと転がる（90°ずつ回転）
+    const f = Math.floor((CONFIG.rollTime - rolling) / 4) % 4;
+    const spr = GIRL_ROT[f];
+    const w = spr[0].length, h = spr.length;
+    drawSprite(spr, x + 6 - Math.floor(w/2), groundY - h, girlPal());
+    return;
+  }
+
+  // 水たまりを踏んだら点滅
+  if(blink > 0 && Math.floor(blink / 4) % 2) return;
+
+  ctx.fillStyle = "rgba(0,0,0,.18)";
+  const sw = player.jumping ? 6 : 10;
+  ctx.fillRect(x + 6 - sw/2, groundY, sw, 1);
+  drawSprite(GIRL_TOP, x, y, girlPal());
+  let legs = GIRL_LEGS_A;
+  const running = state === "playing" || state === "goal";
+  if(running && !player.jumping && Math.floor(animTick / 6) % 2) legs = GIRL_LEGS_B;
+  drawSprite(legs, x, y + 12, girlPal());
+}
+
+// ===== スイカ =====
+// 夏：後ろ（左）から転がってくる。来る前に左に矢印が「ピコン、ピコン」と2回点滅。
+// ジャンプでよけられる。当たると上に乗って（自転車でも）しばらく進み、そのあいだはジャンプできない（バナナと同じく、自分では動けない）。
+// 乗り終わるとスイカは割れて、半分ずつが道に残る
+const MELON_W = 12, MELON_H = 12;
+const MELON_PAL = { G:"#269c33", g:"#186923", R:"#de3733", r:"#b42626", K:"#181818", W:"#ececd2" };
+const MELON_WARN_T = 48;   // 矢印の点滅（2回）
+const MELON_V = 1.7;       // 画面の上で右へ進む速さ（女の子に追いつく）
+const MELON_RIDE_T = 80;   // 乗っている時間（フレーム）
+// 割れたあと：左右の半分（赤い中身と黒い種、下に緑の皮）
+const MELON_HALF_L = [
+  "..RRRR",
+  ".RRKRR",
+  "RRRRKR",
+  "RKRRRR",
+  "WWWWWW",
+  "GGGGGG",
+  ".gGGG.",
+];
+const MELON_HALF_R = MELON_HALF_L.map(r => [...r].reverse().join(""));
+const WARN_ARROW = ["...Y....", "...YY...", "YYYYYY..", "YYYYYYY.", "YYYYYY..", "...YY...", "...Y...."];
+// 丸ごと：まんまるに、ベースの緑と少し濃い緑のしま（roll で回る）
+function drawMelonWhole(x0, y0, roll){
+  const r = MELON_W / 2, c = Math.cos(.5 + roll), sn = Math.sin(.5 + roll);
+  for(let y = 0; y < MELON_H; y++) for(let x = 0; x < MELON_W; x++){
+    const dx = x - r + .5, dy = y - r + .5;
+    if(dx * dx + dy * dy > r * r) continue;
+    const u = dx * c + dy * sn;
+    ctx.fillStyle = (((Math.floor(u + 20) % 4) + 4) % 4) < 2 ? MELON_PAL.g : MELON_PAL.G;
+    ctx.fillRect(x0 + x, y0 + y, 1, 1);
+  }
+}
+function playPikonSE(){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(1568, t); osc.frequency.setValueAtTime(2093, t + .05);
+  gain.gain.setValueAtTime(0.06, t); gain.gain.setValueAtTime(0.0001, t + .1);
+  osc.connect(gain); gain.connect(outNode());
+  osc.start(t); osc.stop(t + .11);
+}
+const melonRideY = () => groundY - MELON_H - player.h;
+function updateMelons(scroll){
+  // 予告の矢印 → スイカ登場
+  if(melonWarn > 0){
+    if(melonWarn === MELON_WARN_T || melonWarn === MELON_WARN_T - 24) playPikonSE();
+    if(--melonWarn === 0) melons.push({ x:-MELON_W - 2, roll:0, broken:false });
+  }
+  for(let i = melons.length - 1; i >= 0; i--){
+    const m = melons[i];
+    if(m.broken){ m.x -= scroll; if(m.x < -20) melons.splice(i, 1); continue; }
+    m.x += MELON_V; m.roll += MELON_V / 6;
+    const pb = playerBox(), feet = player.y + player.h;
+    const touch = m.x + MELON_W - 2 > pb.x && m.x + 2 < pb.x + pb.w;
+    if(touch && starT === 0 && feet > groundY - MELON_H + 3 && !melonRide){
+      // 当たった：上に乗る
+      melons.splice(i, 1);
+      melonRide = { t:MELON_RIDE_T, roll:m.roll };
+      player.vy = 0; player.jumping = false; player.flip = 0;
+      dropUmbrella();
+      playKnockSE();
+      setSpeed();
+      popAt("slowpop", "SLOW", "down", player.x + 6, player.y - 12);
+      popAt("wapopL", "わっ", "", player.x - 9, melonRideY() + 4);   // ぐらっ（左）
+      continue;
+    }
+    if(m.x > W + 20) melons.splice(i, 1);
+  }
+  // 乗っているあいだ：スイカの上で進む（ジャンプ不可）。終わったら割れる
+  if(melonRide){
+    player.y = melonRideY(); player.vy = 0;
+    melonRide.roll += scroll / 6;
+    // 焦りの汗：頭の上から、上へ向かって左右に飛ぶ
+    if(melonRide.t % 4 === 0){
+      const side = (melonRide.t / 4) % 2 ? -1 : 1;
+      particles.push({ x:player.x + 6 + side * 5, y:player.y, vx:side * rand(.4, .8), vy:-rand(1.1, 1.6), life:18, c:"#5fb2ee", w:2, h:2 });
+    }
+    if(melonRide.t === MELON_RIDE_T - 22) popAt("wapopR", "わっ", "", player.x + 21, melonRideY() + 4);   // →ぐらっ（右）
+    if(--melonRide.t <= 0){
+      const m = { x:player.x + (onBike ? 2 : 0), broken:true };
+      melons.push(m);
+      breakMelon(m);
+      melonRide = null;
+      setSpeed();
+      player.jumping = true;   // 地面へ落ちる
+    }
+  }
+}
+function drawMelon(m){
+  const x = Math.round(m.x);
+  ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(x + 1, groundY, MELON_W - 2, 1);
+  if(!m.broken){ drawMelonWhole(x, groundY - MELON_H, m.roll); return; }
+  drawSprite(MELON_HALF_L, x - 2, groundY - 7, MELON_PAL);
+  drawSprite(MELON_HALF_R, x + 8, groundY - 7, MELON_PAL);
+}
+// 乗っているスイカ（女の子の足もと）と、予告の矢印
+function drawMelonExtras(){
+  if(melonRide){
+    const x = Math.round(player.x + (onBike ? 2 : 0));
+    ctx.fillStyle = "rgba(0,0,0,.18)"; ctx.fillRect(x + 1, groundY, MELON_W - 2, 1);
+    drawMelonWhole(x, groundY - MELON_H, melonRide.roll);
+  }
+  if(melonWarn > 0 && Math.floor((MELON_WARN_T - melonWarn) / 12) % 2 === 0) drawSprite(WARN_ARROW, 3, groundY - 10, { Y:"#f8d030" });
+}
+// 割れる：赤い汁と黒い種が飛び散る
+function breakMelon(m){
+  m.broken = true;
+  const cx = m.x + MELON_W / 2, cy = groundY - MELON_H / 2;
+  for(let k = 0; k < 14; k++) particles.push({ x:cx, y:cy, vx:rand(-1.6, 1.6), vy:-rand(.6, 2.2), life:26, c:k % 3 === 0 ? MELON_PAL.K : (k % 3 === 1 ? MELON_PAL.R : MELON_PAL.r) });
+  shakeT = 6;
+  playKnockSE();
+}
+function drawBanana(b){
+  if(b.knock){ drawSprite(BANANA, Math.round(b.x), Math.round(groundY - 4 + b.ky), BANANA_PAL, true); return; }
+  drawSprite(BANANA, b.x, groundY - 4, BANANA_PAL);
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    ctx.fillStyle = p.c;
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), p.w || 1, p.h || 1);
+  });
+}
+
+function drawConfetti(){
+  confetti.forEach(c=>{
+    ctx.fillStyle = c.c;
+    if(Math.floor(c.t / 14) % 2) ctx.fillRect(Math.round(c.x), Math.round(c.y), 2, 1);
+    else ctx.fillRect(Math.round(c.x), Math.round(c.y), 1, 2);
+  });
+}
+
+function draw(){
+  const gx = gateScreenX();
+  drawSky();
+  ctx.save();
+  // 吹っ飛ばしたときに画面を少しゆらす
+  let sx = 0, sy = 0;
+  if(shakeT > 0){ sx = (shakeT % 2 ? 1 : -1); sy = (shakeT % 4 < 2 ? 1 : 0); if(!paused) shakeT--; }
+  ctx.translate(sx, VIEW_OY + sy);
+  drawClouds();
+  drawHills();
+  drawFarHouses();
+  drawNearHouses();
+  drawSchool(gx);
+  drawSakura();
+  drawElder();
+  drawFront(gx);
+  drawRoad();
+  drawHydrangea();
+  ctx.save();
+  ctx.translate(0, LANE);   // ここから道の上（手前）のもの
+  puddles.forEach(drawPuddle);
+  bananas.forEach(drawBanana);
+  melons.forEach(drawMelon);
+  drawMelonExtras();
+  drawGate(gx);
+  drawTeacher(gx);
+  cans.forEach(drawCan);
+  cats.forEach(drawCat);
+  crows.forEach(c => drawSprite(c.knock ? CROW_A : (Math.floor(c.age / 8) % 2 ? CROW_B : CROW_A), Math.round(c.x), Math.round(c.y), CROW_PAL, !!c.knock));   // はじかれたカラスはひっくり返る
+  drawGhosts();
+  drawPlayer();
+  drawHeldUmbrella();
+  drawFlyUmbs();
+  drawParticles();
+  ctx.restore();
+  drawSunflowers();
+  drawPetals();
+  drawRain();
+  drawSunRays();
+  drawFireworks();
+  drawConfetti();
+  ctx.restore();
+}
+
+player = createPlayer();
+createTown();
+
+// 固定タイムステップ（60Hz）
+const STEP = 1000/60;
+let last = performance.now();
+let acc = 0;
+function loop(now){
+  if(paused){
+    // ポーズ中は時間を進めない（再開時にまとめて進まないよう、経過時間も捨てる）
+    last = now; acc = 0;
+    draw();
+    requestAnimationFrame(loop);
+    return;
+  }
+  acc += Math.min(100, now - last);
+  last = now;
+  while(acc >= STEP){
+    update();
+    acc -= STEP;
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
