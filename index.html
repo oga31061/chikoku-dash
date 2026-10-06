@@ -1960,7 +1960,11 @@ function openCam(){
   camOpen = true;
   renderCamUI();
   document.getElementById("camMenu").classList.remove("hidden");
-  if(isActive() && !paused){ paused = true; camPaused = true; stopBGM(); }
+  if(!paused){            // どの画面でも確実にポーズ（クリア画面のカウントなども止める）
+    paused = true; camPaused = true;
+    stopBGM();
+    document.querySelector(".screen").classList.add("paused");   // CSSアニメも止める
+  }
 }
 function closeCam(){
   if(!camOpen) return;
@@ -1968,35 +1972,33 @@ function closeCam(){
   document.getElementById("camMenu").classList.add("hidden");
   if(camPaused){
     camPaused = false; paused = false;
+    document.querySelector(".screen").classList.remove("paused");
     last = performance.now(); acc = 0;
     if(state === "playing" || state === "goal") startBGM(false);
   }
 }
+let camBusy = false;
 async function takeScreenshot(){
-  const blob = await captureScreen(camUI);   // メニューを閉じる前に（ポーズ中のその瞬間を）撮る
-  const fl = document.getElementById("camFlash");
-  fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
-  closeCam();
-  if(!blob) return;
-  const d = new Date(), pad = n => String(n).padStart(2, "0");
-  const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
-  const file = new File([blob], name, { type:"image/png" });
-  if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
-    try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
+  if(camBusy) return;
+  camBusy = true;
+  try{
+    const blob = await captureScreen(camUI);   // 確認メニューは SKIP 対象なので写らない
+    const fl = document.getElementById("camFlash");
+    fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
+    if(!blob) return;
+    const d = new Date(), pad = n => String(n).padStart(2, "0");
+    const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
+    const file = new File([blob], name, { type:"image/png" });
+    if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
+      try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
+    }
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  } finally {
+    camBusy = false;   // メニューは開いたまま＝ポーズ維持
   }
-  const url = URL.createObjectURL(blob), a = document.createElement("a");
-  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
-document.getElementById("btnCam").addEventListener("click", () => camOpen ? closeCam() : openCam());
-document.getElementById("camYes").addEventListener("click", takeScreenshot);
-document.getElementById("camNo").addEventListener("click", closeCam);
-document.getElementById("camUI").addEventListener("click", () => { camUI = !camUI; renderCamUI(); });
-document.querySelectorAll(".pmtab").forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
-document.getElementById("btnTitle").addEventListener("click", goTitle);
-document.getElementById("btnClose").addEventListener("click", closePause);
-renderPauseBtn();
-
 // 音量ボタン：スピーカーのドット絵（波の数で音量、無音は×）
 function speakerSVG(level){
   // 12×12ドット
