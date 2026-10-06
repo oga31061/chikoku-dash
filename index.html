@@ -1966,10 +1966,14 @@ function closeCam(){
   if(!camOpen) return;
   camOpen = false;
   document.getElementById("camMenu").classList.add("hidden");
+  // スクリーンショット後もメインゲームのポーズを維持する。
+  // カメラを開いたときに停止したゲームを勝手に再開しない。
   if(camPaused){
-    camPaused = false; paused = false;
-    last = performance.now(); acc = 0;
-    if(state === "playing" || state === "goal") startBGM(false);
+    camPaused = false;
+    paused = true;
+    document.querySelector(".screen").classList.add("paused");
+    last = performance.now();
+    acc = 0;
   }
 }
 async function takeScreenshot(){
