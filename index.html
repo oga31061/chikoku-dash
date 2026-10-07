@@ -323,6 +323,8 @@ canvas{
 .pausebtn.on{ background:#f8f8f8 !important; }
 .cambtn{ top:calc(var(--dot) * 44); }
 .cammenu{ z-index:11; }
+.campause{ position:absolute; left:50%; top:46%; transform:translate(-50%, -50%); font-size:calc(var(--dot) * 16); color:#f8f8f8; pointer-events:none; z-index:9; }
+.campause.hidden{ display:none; }
 .cambox{ display:flex; flex-direction:column; align-items:center; gap:calc(var(--dot) * 6); font-size:calc(var(--dot) * 8);
   border:var(--dot) solid #f8f8f8; box-shadow:var(--dot) var(--dot) 0 #1c2030; padding:calc(var(--dot) * 8) calc(var(--dot) * 12); }
 .camrow{ display:flex; align-items:center; gap:calc(var(--dot) * 6); }
@@ -586,6 +588,7 @@ button{ font-size:var(--ui) !important; }
     <button class="ctl icon pausebtn" id="btnPause" aria-label="メニュー"></button>
     <button class="ctl icon pausebtn cambtn" id="btnCam" aria-label="スクリーンショット"><svg viewBox="0 0 8 8" shape-rendering="crispEdges"><path d="M2 1h4v1H2z M0 2h8v1H0z M0 3h2v1H0z M6 3h2v1H6z M0 4h1v1H0z M3 4h2v1H3z M7 4h1v1H7z M0 5h1v1H0z M3 5h2v1H3z M7 5h1v1H7z M0 6h2v1H0z M6 6h2v1H6z M0 7h8v1H0z" /></svg></button>
     <div class="camflash" id="camFlash"></div>
+    <div class="campause outline hidden" id="camPauseLabel">ポーズ中</div>
     <!-- カメラ：確認（ゲームはポーズ） -->
     <div class="pausemenu cammenu hidden" id="camMenu">
       <div class="cambox outline">
@@ -1873,6 +1876,7 @@ function renderPauseBtn(){
 // ポーズメニュー：遊んでいる途中なら時間・BGM・アニメを止める（タイトルや結果画面でも開ける）
 function openPause(){
   if(menuOpen || exchangeOpen || camOpen) return;
+  if(camHold){ setCamHold(false); camPaused = false; }   // カメラの「ポーズ中」からメニューへ（ポーズはメニューが引きつぐ）
   menuOpen = true;
   document.getElementById("tabTitle").style.display = state === "menu" ? "none" : "";
   renderRecords();
@@ -1915,6 +1919,7 @@ function closeRecords(){}
 
 function goTitle(){
   closePause();
+  if(camHold){ setCamHold(false); camPaused = false; paused = false; }
   // 途中でやめた場合も、そこまでの記録は残す
   if(isActive()) addRecord(dayIdx(week, day), mul);
   else if(state === "clear") addRecord(dayIdx(week, day) + 1, mul);
@@ -1953,52 +1958,70 @@ function goTitle(){
 document.querySelectorAll("button").forEach(b => b.addEventListener("mousedown", e => e.preventDefault()));
 document.getElementById("btnPause").addEventListener("click", togglePause);
 // カメラ：押すと確認（ゲームはポーズ）→「はい」でいまのゲーム画面を画像に（ボタン類は写さない。UI オフならゲームの絵だけ）
-let camOpen = false, camUI = true, camPaused = false;
+// カメラ：押すと確認画面（ゲームはポーズ）
+//  はい → フラッシュ → 確認画面を消して、撮った画面を1秒見せる（操作できない）→ 確認画面にもどる
+//  いいえ → 確認画面を消して、まん中に「ポーズ中」。ジャンプ（スペース・タップ・クリック）で再開
+let camOpen = false, camUI = true, camPaused = false, camHold = false, camPreview = false;
 function renderCamUI(){ const b = document.getElementById("camUI"); b.classList.toggle("on", camUI); b.setAttribute("aria-pressed", camUI); }
 function openCam(){
   if(camOpen || menuOpen || exchangeOpen) return;
   camOpen = true;
+  setCamHold(false);
   renderCamUI();
   document.getElementById("camMenu").classList.remove("hidden");
-  if(!paused){            // どの画面でも確実にポーズ（クリア画面のカウントなども止める）
-    paused = true; camPaused = true;
-    stopBGM();
-    document.querySelector(".screen").classList.add("paused");   // CSSアニメも止める
-  }
+  if(isActive() && !paused){ paused = true; camPaused = true; stopBGM(); }
 }
+function setCamHold(on){
+  camHold = on;
+  document.getElementById("camPauseLabel").classList.toggle("hidden", !on);
+}
+// いいえ：確認画面は閉じるが、ポーズのまま（遊んでいる途中のときだけ）
 function closeCam(){
-  if(!camOpen) return;
+  if(!camOpen || camPreview) return;
   camOpen = false;
   document.getElementById("camMenu").classList.add("hidden");
+  if(camPaused) setCamHold(true);
+}
+// 「ポーズ中」から再開
+function resumeFromCam(){
+  if(!camHold) return;
+  setCamHold(false);
   if(camPaused){
     camPaused = false; paused = false;
-    document.querySelector(".screen").classList.remove("paused");
     last = performance.now(); acc = 0;
     if(state === "playing" || state === "goal") startBGM(false);
   }
 }
-let camBusy = false;
 async function takeScreenshot(){
-  if(camBusy) return;
-  camBusy = true;
-  try{
-    const blob = await captureScreen(camUI);   // 確認メニューは SKIP 対象なので写らない
-    const fl = document.getElementById("camFlash");
-    fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
-    if(!blob) return;
-    const d = new Date(), pad = n => String(n).padStart(2, "0");
-    const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
-    const file = new File([blob], name, { type:"image/png" });
-    if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
-      try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
-    }
-    const url = URL.createObjectURL(blob), a = document.createElement("a");
-    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-  } finally {
-    camBusy = false;   // メニューは開いたまま＝ポーズ維持
+  if(camPreview) return;
+  const blob = await captureScreen(camUI);
+  const fl = document.getElementById("camFlash");
+  fl.className = "camflash"; void fl.offsetWidth; fl.className = "camflash go";
+  // 撮った画面を1秒見せる（そのあいだは操作できない）
+  camPreview = true;
+  const menu = document.getElementById("camMenu");
+  menu.classList.add("hidden");
+  setTimeout(() => { camPreview = false; if(camOpen) menu.classList.remove("hidden"); }, 1000);
+  if(!blob) return;
+  const d = new Date(), pad = n => String(n).padStart(2, "0");
+  const name = `chikoku-dash_${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.png`;
+  const file = new File([blob], name, { type:"image/png" });
+  if(isTouchDevice() && navigator.canShare && navigator.canShare({ files:[file] })){
+    try{ await navigator.share({ files:[file] }); return; }catch(e){ if(e && e.name === "AbortError") return; }
   }
+  const url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
+document.getElementById("btnCam").addEventListener("click", () => { if(camPreview) return; camOpen ? closeCam() : openCam(); });
+document.getElementById("camYes").addEventListener("click", takeScreenshot);
+document.getElementById("camNo").addEventListener("click", closeCam);
+document.getElementById("camUI").addEventListener("click", () => { camUI = !camUI; renderCamUI(); });
+document.querySelectorAll(".pmtab").forEach(t => t.addEventListener("click", () => selectTab(t.dataset.tab)));
+document.getElementById("btnTitle").addEventListener("click", goTitle);
+document.getElementById("btnClose").addEventListener("click", closePause);
+renderPauseBtn();
+
 // 音量ボタン：スピーカーのドット絵（波の数で音量、無音は×）
 function speakerSVG(level){
   // 12×12ドット
@@ -2048,6 +2071,7 @@ function proceed(){
 // ジャンプ操作（スペース・画面下のボタン共通）
 function pressJump(isRepeat){
   if(recordOpen){ if(!isRepeat) closeRecords(); return; }   // 記録表示中はまず閉じる（ジャンプはしない）
+  if(camHold){ if(!isRepeat) resumeFromCam(); return; }   // カメラの「ポーズ中」：ジャンプで再開（ジャンプはしない）
   if(menuOpen || camOpen) return;   // ポーズ中は何もしない（開け閉めはポーズボタン・Esc・P）
   if(state === "playing" || state === "goal") jump();
   else if(!isRepeat) proceed();   // 押しっぱなしの連打では進まない
@@ -2063,6 +2087,7 @@ window.addEventListener("keydown", e=>{
     return;
   }
   if(camOpen){ e.preventDefault(); if(e.code === "Escape") closeCam(); return; }
+  if(camHold && (e.code === "Escape" || e.code === "KeyP")){ e.preventDefault(); resumeFromCam(); return; }
   if(e.code === "Space"){
     e.preventDefault();
     pressJump(e.repeat);
@@ -2072,6 +2097,7 @@ window.addEventListener("keydown", e=>{
 });
 // 画面のどこをタップしてもジャンプ（ボタンとメニューの上は除く）
 document.querySelector(".screen").addEventListener("pointerdown", e=>{
+  if(camHold && !e.target.closest("button")){ resumeFromCam(); return; }   // カメラの「ポーズ中」：画面タップで再開
   if(menuOpen || camOpen || exchangeOpen || e.target.closest("button, #pauseMenu, #camMenu")) return;
   if(state === "playing" || state === "goal") jump();
   else if(state === "menu" || state === "gameover") proceed();   // ゲームオーバーは画面タップでタイトルへ（クリア画面はボタンかスペースで）
@@ -3220,7 +3246,7 @@ async function captureScreen(withUI = true){
   const g = c.getContext("2d");
   g.imageSmoothingEnabled = false;
   const X = v => (v - sr.left) * k, Y = v => (v - sr.top) * k;
-  const SKIP = "button, .sharebar, .pausemenu, .xchg, .camflash";
+  const SKIP = "button, .sharebar, .pausemenu, .xchg, .camflash, .campause";
   const uiOff = !withUI;
   const loadImg = src => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
   const shadows = s => { const out = []; if(!s || s === "none") return out;
