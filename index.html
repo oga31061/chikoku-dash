@@ -672,7 +672,7 @@ button{ font-size:var(--ui) !important; }
 //  低解像度（220×120）で描いて整数倍に拡大 → ドットの大きさが全画面で統一
 // =====================================================
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");   // 一時的に別のキャンバスへ向けて、絵を先に描いておくことがある（renderOff）
 ctx.imageSmoothingEnabled = false;
 
 const W = canvas.width;   // 264（少し引いた画：前方が広く見える）
@@ -1224,13 +1224,20 @@ const FENCE_FACTOR = .6;   // 塀（layers.front）の流れる速さ
 const SUN_RAYS = [[17.5, 20.5], [31, 34.5], [45, 47.5], [60, 64]];   // 一筋ずつ細め   // 帯の角度（度：水平から下向き）
 const BAYER4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];   // 網掛け（4×4 のディザ）
 // 画面の右上4分の1におさめる：下は画面の真ん中の高さ、左は画面の真ん中まで。そこへ向かって網掛けで消える
+// 形は毎回同じなので一度だけ描いておき、ゆらめきは濃さ（globalAlpha）だけ変えて貼る
+let _raysCv = null;
 function drawSunRays(){
   if(season !== 1) return;
+  if(!_raysCv) _raysCv = renderOff(W, H, () => { ctx.translate(0, VIEW_OY); drawSunRaysRaw(); });
+  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
+  ctx.drawImage(_raysCv, 0, -VIEW_OY);
+  ctx.globalAlpha = 1;
+}
+function drawSunRaysRaw(){
   const ox = W + 24, oy = -VIEW_OY - 34, D = Math.PI / 180;
   const top = -VIEW_OY, bottom = H / 2 - VIEW_OY, left = W / 2;
   const fadeY0 = top + (bottom - top) * .35, fadeX0 = left + (W - left) * .55;
   ctx.fillStyle = "#fff6c8";
-  ctx.globalAlpha = .3 * (.85 + .15 * Math.sin(animTick * .03));
   for(let y = top; y < bottom; y++){
     const dy = y - oy;
     const fy = y < fadeY0 ? 0 : (y - fadeY0) / (bottom - fadeY0);
@@ -1245,7 +1252,6 @@ function drawSunRays(){
       }
     });
   }
-  ctx.globalAlpha = 1;
 }
 // ===== アジサイのまわりの雨 =====
 const RAIN_COL = "#9cb4cc";
@@ -1336,6 +1342,17 @@ function drawHydrangea(){
     // 塀と同じ速さ。門まわりの3つは、ゴールで止まったとき（門が x=150）に門からのずれの位置にくる
     const x = h.off != null ? Math.round(150 + h.off - (worldOffset - (COURSE - 150)) * FENCE_FACTOR) : Math.round(h.x - worldOffset * FENCE_FACTOR);
     if(x > W + 4 || x + h.w < -4) return;
+    // 花壇の絵は一度だけ描いておく（花の種類・季節の色が変わったら描き直す）
+    const key = backBedFlower + PAL.leaf + PAL.brick;
+    if(h.cvKey !== key){ h.cvKey = key; h.cv = renderOff(h.w + 8, 30, () => drawBedArt(h, 4, -70)); }
+    ctx.drawImage(h.cv, x - 4, 70);
+    if(backBedFlower === "hyd") drawFrog(x + h.w / 2, Math.round(h.w * 7 + (h.off || 0)));
+  });
+}
+// 花壇1つぶんの絵（x0, y0 はずらし）
+function drawBedArt(h, x, dy){
+  ctx.save(); ctx.translate(0, dy);
+  {
     if(backBedFlower === "small"){
       // 手前の花壇と同じ小さな草花
       ctx.fillStyle = PAL.leaf; ctx.fillRect(x + 1, 90, h.w - 2, 3);
@@ -1360,8 +1377,8 @@ function drawHydrangea(){
     ctx.fillStyle = PAL.brick;   ctx.fillRect(x, 93, h.w, 5);
     ctx.fillStyle = PAL.brickHi; ctx.fillRect(x, 93, h.w, 1);
     for(let bx = x + 3; bx < x + h.w; bx += 6) ctx.fillRect(bx, 95, 1, 3);
-    if(backBedFlower === "hyd") drawFrog(x + h.w / 2, Math.round(h.w * 7 + (h.off || 0)));
-  });
+  }
+  ctx.restore();
 }
 // 季節の中の週（0〜3）。春：第1週＝桜、第2週＝なし、第3週＝アジサイ、第4週＝なし
 const weekInSeason = w => (w - 1) % 4;
@@ -1595,18 +1612,40 @@ const CAN = [
 ];
 const CAN_PAL = { O:"#202028", G:"#c8c8d0", Y:"#f8d030", R:"#e03030" };
 
-function drawSprite(rows, x, y, pal, flipV){
-  x = Math.round(x); y = Math.round(y);
-  const n = rows.length;
-  for(let r=0;r<n;r++){
-    const row = rows[flipV ? n-1-r : r];
-    for(let c=0;c<row.length;c++){
-      const col = pal[row[c]];
-      if(!col) continue;
-      ctx.fillStyle = col;
-      ctx.fillRect(x+c, y+r, 1, 1);
+// ===== 描画の最適化：絵は一度だけ小さなキャンバスに描いておき、毎フレームは貼るだけ =====
+// 別のキャンバスに描く（中では ctx がそのキャンバスを指す。pixelCircle や drawSprite もそのまま使える）
+function renderOff(w, h, fn){
+  const cv = document.createElement("canvas"); cv.width = Math.max(1, w); cv.height = Math.max(1, h);
+  const saved = ctx; ctx = cv.getContext("2d");
+  try{ fn(); } finally { ctx = saved; }
+  return cv;
+}
+const _rowsKey = new WeakMap(), _palKey = new WeakMap(), _spriteCache = new Map();
+function rowsKeyOf(rows){ let k = _rowsKey.get(rows); if(k === undefined){ k = rows.join("|"); _rowsKey.set(rows, k); } return k; }
+function palKeyOf(pal){ let k = _palKey.get(pal); if(k === undefined){ k = Object.keys(pal).sort().map(c => c + pal[c]).join(","); _palKey.set(pal, k); } return k; }
+function spriteCanvas(rows, pal, flipV){
+  const key = rowsKeyOf(rows) + "#" + palKeyOf(pal) + (flipV ? "#v" : "");
+  let cv = _spriteCache.get(key);
+  if(!cv){
+    if(_spriteCache.size > 3000) _spriteCache.clear();   // 念のため増えすぎないように
+    const n = rows.length, w = Math.max(...rows.map(r => r.length));
+    cv = document.createElement("canvas"); cv.width = Math.max(1, w); cv.height = Math.max(1, n);
+    const g = cv.getContext("2d");
+    for(let r = 0; r < n; r++){
+      const row = rows[flipV ? n - 1 - r : r];
+      for(let c = 0; c < row.length; c++){
+        const col = pal[row[c]];
+        if(!col) continue;
+        g.fillStyle = col; g.fillRect(c, r, 1, 1);
+      }
     }
+    _spriteCache.set(key, cv);
   }
+  return cv;
+}
+function drawSprite(rows, x, y, pal, flipV){
+  if(!rows.length) return;
+  ctx.drawImage(spriteCanvas(rows, pal, !!flipV), Math.round(x), Math.round(y));
 }
 
 function pixelCircle(cx, cy, r){
@@ -2345,7 +2384,8 @@ function renderMessage(){
   if(!msgOn || (!text && !boosting)){ win.classList.add("hidden"); return; }   // セリフがないときはウィンドウごと消す
   win.classList.remove("hidden");
   if(t.textContent !== text) t.textContent = text;
-  t.className = "msg " + (side === "R" ? npcCls : "");
+  const mc = "msg " + (side === "R" ? npcCls : "");
+  if(t.className !== mc) t.className = mc;   // 変わったときだけ
   // 顔アイコンは全員左（NPC のセリフ中はそちらが優先）
   if(!BOOST_FACES) BOOST_FACES = [boostFaceURL(0), boostFaceURL(1)];
   const src = side === "L" ? (boosting ? BOOST_FACES[Math.floor(animTick / 8) % 2] : faces().girl) : faces()[npcWho];
@@ -2516,17 +2556,19 @@ function updateHUD(){
     setHTML("hud", `${hh}:<span class="${cls}">${mm}</span>`);   // 色が変わるのは「分」だけ
   }
   const meter = document.getElementById("meter");
-  document.getElementById("meterNum").textContent = m;
+  setHTML("meterNum", String(m));   // 変わったときだけ書く
   meter.classList.toggle("hidden", gateScreenX() < W + 20 || !(state === "playing" || state === "goal"));   // 正門が見えたら消す
   let hearts = "";
   for(let i=0;i<maxLives;i++) hearts += `<span class="${i < lives ? "heart" : "heart lost"}">♥</span>`;
   // 右上：上から「週（第1週は出さない） 日にち」／時刻／メニュー
   setHTML("dayLabel", (week === 1 ? "" : `第<span class="num">${week}</span>週 `) + `<span class="num">${day}</span>日目`);   // 週と日にちは同じ行
-  const rows = 0;
-  hud.style.top = `calc(var(--dot) * ${16 + rows * 10})`;   // 日にちとの間を少しあける
-  document.getElementById("btnPause").style.top = `calc(var(--dot) * ${28 + rows * 10})`;
-  document.getElementById("btnCam").style.top = `calc(var(--dot) * ${44 + rows * 10})`;
-  document.getElementById("boostLabel").style.top = `calc(var(--dot) * ${42 + rows * 10})`;
+  if(!_htmlCache.posSet){   // 位置は変わらないので最初の1回だけ
+    _htmlCache.posSet = true;
+    hud.style.top = `calc(var(--dot) * 16)`;   // 日にちとの間を少しあける
+    document.getElementById("btnPause").style.top = `calc(var(--dot) * 28)`;
+    document.getElementById("btnCam").style.top = `calc(var(--dot) * 44)`;
+    document.getElementById("boostLabel").style.top = `calc(var(--dot) * 42)`;
+  }
   const key = `${lives}/${maxLives}/${drinkStock}/${starT > 0}`;
   if(_htmlCache.lifeKey !== key){
     _htmlCache.lifeKey = key;
@@ -3494,13 +3536,22 @@ function drawClouds(){
   });
 }
 
+// 丘：1周ぶん（period）を一度だけ描いておき、ずらして貼る（色が変わったら描き直す）
+let _hillsCv = null, _hillsKey = "";
 function drawHills(){
   const L = layers.hills, off = layerOffset(L);
-  ctx.fillStyle = PAL.hill;
-  for(let x=0;x<W;x++){
-    const h = L.heights[(x + off) % L.period];
-    ctx.fillRect(x, h, 1, groundY - h);
+  const key = PAL.hill + "|" + L.heights.length + "|" + L.heights[0] + L.heights[100];
+  if(!_hillsCv || _hillsKey !== key){
+    _hillsKey = key;
+    const top = Math.min(...L.heights);
+    _hillsCv = renderOff(L.period, groundY - top, () => {
+      ctx.fillStyle = PAL.hill;
+      for(let x = 0; x < L.period; x++){ const h = L.heights[x]; ctx.fillRect(x, h - top, 1, groundY - h); }
+    });
+    _hillsCv.top = top;
   }
+  ctx.drawImage(_hillsCv, -off, _hillsCv.top);
+  if(L.period - off < W) ctx.drawImage(_hillsCv, L.period - off, _hillsCv.top);
 }
 
 function drawHouse(x, base, w, wall, roof, wallCol, roofCol){
@@ -4089,7 +4140,14 @@ const MELON_HALF_L = [
 const MELON_HALF_R = MELON_HALF_L.map(r => [...r].reverse().join(""));
 const WARN_ARROW = ["...Y....", "...YY...", "YYYYYY..", "YYYYYYY.", "YYYYYY..", "...YY...", "...Y...."];
 // 丸ごと：まんまるに、ベースの緑と少し濃い緑のしま（roll で回る）
+// 回転は16コマにして、先に描いておく
+const _melonFrames = [];
 function drawMelonWhole(x0, y0, roll){
+  const N = 16, k = ((Math.round(roll / (Math.PI * 2) * N) % N) + N) % N;
+  if(!_melonFrames[k]) _melonFrames[k] = renderOff(MELON_W, MELON_H, () => drawMelonWholeRaw(0, 0, k / N * Math.PI * 2));
+  ctx.drawImage(_melonFrames[k], Math.round(x0), Math.round(y0));
+}
+function drawMelonWholeRaw(x0, y0, roll){
   const r = MELON_W / 2, c = Math.cos(.5 + roll), sn = Math.sin(.5 + roll);
   for(let y = 0; y < MELON_H; y++) for(let x = 0; x < MELON_W; x++){
     const dx = x - r + .5, dy = y - r + .5;
@@ -4250,21 +4308,27 @@ createTown();
 const STEP = 1000/60;
 let last = performance.now();
 let acc = 0;
+// ゲームが1コマ以上進んだときだけ描く（高リフレッシュレートの画面で同じ絵を何度も描かない）。
+// ポーズ中は、変化を拾うために時々だけ描く
+let _pausedFrames = 0;
 function loop(now){
   if(paused){
     // ポーズ中は時間を進めない（再開時にまとめて進まないよう、経過時間も捨てる）
     last = now; acc = 0;
-    draw();
+    if(_pausedFrames++ % 15 === 0) draw();
     requestAnimationFrame(loop);
     return;
   }
+  _pausedFrames = 0;
   acc += Math.min(100, now - last);
   last = now;
+  let stepped = false;
   while(acc >= STEP){
     update();
     acc -= STEP;
+    stepped = true;
   }
-  draw();
+  if(stepped) draw();
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
